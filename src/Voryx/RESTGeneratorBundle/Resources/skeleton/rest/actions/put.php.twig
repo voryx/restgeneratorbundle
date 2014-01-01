@@ -1,0 +1,46 @@
+    /**
+{% block phpdoc_method_header %}
+     * Update a {{ entity }} entity.
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function put{{ entity }}Action(Request $request, $id)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
+
+        if (!$entity) {
+            return $this->view(array('errors' => 'Not found'), "404");
+        }
+
+        $form = $this->createDaForm($entity, $request->getMethod());
+
+        $data = $request->request->all();
+
+        $this->formBind($form, $data);
+
+        if ($form->isValid()) {
+            $em->flush();
+
+            return $this->view($entity, "200");
+        }
+{% endblock method_body %}
+{% block method_return %}
+
+        return $this->view(array('errors' => $form->getErrors()), "500");
+{% endblock method_return %}
+    }
+{% block form %}
+
+{% endblock form %}

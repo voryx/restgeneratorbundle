@@ -1,0 +1,42 @@
+    /**
+{% block phpdoc_method_header %}
+     * Create a {{ entity }} entity.
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function post{{ entity }}Action(Request $request)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $entity = new {{ entity }}();
+
+        $form = $this->createDaForm($entity, $request->getMethod());
+
+        $data = $request->request->all();
+
+        $this->formBind($form, $data);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->view($entity, "200");
+        }
+
+{% endblock method_body %}
+{% block method_return %}
+        return $this->view(array('errors' => $form->getErrors()), "500");
+{% endblock method_return %}
+    }
+{% block form %}
+
+{% endblock form %}

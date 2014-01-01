@@ -1,0 +1,32 @@
+    /**
+{% block phpdoc_method_header %}
+     * Get a {{ entity }} entity
+     *
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function get{{ entity }}Action($id)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
+        if ($entity) {
+            return $this->view($entity, "200");
+        } else {
+            return $this->view('Post not found', "404");
+        }
+{% endblock method_body %}
+{% block method_return %}
+{% endblock method_return %}
+    }
+{% block form %}
+
+{% endblock form %}
