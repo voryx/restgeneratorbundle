@@ -1,0 +1,24 @@
+{
+    "name": "Voryx/RESTGeneratorBundle",
+    "type": "library",
+    "description": "REST API Controller Generator",
+    "keywords": ["REST", "API", "Generator"],
+    "authors": [
+        {
+            "name": "David Dan",
+            "email": "davidwdan@gmail.com"
+        },
+        {
+            "name": "Matt Bonneau",
+            "email": "matt@bonneau.net"
+        }
+    ],
+    "require": {
+
+    },
+    "autoload": {
+        "psr-0": {
+            "Voryx\\RESTGeneratorBundle": "src/"
+        }
+    }
+}
