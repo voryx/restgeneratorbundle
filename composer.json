@@ -1,6 +1,7 @@
 {
     "name": "voryx/restgeneratorbundle",
     "description": "REST API Controller Generator",
+    "type": "symfony-bundle",
     "authors": [
         {
             "name": "Matt Bonneau",
