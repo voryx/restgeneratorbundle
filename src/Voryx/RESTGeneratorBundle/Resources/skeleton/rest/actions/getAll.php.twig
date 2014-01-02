@@ -16,7 +16,7 @@
     {
 {% block method_body %}
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('AcmeDemoBundle:Post')->findAll();
+        $entities = $em->getRepository('{{ bundle }}:{{ entity }}')->findBy(array( ), null, 100);
         if ($entities) {
             return $this->view($entities, "200");
         } else {
