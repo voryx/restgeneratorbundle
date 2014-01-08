@@ -114,7 +114,7 @@ class {{ entity_class }}RESTController extends Controller
     {
         $view = new View($entity, $statusCode);
         //$view->setTemplate($template);
-        $view->setData(array('data'=>$entity));
+        $view->setData($entity);
 
         $view_handler = $this->get('fos_rest.view_handler');
 
