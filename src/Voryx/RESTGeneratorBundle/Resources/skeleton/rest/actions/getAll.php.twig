@@ -2,6 +2,8 @@
 {% block phpdoc_method_header %}
      * Get all {{ entity }} entities.
      *
+     * @View()
+     *
      * @param \FOS\RestBundle\Request\ParamFetcherInterface $paramFetcher
      * @return \Symfony\Component\HttpFoundation\Response
      *
@@ -30,12 +32,12 @@
             $em = $this->getDoctrine()->getManager();
             $entities = $em->getRepository('{{ bundle }}:{{ entity }}')->findBy($filters, $order_by, $limit, $offset);
             if ($entities) {
-                return $this->view($entities, Codes::HTTP_OK);
+                return $entities;
             } else {
-                return $this->view('Not Found', Codes::HTTP_NOT_FOUND);
+                return FOSView::create('Not Found', Codes::HTTP_NOT_FOUND);
             }
         } catch (\Exception $e) {
-            return $this->view($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
+            return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 {% endblock method_body %}
 {% block method_return %}

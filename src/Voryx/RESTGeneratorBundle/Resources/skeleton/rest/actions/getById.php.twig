@@ -2,6 +2,8 @@
 {% block phpdoc_method_header %}
      * Get a {{ entity }} entity
      *
+     * @View()
+     *
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
 {% endblock phpdoc_method_header %}
@@ -16,11 +18,7 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        try {
-            return $this->view($entity, Codes::HTTP_OK);
-        } catch (\Exception $e) {
-            return $this->view($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $entity;
 {% endblock method_body %}
 {% block method_return %}
 {% endblock method_return %}

@@ -16,11 +16,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use {{ namespace }}\Entity\{{ entity }};
 use {{ namespace }}\Form\{{ entity }}Type;
 
-use FOS\RestBundle\View\View;
+use FOS\RestBundle\View\View as FOSView;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\Util\Codes;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
+use FOS\RestBundle\Controller\Annotations\View;
 {% endblock use_statements %}
 
 /**
@@ -102,23 +103,5 @@ class {{ entity_class }}RESTController extends Controller
         $form->submit(null, false);
     }
 
-    /**
-    * Create the Rest View
-    *
-    * @param $entity
-    * @param null $statusCode
-    * @param string $template
-    * @return \Symfony\Component\HttpFoundation\Response
-    */
-    protected function view($entity, $statusCode = null, $template = "")
-    {
-        $view = new View($entity, $statusCode);
-        //$view->setTemplate($template);
-        $view->setData($entity);
-
-        $view_handler = $this->get('fos_rest.view_handler');
-
-        return $view_handler->handle($view);
-    }
 {% endblock class_body %}
 }
