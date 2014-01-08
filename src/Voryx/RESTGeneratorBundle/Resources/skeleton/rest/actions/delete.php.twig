@@ -3,7 +3,8 @@
      * Delete a {{ entity }} entity.
      *
      * @param Request $request
-     * @param $id
+     * @param $entity
+     * @internal param $id
      * @return \Symfony\Component\HttpFoundation\Response
 {% endblock phpdoc_method_header %}
      *
@@ -13,34 +14,24 @@
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
-    public function delete{{ entity }}Action(Request $request, $id)
+    public function delete{{ entity }}Action(Request $request, {{ entity }} $entity)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $form = $this->createDaForm(null, $request->getMethod());
 
-        $data = $request->request->all();
-
-        $this->formBind($form, $data);
-
-        if ($form->isValid()) {
-
+        try {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
-
-            if (!$entity) {
-                return $this->view(array('errors' => 'Not found'), "404");
-            }
-
+            $em->merge($entity);
             $em->remove($entity);
             $em->flush();
 
-            return $this->view(array('message' => 'The entity has been removed'), "200");
+            return $this->view(null, Codes::HTTP_NO_CONTENT);
+        } catch (\Exception $e) {
+            return $this->view($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 {% endblock method_body %}
 {% block method_return %}
 
-        return $this->view(array('errors' => $form->getErrors()), "500");
 {% endblock method_return %}
     }
 {% block form %}

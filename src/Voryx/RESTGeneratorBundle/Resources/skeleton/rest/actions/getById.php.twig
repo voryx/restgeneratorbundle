@@ -12,16 +12,14 @@
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
-    public function get{{ entity }}Action($id)
+    public function get{{ entity }}Action({{ entity }} $entity)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
-        if ($entity) {
-            return $this->view($entity, "200");
-        } else {
-            return $this->view('Post not found', "404");
+        try {
+            return $this->view($entity, Codes::HTTP_OK);
+        } catch (\Exception $e) {
+            return $this->view($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 {% endblock method_body %}
 {% block method_return %}

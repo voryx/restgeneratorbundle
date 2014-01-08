@@ -16,25 +16,27 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $entity = new {{ entity }}();
+        $entity = $this->get('serializer')->deserialize(
+            $request->getContent(),
+            get_class(new {{ entity }}()),
+            $request->getContentType()
+        );
 
-        $form = $this->createDaForm($entity, $request->getMethod());
+        $form = $this->createForm(new {{ entity }}Type(), $entity, array("method" => $request->getMethod()));
 
-        $data = $request->request->all();
-
-        $this->formBind($form, $data);
+        $this->formBind($form, $entity);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
-            return $this->view($entity, "200");
+            return $this->view($entity, Codes::HTTP_CREATED);
         }
 
 {% endblock method_body %}
 {% block method_return %}
-        return $this->view(array('errors' => $form->getErrors()), "500");
+        return $this->view(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
 {% endblock method_return %}
     }
 {% block form %}

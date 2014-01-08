@@ -17,6 +17,9 @@ use {{ namespace }}\Entity\{{ entity }};
 use {{ namespace }}\Form\{{ entity }}Type;
 
 use FOS\RestBundle\View\View;
+use FOS\RestBundle\Request\ParamFetcherInterface;
+use FOS\RestBundle\Util\Codes;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 {% endblock use_statements %}
 
 /**
@@ -46,46 +49,56 @@ class {{ entity_class }}RESTController extends Controller
     {%- include 'rest/actions/delete.php.twig' %}
 
     /**
-     * Create the {{ entity }} form
-     *
-     * @param $entity
-     * @param $method
-     * @return Form|\Symfony\Component\Form\FormInterface
-     */
-    protected function createDaForm($entity = null, $method)
+    * Create the {{ entity }} form
+    *
+    * @param null $type
+    * @param null $data
+    * @param array $options
+    * @internal param $entity
+    * @internal param $method
+    * @return Form|\Symfony\Component\Form\FormInterface
+    */
+    public function createForm($type = null, $data = null, array $options = array())
     {
-
         $form = $this->container->get('form.factory')->createNamed(
             null, //since we're not including the form name in the request, set this to null
-            new {{ entity }}Type(),
-            $entity,
-            array('method' => $method)
+            $type,
+            $data,
+            $options
         );
 
         return $form;
     }
 
     /**
-    * Remove extra fields from the submitted data and then submit it
+    * Bind the entity to the form
+    * Supports submitting partial updates
     *
     * @param Form $form
-    * @param $data
+    * @param $entity
+    * @param null $old_entity
+    * @internal param $data
     */
-    protected function formBind(Form $form, $data)
+    protected function formBind(Form $form, $entity, $old_entity = null)
     {
         $form_fields = $form->all();
 
-        //Remove all fields from the submitted data that don't have corresponding form fields
-        $data = array_intersect_key($data, $form_fields);
-
-        //Remove fields from the form that don't have any data, so we don't erase anything by accident
-        foreach ($form_fields as $name => $field) {
-            if (!isset($data[$name])) {
-                $form->remove($name);
+        /*
+        * If any of the field values are null in the new entity apply the values from the old entity
+        * This is a hack, because I couldn't figure out how to submit partials
+        */
+        if (!is_null($old_entity)) {
+            foreach ($form_fields as $name => $field) {
+                $get = 'get' . ucfirst($name);
+                $set = 'set' . ucfirst($name);
+                if ($entity->$get() === null) {
+                    $entity->$set($old_entity->$get());
+                }
             }
         }
+        $form->setData($entity);
 
-        $form->submit($data);
+        $form->submit(null, false);
     }
 
     /**
