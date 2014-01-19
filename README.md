@@ -11,10 +11,19 @@ A CRUD like REST Generator
 
 
 ## Installation
+Add composer repository to your composer.json file:
+
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@bitbucket.org:mbonneau/voryxrestgeneratorbundle.git"
+        }
+    ]
+
 
 Require the "voryx/restgeneratorbundle" package in your composer.json and update your dependencies.
 
-    $ composer require "voryx/restgeneratorbundle": "dev-master"
+    $ composer require voryx/restgeneratorbundle dev-master
 
 Add the VoryxRestGeneratorBundle to your application's kernel along with other dependencies:
 
