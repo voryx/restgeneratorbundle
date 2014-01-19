@@ -14,7 +14,7 @@
         "friendsofsymfony/rest-bundle": "1.2.*@dev",
         "jms/serializer-bundle": "0.12.*@dev",
         "nelmio/cors-bundle": "1.2.*@dev",
-        "symfony/serializer": "2.4.0"
+        "symfony/serializer": "2.4.*"
     },
     "autoload": {
         "psr-0": {
