@@ -2,7 +2,7 @@
 {% block phpdoc_method_header %}
      * Create a {{ entity }} entity.
      *
-     * @View(statusCode=201)
+     * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
@@ -14,7 +14,7 @@
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
-    public function post{{ entity }}Action(Request $request)
+    public function postAction(Request $request)
 {% endblock method_definition %}
     {
 {% block method_body %}

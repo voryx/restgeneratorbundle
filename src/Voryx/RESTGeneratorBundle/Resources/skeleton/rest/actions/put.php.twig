@@ -2,7 +2,7 @@
 {% block phpdoc_method_header %}
      * Update a {{ entity }} entity.
      *
-     * @View()
+     * @View(serializerEnableMaxDepthChecks=true)
      *
      * @param Request $request
      * @param $entity
@@ -17,7 +17,7 @@
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
-    public function put{{ entity }}Action(Request $request, {{ entity }} $entity)
+    public function putAction(Request $request, {{ entity }} $entity)
 {% endblock method_definition %}
     {
 {% block method_body %}

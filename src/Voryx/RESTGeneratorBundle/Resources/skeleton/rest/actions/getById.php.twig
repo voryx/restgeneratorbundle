@@ -2,7 +2,7 @@
 {% block phpdoc_method_header %}
      * Get a {{ entity }} entity
      *
-     * @View()
+     * @View(serializerEnableMaxDepthChecks=true)
      *
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
@@ -14,7 +14,7 @@
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
-    public function get{{ entity }}Action({{ entity }} $entity)
+    public function getAction({{ entity }} $entity)
 {% endblock method_definition %}
     {
 {% block method_body %}

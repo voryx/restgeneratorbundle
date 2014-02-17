@@ -2,7 +2,7 @@
 {% block phpdoc_method_header %}
      * Get all {{ entity }} entities.
      *
-     * @View()
+     * @View(serializerEnableMaxDepthChecks=true)
      *
      * @param \FOS\RestBundle\Request\ParamFetcherInterface $paramFetcher
      * @return \Symfony\Component\HttpFoundation\Response
@@ -19,7 +19,7 @@
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
-    public function get{{ entity }}sAction(ParamFetcherInterface $paramFetcher)
+    public function cgetAction(ParamFetcherInterface $paramFetcher)
 {% endblock method_definition %}
     {
 {% block method_body %}
@@ -34,7 +34,7 @@
             if ($entities) {
                 return $entities;
             } else {
-                return FOSView::create('Not Found', Codes::HTTP_NOT_FOUND);
+                return FOSView::create('Not Found', Codes::HTTP_NO_CONTENT);
             }
         } catch (\Exception $e) {
             return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
