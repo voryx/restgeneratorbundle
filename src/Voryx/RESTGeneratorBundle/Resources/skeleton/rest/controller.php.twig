@@ -28,7 +28,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 {% block phpdoc_class_header %}
  * {{ entity }} controller.
 {% endblock phpdoc_class_header %}
- *
+ * @RouteResource("{{ entity }}")
 {% block phpdoc_class_annotations %}
 {% if 'annotation' == format %}
  * @Route("/{{ route_prefix }}")
