@@ -4,7 +4,7 @@
     "type": "symfony-bundle",
     "authors": [
         {
-            "name": "Matt Bonneau",
+            "name": "Matt Bonneau"
         }
     ],
     "minimum-stability": "dev",
