@@ -2,7 +2,7 @@
     "name": "voryx/restgeneratorbundle",
     "description": "REST API Generator for Symfony 2",
     "type": "symfony-bundle",
-    "license", "MIT",
+    "license": "MIT",
     "authors": [
         {
             "name": "Matt Bonneau"
