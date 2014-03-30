@@ -13,7 +13,7 @@ A CRUD like REST Generator
 ## Installation
 Require the "voryx/restgeneratorbundle" package in your composer.json and update your dependencies.
 
-    $ composer require voryx/restgeneratorbundle dev-master
+    $ php composer.phar require voryx/restgeneratorbundle dev-master
 
 Add the VoryxRestGeneratorBundle to your application's kernel along with other dependencies:
 
@@ -32,7 +32,7 @@ Add the VoryxRestGeneratorBundle to your application's kernel along with other d
 
 ## Configuration
 
-This bundle depends on a number of other symfony bundles, so they need to be configure in order for the generator to work properly
+This bundle depends on a number of other symfony bundles, so they need to be configured in order for the generator to work properly
 
     framework:
         csrf_protection: false #only use for public API
