@@ -68,8 +68,15 @@ This bundle depends on a number of other symfony bundles, so they need to be con
         view:    { annotations: false }
         router:  { annotations: true }
 
+## Generating the Controller
 
-Add a route:  (Hopefully this will be added to the generator soon)
+Generate the REST controller
+
+    php app/console voryx:generate:rest
+    
+This will guide you through the generator which will generate a RESTful controller for an entity.
+
+You will still need to Add a route for each generated entity:  (Hopefully this will be added to the generator soon)
 
     api_posts:
         type:     rest
