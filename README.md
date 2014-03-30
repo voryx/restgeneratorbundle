@@ -70,6 +70,10 @@ This bundle depends on a number of other symfony bundles, so they need to be con
 
 ## Generating the Controller
 
+Right now, the generator uses forms created by the doctrine generator. You must create these to use the generated controller. (If you don't create them prior to running the voryx:generate:rest command, you will get an error, but it will still work if you just create them afterwards)
+
+    php app/console doctrine:generate:form AcmeDemoBundle:Post
+
 Generate the REST controller
 
     php app/console voryx:generate:rest
