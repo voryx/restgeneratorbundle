@@ -7,8 +7,7 @@
      * @param Request $request
      * @param $entity
      * @return \Symfony\Component\HttpFoundation\Response
-     * @internal param $id
-     * @ParamConverter("entity", converter="fos_rest.request_body")
+     *
 {% endblock phpdoc_method_header %}
      *
 {% block phpdoc_method_annotations %}
@@ -24,10 +23,10 @@
 
         try {
             $em = $this->getDoctrine()->getManager();
-            $old_entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($entity->getId());
-            $form = $this->createForm(new {{ entity }}Type(), $old_entity, array("method" => $request->getMethod()));
-            $this->formBind($form, $entity, $old_entity);
-            $em->merge($entity);
+            $request->setMethod('PATCH'); //Treat all PUTs as PATCH
+            $form = $this->createForm(new {{ entity }}Type(), $entity, array("method" => $request->getMethod()));
+            $this->removeExtraFields($request, $form);
+            $form->handleRequest($request);
             if ($form->isValid()) {
                 $em->flush();
 
