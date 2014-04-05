@@ -23,6 +23,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
+use Voryx\RESTGeneratorBundle\Controller\VoryxController;
 {% endblock use_statements %}
 
 /**
@@ -37,7 +38,7 @@ use FOS\RestBundle\Controller\Annotations\RouteResource;
 {% endblock phpdoc_class_annotations %}
  */
 {% block class_definition %}
-class {{ entity_class }}RESTController extends Controller
+class {{ entity_class }}RESTController extends VoryxController
 {% endblock class_definition %}
 {
 {% block class_body %}
@@ -49,60 +50,11 @@ class {{ entity_class }}RESTController extends Controller
 
     {%- include 'rest/actions/put.php.twig' %}
 
+    {%- include 'rest/actions/patch.php.twig' %}
+
     {%- include 'rest/actions/delete.php.twig' %}
 
-    /**
-    * Create the {{ entity }} form
-    *
-    * @param null $type
-    * @param null $data
-    * @param array $options
-    * @internal param $entity
-    * @internal param $method
-    * @return Form|\Symfony\Component\Form\FormInterface
-    */
-    public function createForm($type = null, $data = null, array $options = array())
-    {
-        $form = $this->container->get('form.factory')->createNamed(
-            null, //since we're not including the form name in the request, set this to null
-            $type,
-            $data,
-            $options
-        );
 
-        return $form;
-    }
-
-    /**
-    * Bind the entity to the form
-    * Supports submitting partial updates
-    *
-    * @param Form $form
-    * @param $entity
-    * @param null $old_entity
-    * @internal param $data
-    */
-    protected function formBind(Form $form, $entity, $old_entity = null)
-    {
-        $form_fields = $form->all();
-
-        /*
-        * If any of the field values are null in the new entity apply the values from the old entity
-        * This is a hack, because I couldn't figure out how to submit partials
-        */
-        if (!is_null($old_entity)) {
-            foreach ($form_fields as $name => $field) {
-                $get = 'get' . ucfirst($name);
-                $set = 'set' . ucfirst($name);
-                if ($entity->$get() === null) {
-                    $entity->$set($old_entity->$get());
-                }
-            }
-        }
-        $form->setData($entity);
-
-        $form->submit(null, false);
-    }
 
 {% endblock class_body %}
 }
