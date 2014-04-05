@@ -18,15 +18,11 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $entity = $this->get('serializer')->deserialize(
-            $request->getContent(),
-            get_class(new {{ entity }}()),
-            $request->getContentType()
-        );
 
+        $entity = new {{ entity }}();
         $form = $this->createForm(new {{ entity }}Type(), $entity, array("method" => $request->getMethod()));
-
-        $this->formBind($form, $entity);
+        $this->removeExtraFields($request, $form);
+        $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
