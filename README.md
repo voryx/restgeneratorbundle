@@ -86,3 +86,15 @@ You will still need to Add a route for each generated entity:  (Hopefully this w
         type:     rest
         resource: "@AcmeDemoBundle/Controller/PostController.php"
         prefix: /api
+
+## Related Entities
+
+If you want the form to be able to convert related entities into the correct entity id on POST, PUT or PATCH, use the voryx_entity form type
+
+    #Form/TicketType()
+
+        ->add(
+            'user', 'voryx_entity', array(
+                'class' => 'Acme\Bundle\Entity\User'
+            )
+        )
