@@ -17,4 +17,11 @@
         </service>
     </services>
     -->
+
+    <services>
+        <service id="voryx.type.voryx_entity" class="Voryx\RESTGeneratorBundle\Form\Type\VoryxEntityType">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <tag name="form.type" alias="voryx_entity" />
+        </service>
+    </services>
 </container>
