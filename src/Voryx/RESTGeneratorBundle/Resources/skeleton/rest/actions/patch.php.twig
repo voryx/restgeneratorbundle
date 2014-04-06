@@ -16,19 +16,19 @@
 {% endblock phpdoc_method_annotations %}
 */
 {% block method_definition %}
-    public function putAction(Request $request, {{ entity }} $entity)
+    public function patchAction(Request $request, {{ entity }} $entity)
 {% endblock method_definition %}
-{
+    {
 {% block method_body %}
 
         return $this->putAction($request, $entity);
 
-    }
+
 {% endblock method_body %}
 {% block method_return %}
 
 {% endblock method_return %}
-}
+    }
 {% block form %}
 
 {% endblock form %}
