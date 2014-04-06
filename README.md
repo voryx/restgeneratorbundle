@@ -91,7 +91,7 @@ You will still need to Add a route for each generated entity:  (Hopefully this w
 
 If you want the form to be able to convert related entities into the correct entity id on POST, PUT or PATCH, use the voryx_entity form type
 
-    #Form/TicketType()
+    #Form/PostType()
 
         ->add(
             'user', 'voryx_entity', array(
