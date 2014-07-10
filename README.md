@@ -1,4 +1,5 @@
 # Voryx REST Generator Bundle
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/ac1842d9-4e36-45cc-8db1-b97e2e62540e/big.png)](https://insight.sensiolabs.com/projects/ac1842d9-4e36-45cc-8db1-b97e2e62540e)
 
 ## About
 
