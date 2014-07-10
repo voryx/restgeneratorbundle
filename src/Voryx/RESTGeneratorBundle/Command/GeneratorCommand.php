@@ -14,7 +14,6 @@ namespace Voryx\RESTGeneratorBundle\Command;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
-//use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Voryx\RESTGeneratorBundle\Generator\Generator;
 
 /**
@@ -56,8 +55,10 @@ abstract class GeneratorCommand extends ContainerAwareCommand
             $skeletonDirs[] = $dir;
         }
 
-        $skeletonDirs[] = __DIR__.'/../Resources/skeleton';
-        $skeletonDirs[] = __DIR__.'/../Resources';
+        $reflClass = new \ReflectionClass(get_class($this));
+
+        $skeletonDirs[] = dirname($reflClass->getFileName()).'/../Resources/skeleton';
+        $skeletonDirs[] = dirname($reflClass->getFileName()).'/../Resources';
 
         return $skeletonDirs;
     }

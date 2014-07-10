@@ -5,8 +5,6 @@ namespace Voryx\RESTGeneratorBundle\Form\DataTransformer;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\Validator\Tests\Fixtures\EntityInterface;
 
 class ArrayToIdTransformer implements DataTransformerInterface
 {

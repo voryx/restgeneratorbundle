@@ -12,7 +12,6 @@ use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
-//use Sensio\Bundle\GeneratorBundle\Generator\DoctrineCrudGenerator;
 use Voryx\RESTGeneratorBundle\Generator\DoctrineRESTGenerator;
 use Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator;
 use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
@@ -214,7 +213,6 @@ EOT
 
     protected function createGenerator($bundle = null)
     {
-        //return new DoctrineCrudGenerator($this->getContainer()->get('filesystem'));
         return new DoctrineRESTGenerator($this->getContainer()->get('filesystem'));
     }
 

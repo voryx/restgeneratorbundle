@@ -17,7 +17,7 @@ class VoryxController extends Controller
      * @param array $options
      * @return Form|\Symfony\Component\Form\FormInterface
      */
-    public function createForm($type = null, $data = null, array $options = array())
+    protected function createForm($type = null, $data = null, array $options = array())
     {
         $form = $this->container->get('form.factory')->createNamed(
             null, //since we're not including the form name in the request, set this to null
@@ -35,7 +35,7 @@ class VoryxController extends Controller
      * @param $request
      * @param $form
      */
-    public function removeExtraFields(Request $request, Form $form)
+    protected function removeExtraFields(Request $request, Form $form)
     {
         $data = $request->request->all();
         $children = $form->all();

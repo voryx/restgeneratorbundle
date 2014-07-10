@@ -76,21 +76,6 @@ class DoctrineRESTGenerator extends Generator
 
         $this->generateControllerClass($forceOverwrite);
 
-        // We are not doing any views
-//        $dir = sprintf('%s/Resources/views/%s', $this->bundle->getPath(), str_replace('\\', '/', $this->entity));
-//
-//        if (!file_exists($dir)) {
-//            $this->filesystem->mkdir($dir, 0777);
-//        }
-//
-//        $this->generateIndexView($dir);
-//
-
-        // we are not doing test classes
-        //$this->generateTestClass();
-
-        // TODO: fix this
-        //$this->generateConfiguration();
     }
 
     /**
