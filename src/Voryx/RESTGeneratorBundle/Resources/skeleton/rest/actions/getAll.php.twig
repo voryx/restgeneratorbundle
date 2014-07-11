@@ -4,9 +4,9 @@
      *
      * @View(serializerEnableMaxDepthChecks=true)
      *
-     * @param \FOS\RestBundle\Request\ParamFetcherInterface $paramFetcher
+     * @param ParamFetcherInterface $paramFetcher
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
      * @QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing notes.")
      * @QueryParam(name="limit", requirements="\d+", default="20", description="How many notes to return.")
