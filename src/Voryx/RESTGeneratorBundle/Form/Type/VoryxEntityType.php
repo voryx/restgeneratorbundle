@@ -18,7 +18,7 @@ class VoryxEntityType extends EntityType
 {
 
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     private $em;
 

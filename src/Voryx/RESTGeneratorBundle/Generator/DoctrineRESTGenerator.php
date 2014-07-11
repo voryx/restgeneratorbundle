@@ -47,9 +47,8 @@ class DoctrineRESTGenerator extends Generator
      * @param BundleInterface   $bundle           A bundle object
      * @param string            $entity           The entity relative class name
      * @param ClassMetadataInfo $metadata         The entity class metadata
-     * @param string            $format           The configuration format (xml, yaml, annotation)
      * @param string            $routePrefix      The route name prefix
-     * @param array             $needWriteActions Wether or not to generate write actions
+     * @param array             $forceOverwrite Wether or not to generate write actions
      *
      * @throws \RuntimeException
      */
