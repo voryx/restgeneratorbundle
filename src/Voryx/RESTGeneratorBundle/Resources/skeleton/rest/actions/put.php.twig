@@ -6,13 +6,11 @@
      *
      * @param Request $request
      * @param $entity
-     * @return \Symfony\Component\HttpFoundation\Response
      *
+     * @return Response
 {% endblock phpdoc_method_header %}
-     *
 {% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}
-{% endif %}
+{% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
@@ -20,7 +18,6 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-
         try {
             $em = $this->getDoctrine()->getManager();
             $request->setMethod('PATCH'); //Treat all PUTs as PATCH
@@ -38,10 +35,6 @@
             return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 {% endblock method_body %}
-{% block method_return %}
-
-{% endblock method_return %}
+{% block method_return '' %}
     }
-{% block form %}
-
-{% endblock form %}
+{% block form '' %}

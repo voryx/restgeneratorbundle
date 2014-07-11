@@ -51,7 +51,6 @@ class Generator
             mkdir(dirname($target), 0777, true);
         }
 
-
         return file_put_contents($target, $this->render($template, $parameters));
     }
 }

@@ -16,7 +16,6 @@ use Voryx\RESTGeneratorBundle\Generator\DoctrineRESTGenerator;
 use Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator;
 use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
 
-
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
 
 /**
@@ -77,8 +76,6 @@ EOT
                 return 1;
             }
         }
-
-
 
         $entity = Validators::validateEntityName($input->getOption('entity'));
         list($bundle, $entity) = $this->parseShortcutNotation($entity);

@@ -3,26 +3,26 @@
 namespace {{ namespace }}\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
 {% block use_statements %}
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Form;
+use {{ namespace }}\Entity\{{ entity }};
+use {{ namespace }}\Form\{{ entity }}Type;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+use FOS\RestBundle\Controller\Annotations\RouteResource;
+use FOS\RestBundle\Controller\Annotations\View;
+use FOS\RestBundle\Request\ParamFetcherInterface;
+use FOS\RestBundle\Util\Codes;
+use FOS\RestBundle\View\View as FOSView;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 {% if 'annotation' == format -%}
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 {%- endif %}
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-use {{ namespace }}\Entity\{{ entity }};
-use {{ namespace }}\Form\{{ entity }}Type;
-
-use FOS\RestBundle\View\View as FOSView;
-use FOS\RestBundle\Request\ParamFetcherInterface;
-use FOS\RestBundle\Util\Codes;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use FOS\RestBundle\Controller\Annotations\QueryParam;
-use FOS\RestBundle\Controller\Annotations\View;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
 use Voryx\RESTGeneratorBundle\Controller\VoryxController;
 {% endblock use_statements %}
 
@@ -53,8 +53,5 @@ class {{ entity_class }}RESTController extends VoryxController
     {%- include 'rest/actions/patch.php.twig' %}
 
     {%- include 'rest/actions/delete.php.twig' %}
-
-
-
 {% endblock class_body %}
 }
