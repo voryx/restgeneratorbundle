@@ -2,9 +2,10 @@
 
 namespace Voryx\RESTGeneratorBundle\Controller;
 
-use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class VoryxController extends Controller
 {
@@ -12,10 +13,11 @@ class VoryxController extends Controller
     /**
      * Create a form without a name
      *
-     * @param null $type
-     * @param null $data
+     * @param null  $type
+     * @param null  $data
      * @param array $options
-     * @return Form|\Symfony\Component\Form\FormInterface
+     *
+     * @return Form|FormInterface
      */
     protected function createForm($type = null, $data = null, array $options = array())
     {
@@ -32,8 +34,8 @@ class VoryxController extends Controller
     /**
      * Get rid on any fields that don't appear in the form
      *
-     * @param $request
-     * @param $form
+     * @param Request $request
+     * @param Form    $form
      */
     protected function removeExtraFields(Request $request, Form $form)
     {

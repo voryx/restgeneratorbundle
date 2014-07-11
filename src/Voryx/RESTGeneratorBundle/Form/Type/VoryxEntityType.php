@@ -8,7 +8,6 @@
 
 namespace Voryx\RESTGeneratorBundle\Form\Type;
 
-
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;

@@ -2,7 +2,6 @@
 
 namespace Voryx\RESTGeneratorBundle\Form\DataTransformer;
 
-
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -20,7 +19,7 @@ class ArrayToIdTransformer implements DataTransformerInterface
 
     /**
      * @param EntityManager $em
-     * @param $class
+     * @param string        $class
      */
     public function __construct(EntityManager $em, $class)
     {
@@ -28,9 +27,9 @@ class ArrayToIdTransformer implements DataTransformerInterface
         $this->class = $class;
     }
 
-
     /**
      * @param mixed $data
+     *
      * @return mixed
      */
     public function transform($data)
