@@ -48,7 +48,7 @@ class DoctrineRESTGenerator extends Generator
      * @param string            $entity           The entity relative class name
      * @param ClassMetadataInfo $metadata         The entity class metadata
      * @param string            $routePrefix      The route name prefix
-     * @param array             $forceOverwrite Wether or not to generate write actions
+     * @param array             $forceOverwrite   Whether or not to overwrite an existing controller
      *
      * @throws \RuntimeException
      */
