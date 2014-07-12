@@ -19,7 +19,7 @@ class VoryxController extends Controller
      *
      * @return Form|FormInterface
      */
-    protected function createForm($type = null, $data = null, array $options = array())
+    public function createForm($type = null, $data = null, array $options = array())
     {
         $form = $this->container->get('form.factory')->createNamed(
             null, //since we're not including the form name in the request, set this to null
