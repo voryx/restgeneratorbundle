@@ -1,0 +1,9 @@
+{% block method_definition %}
+    public function get($id)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        return $this->repository->find($id);
+{% endblock method_body %}
+    }
+

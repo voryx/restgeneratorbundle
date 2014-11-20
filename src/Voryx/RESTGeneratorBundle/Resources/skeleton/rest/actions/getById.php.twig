@@ -13,11 +13,12 @@
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
-    public function getAction({{ entity }} $entity)
+    public function getAction($id)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        return $entity;
+        $answer['{{ entity|lower }}'] = $this->getOr404($id);
+        return $answer;
 {% endblock method_body %}
 {% block method_return '' %}
     }

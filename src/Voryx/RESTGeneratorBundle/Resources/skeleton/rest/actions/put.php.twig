@@ -14,26 +14,24 @@
 {% endblock phpdoc_method_annotations %}
      */
 {% block method_definition %}
-    public function putAction(Request $request, {{ entity }} $entity)
+    public function putAction(Request $request, $id)
 {% endblock method_definition %}
     {
 {% block method_body %}
         try {
-            $em = $this->getDoctrine()->getManager();
-            $request->setMethod('PATCH'); //Treat all PUTs as PATCH
-            $form = $this->createForm(new {{ entity }}Type(), $entity, array("method" => $request->getMethod()));
-            $this->removeExtraFields($request, $form);
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $em->flush();
-
-                return $entity;
+            if ($bairro = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id)) {
+                $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->put(${{ entity|lower }}, $request->request->all());
+                $code = Codes::HTTP_OK;
+            } else {
+                $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+                $code = Codes::HTTP_CREATED;
             }
-
-            return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception $e) {
-            return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (InvalidFormException $exception) {
+            return $exception->getForm();
         }
+
+        $view = $this->view($answer, $code);
+        return $this->handleView($view);
 {% endblock method_body %}
 {% block method_return '' %}
     }

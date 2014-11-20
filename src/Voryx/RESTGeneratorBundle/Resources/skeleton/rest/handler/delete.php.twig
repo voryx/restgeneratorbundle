@@ -1,0 +1,16 @@
+{% block method_definition %}
+    public function delete({{ entity }} ${{ entity|lower }})
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        try {
+            $this->om->remove(${{ entity|lower }});
+            $this->om->flush();
+
+            return null;
+        } catch (\Exception $e) {
+            throw new \RuntimeException("Exclusion not allowed");
+        }
+{% endblock method_body %}
+    }
+

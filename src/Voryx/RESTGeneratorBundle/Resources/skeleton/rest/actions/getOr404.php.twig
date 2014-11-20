@@ -1,0 +1,14 @@
+
+{% block method_definition %}
+    protected function getOr404($id)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        if (!($entity = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id))) {
+            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.',$id));
+        }
+
+        return $entity;
+{% endblock method_body %}
+    }
+

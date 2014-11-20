@@ -1,0 +1,9 @@
+{% block method_definition %}
+    public function patch({{ entity }} ${{ entity|lower }}, array $parameters)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        return $this->processForm(${{ entity|lower }}, $parameters, 'PATCH');
+{% endblock method_body %}
+    }
+

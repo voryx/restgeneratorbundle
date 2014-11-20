@@ -1,0 +1,11 @@
+{% block method_definition %}
+    public function post($parameters)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        ${{ entity|lower }} = $this->create{{ entity }}();
+
+        return $this->processForm(${{ entity|lower }}, $parameters, 'POST');
+{% endblock method_body %}
+    }
+

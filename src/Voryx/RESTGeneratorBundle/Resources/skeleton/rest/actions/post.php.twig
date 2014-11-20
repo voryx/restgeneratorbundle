@@ -18,22 +18,14 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $entity = new {{ entity }}();
-        $form = $this->createForm(new {{ entity }}Type(), $entity, array("method" => $request->getMethod()));
-        $this->removeExtraFields($request, $form);
-        $form->handleRequest($request);
+        try {
+            $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+            $answer['{{ entity|lower }}'] = $new;
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $entity;
+            return $answer;
+        } catch (InvalidFormException $exception) {
+            return $exception->getForm();
         }
-
 {% endblock method_body %}
-{% block method_return %}
-        return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
-{% endblock method_return %}
     }
 {% block form '' %}

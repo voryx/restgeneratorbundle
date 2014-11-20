@@ -14,11 +14,12 @@
 {% endblock phpdoc_method_annotations %}
 */
 {% block method_definition %}
-    public function patchAction(Request $request, {{ entity }} $entity)
+    public function patchAction(Request $request, $id)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        return $this->putAction($request, $entity);
+        $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->patch($this->getOr404($id), $request->request->all());
+        return $answer;
 {% endblock method_body %}
 {% block method_return '' %}
     }

@@ -22,22 +22,16 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        try {
-            $offset = $paramFetcher->get('offset');
-            $limit = $paramFetcher->get('limit');
-            $order_by = $paramFetcher->get('order_by');
-            $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
+        $offset = $paramFetcher->get('offset');
+        $limit = $paramFetcher->get('limit');
+        $order_by = $paramFetcher->get('order_by');
+        $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
 
-            $em = $this->getDoctrine()->getManager();
-            $entities = $em->getRepository('{{ bundle }}:{{ entity }}')->findBy($filters, $order_by, $limit, $offset);
-            if ($entities) {
-                return $entities;
-            }
-
-            return FOSView::create('Not Found', Codes::HTTP_NO_CONTENT);
-        } catch (\Exception $e) {
-            return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
+        $answer['{{ entity|lower }}'] =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->getAll($filters, $order_by, $limit, $offset);
+        if ($answer['{{ entity|lower }}']) {
+            return $answer;
         }
+        return null;
 {% endblock method_body %}
 {% block method_return '' %}
     }

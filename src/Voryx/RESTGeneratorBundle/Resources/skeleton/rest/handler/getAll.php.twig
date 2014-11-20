@@ -1,0 +1,9 @@
+{% block method_definition %}
+    public function getAll($filters, $order_by, $limit, $offset)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        return $this->repository->findBy($filters, $order_by, $limit, $offset);
+{% endblock method_body %}
+    }
+
