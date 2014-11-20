@@ -2,6 +2,14 @@
 {% block phpdoc_method_header %}
      * Get all {{ entity }} entities.
      *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Get all {{ entity }} entities.",
+     *   statusCodes = {
+     *     200 = "List of {{ entity }}",
+     *     204 = "No content. Nothing to list."
+     *   }
+     * )
      * @View(serializerEnableMaxDepthChecks=true)
      *
      * @param ParamFetcherInterface $paramFetcher
