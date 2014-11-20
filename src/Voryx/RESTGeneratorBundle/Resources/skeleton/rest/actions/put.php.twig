@@ -19,7 +19,7 @@
     {
 {% block method_body %}
         try {
-            if ($bairro = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id)) {
+            if (${{ entity|lower }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id)) {
                 $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->put(${{ entity|lower }}, $request->request->all());
                 $code = Codes::HTTP_OK;
             } else {
