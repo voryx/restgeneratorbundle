@@ -29,6 +29,7 @@ public function registerBundles()
           new FOS\RestBundle\FOSRestBundle(),
           new JMS\SerializerBundle\JMSSerializerBundle($this),
           new Nelmio\CorsBundle\NelmioCorsBundle(),
+          new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
         //...
     );
     //...
@@ -73,6 +74,8 @@ sensio_framework_extra:
     request: { converters: true }
     view:    { annotations: false }
     router:  { annotations: true }
+    
+nelmio_api_doc: ~
 ```
 
 ## Generating the Controller

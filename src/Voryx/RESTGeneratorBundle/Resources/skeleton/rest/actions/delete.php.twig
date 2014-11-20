@@ -2,6 +2,15 @@
 {% block phpdoc_method_header %}
      * Delete a {{ entity }} entity.
      *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Delete a {{ entity }} entity.",
+     *   statusCodes = {
+     *     204 = "No content. Successfully excluded.",
+     *     404 = "Not found."
+     *   }
+     * )
+     *
      * @View(statusCode=204)
      *
      * @param Request $request

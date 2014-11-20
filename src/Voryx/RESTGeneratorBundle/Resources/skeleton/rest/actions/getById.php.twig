@@ -2,6 +2,15 @@
 {% block phpdoc_method_header %}
      * Get a {{ entity }} entity
      *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Get a {{ entity }} entity.",
+     *   statusCodes = {
+     *     200 = "{{ entity }}'s object.",
+     *     404 = "Not Found."
+     *   }
+     * )
+     *
      * @View(serializerEnableMaxDepthChecks=true)
      *
      * @return Response
