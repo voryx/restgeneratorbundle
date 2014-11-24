@@ -1,40 +1,43 @@
-    /**
+/**
 {% block phpdoc_method_header %}
-     * Delete a {{ entity }} entity.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Delete a {{ entity }} entity.",
-     *   statusCodes = {
-     *     204 = "No content. Successfully excluded.",
-     *     404 = "Not found."
-     *   }
-     * )
-     *
-     * @View(statusCode=204)
-     *
-     * @param Request $request
-     * @param $entity
-     * @internal param $id
-     *
-     * @return Response
+    * Delete a {{ entity }} entity.
+    *
+    {% block documentation %}
+        {% if document %}
+            * @ApiDoc(
+            *   resource = true,
+            *   description = "Delete a {{ entity }} entity.",
+            *   statusCodes = {
+            *     204 = "No content. Successfully excluded.",
+            *     404 = "Not found."
+            *   }
+            * )
+        {% endif %}
+    {% endblock documentation %}
+    * @View(statusCode=204)
+    *
+    * @param Request $request
+    * @param $entity
+    * @internal param $id
+    *
+    * @return Response
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
+    {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
-     */
+*/
 {% block method_definition %}
     public function deleteAction($id)
 {% endblock method_definition %}
-    {
+{
 {% block method_body %}
-        ${{ entity|lower }} = $this->getOr404($id);
-        try {
-            return $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->delete(${{ entity|lower }});
-        } catch (\Exception $exception) {
-            return $exception;
-        }
+    ${{ entity|lower }} = $this->getOr404($id);
+    try {
+    return $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->delete(${{ entity|lower }});
+    } catch (\Exception $exception) {
+    return $exception;
+    }
 {% endblock method_body %}
 {% block method_return '' %}
-    }
+}
 {% block form '' %}

@@ -58,7 +58,8 @@ class DoctrineRESTGenerator extends Generator
         $entity,
         ClassMetadataInfo $metadata,
         $routePrefix,
-        $forceOverwrite
+        $forceOverwrite,
+        $document
     ) {
         $this->routePrefix = $routePrefix;
         $this->routeNamePrefix = str_replace('/', '_', $routePrefix);
@@ -81,7 +82,7 @@ class DoctrineRESTGenerator extends Generator
         $this->metadata = $metadata;
         $this->setFormat('yml');
 
-        $this->generateControllerClass($forceOverwrite);
+        $this->generateControllerClass($forceOverwrite, $document);
         $this->generateHandler($forceOverwrite);
         $this->generateExceptionClass();
         $this->declareService();
@@ -141,7 +142,7 @@ class DoctrineRESTGenerator extends Generator
      * Generates the controller class only.
      *
      */
-    protected function generateControllerClass($forceOverwrite)
+    protected function generateControllerClass($forceOverwrite, $document)
     {
         $dir = $this->bundle->getPath();
 
@@ -172,6 +173,7 @@ class DoctrineRESTGenerator extends Generator
                 'namespace' => $this->bundle->getNamespace(),
                 'entity_namespace' => $entityNamespace,
                 'format' => $this->format,
+                'document' => $document,
             )
         );
     }

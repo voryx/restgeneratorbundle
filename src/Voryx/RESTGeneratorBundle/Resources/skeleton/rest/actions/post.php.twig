@@ -1,40 +1,44 @@
-    /**
+/**
 {% block phpdoc_method_header %}
-     * Create a {{ entity }} entity.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Create a {{ entity }} entity.",
-     *   statusCodes = {
-     *     201 = "Created object.",
-     *     400 = "Bad Request. Verify your params.",
-     *     404 = "Not Found."
-     *   }
-     * )
-     * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
-     *
-     * @param Request $request
-     *
-     * @return Response
+    * Create a {{ entity }} entity.
+    *
+    {% block documentation %}
+        {% if document %}
+            * @ApiDoc(
+            *   resource = true,
+            *   description = "Create a {{ entity }} entity.",
+            *   statusCodes = {
+            *     201 = "Created object.",
+            *     400 = "Bad Request. Verify your params.",
+            *     404 = "Not Found."
+            *   }
+            * )
+        {% endif %}
+    {% endblock documentation %}
+    * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
+    *
+    * @param Request $request
+    *
+    * @return Response
 {% endblock phpdoc_method_header %}
-     *
+*
 {% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
+    {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
-     */
+*/
 {% block method_definition %}
     public function postAction(Request $request)
 {% endblock method_definition %}
-    {
+{
 {% block method_body %}
-        try {
-            $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
-            $answer['{{ entity|lower }}'] = $new;
+    try {
+    $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+    $answer['{{ entity|lower }}'] = $new;
 
-            return $answer;
-        } catch (InvalidFormException $exception) {
-            return $exception->getForm();
-        }
-{% endblock method_body %}
+    return $answer;
+    } catch (InvalidFormException $exception) {
+    return $exception->getForm();
     }
+{% endblock method_body %}
+}
 {% block form '' %}

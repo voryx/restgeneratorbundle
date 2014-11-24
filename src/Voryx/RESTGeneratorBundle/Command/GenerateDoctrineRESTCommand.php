@@ -33,10 +33,11 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCommand
     {
         $this
             ->setDefinition(array(
-                new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
-                new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
-                new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
-            ))
+                    new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
+                    new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
+                    new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
+                    new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller')
+                ))
             ->setDescription('Generates a REST api based on a Doctrine entity')
             ->setHelp(<<<EOT
 The <info>voryx:generate:rest</info> command generates a REST api based on a Doctrine entity.
@@ -88,9 +89,10 @@ EOT
         $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace($bundle).'\\'.$entity;
         $metadata    = $this->getEntityMetadata($entityClass);
         $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
+        $document    = $input->getOption('document');
 
         $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite);
+        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $document);
 
         $output->writeln('Generating the REST api code: <info>OK</info>');
 
@@ -116,16 +118,16 @@ EOT
 
         // namespace
         $output->writeln(array(
-            '',
-            'This command helps you generate a REST api controller.',
-            '',
-            'First, you need to give the entity for which you want to generate a REST api.',
-            'You can give an entity that does not exist yet and the wizard will help',
-            'you defining it.',
-            '',
-            'You must use the shortcut notation like <comment>AcmeBlogBundle:Post</comment>.',
-            '',
-        ));
+                '',
+                'This command helps you generate a REST api controller.',
+                '',
+                'First, you need to give the entity for which you want to generate a REST api.',
+                'You can give an entity that does not exist yet and the wizard will help',
+                'you defining it.',
+                '',
+                'You must use the shortcut notation like <comment>AcmeBlogBundle:Post</comment>.',
+                '',
+            ));
 
         $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'));
         $input->setOption('entity', $entity);
@@ -134,22 +136,22 @@ EOT
         // route prefix
         $prefix = $this->getRoutePrefix($input, $entity);
         $output->writeln(array(
-            '',
-            'Determine the routes prefix (all the routes will be "mounted" under this',
-            'prefix: /prefix/, /prefix/new, ...).',
-            '',
-        ));
+                '',
+                'Determine the routes prefix (all the routes will be "mounted" under this',
+                'prefix: /prefix/, /prefix/new, ...).',
+                '',
+            ));
         $prefix = $dialog->ask($output, $dialog->getQuestion('Routes prefix', '/'.$prefix), '/'.$prefix);
         $input->setOption('route-prefix', $prefix);
 
         // summary
         $output->writeln(array(
-            '',
-            $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
-            '',
-            sprintf("You are going to generate a REST api controller for \"<info>%s:%s</info>\"", $bundle, $entity),
-            '',
-        ));
+                '',
+                $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
+                '',
+                sprintf("You are going to generate a REST api controller for \"<info>%s:%s</info>\"", $bundle, $entity),
+                '',
+            ));
     }
 
     /**

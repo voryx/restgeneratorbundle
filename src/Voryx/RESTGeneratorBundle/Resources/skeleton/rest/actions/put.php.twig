@@ -1,49 +1,52 @@
-    /**
+/**
 {% block phpdoc_method_header %}
-     * Update a {{ entity }} entity.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   description = "Update a {{ entity }} entity.",
-     *   statusCodes = {
-     *     200 = "Updated object.",
-     *     201 = "Created object.",
-     *     400 = "Bad Request. Verify your params.",
-     *     404 = "Not Found."
-     *   }
-     * )
-     *
-     * @View(serializerEnableMaxDepthChecks=true)
-     *
-     * @param Request $request
-     * @param $entity
-     *
-     * @return Response
+    * Update a {{ entity }} entity.
+    *
+    {% block documentation %}
+        {% if document %}
+            * @ApiDoc(
+            *   resource = true,
+            *   description = "Update a {{ entity }} entity.",
+            *   statusCodes = {
+            *     200 = "Updated object.",
+            *     201 = "Created object.",
+            *     400 = "Bad Request. Verify your params.",
+            *     404 = "Not Found."
+            *   }
+            * )
+        {% endif %}
+    {% endblock documentation %}
+    * @View(serializerEnableMaxDepthChecks=true)
+    *
+    * @param Request $request
+    * @param $entity
+    *
+    * @return Response
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
+    {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
-     */
+*/
 {% block method_definition %}
     public function putAction(Request $request, $id)
 {% endblock method_definition %}
-    {
+{
 {% block method_body %}
-        try {
-            if (${{ entity|lower }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id)) {
-                $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->put(${{ entity|lower }}, $request->request->all());
-                $code = Codes::HTTP_OK;
-            } else {
-                $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
-                $code = Codes::HTTP_CREATED;
-            }
-        } catch (InvalidFormException $exception) {
-            return $exception->getForm();
-        }
+    try {
+    if (${{ entity|lower }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id)) {
+    $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->put(${{ entity|lower }}, $request->request->all());
+    $code = Codes::HTTP_OK;
+    } else {
+    $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+    $code = Codes::HTTP_CREATED;
+    }
+    } catch (InvalidFormException $exception) {
+    return $exception->getForm();
+    }
 
-        $view = $this->view($answer, $code);
-        return $this->handleView($view);
+    $view = $this->view($answer, $code);
+    return $this->handleView($view);
 {% endblock method_body %}
 {% block method_return '' %}
-    }
+}
 {% block form '' %}

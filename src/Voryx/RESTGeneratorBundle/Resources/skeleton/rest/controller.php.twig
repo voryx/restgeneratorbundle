@@ -26,7 +26,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use FOS\RestBundle\Controller\FOSRestController;
+{% if document %}
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+{% endif %}
 {% endblock use_statements %}
 
 /**
