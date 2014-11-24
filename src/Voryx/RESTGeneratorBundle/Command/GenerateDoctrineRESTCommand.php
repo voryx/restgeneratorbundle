@@ -32,15 +32,39 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCommand
     protected function configure()
     {
         $this
-            ->setDefinition(array(
-                    new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
+            ->setDefinition(
+                array(
+                    new InputOption(
+                        'entity',
+                        '',
+                        InputOption::VALUE_REQUIRED,
+                        'The entity class name to initialize (shortcut notation)'
+                    ),
                     new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
-                    new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
-                    new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller')
-                ))
+                    new InputOption(
+                        'overwrite',
+                        '',
+                        InputOption::VALUE_NONE,
+                        'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'
+                    ),
+                    new InputOption(
+                        'resource',
+                        '',
+                        InputOption::VALUE_NONE,
+                        'The object will return with the resource name'
+                    ),
+                    new InputOption(
+                        'document',
+                        '',
+                        InputOption::VALUE_NONE,
+                        'Use NelmioApiDocBundle to document the controller'
+                    ),
+                )
+            )
             ->setDescription('Generates a REST api based on a Doctrine entity')
-            ->setHelp(<<<EOT
-The <info>voryx:generate:rest</info> command generates a REST api based on a Doctrine entity.
+            ->setHelp(
+                <<<EOT
+                The <info>voryx:generate:rest</info> command generates a REST api based on a Doctrine entity.
 
 <info>php app/console voryx:generate:rest --entity=AcmeBlogBundle:Post --route-prefix=post_admin</info>
 
@@ -59,8 +83,7 @@ in order to know the file structure of the skeleton
 EOT
             )
             ->setName('voryx:generate:rest')
-            ->setAliases(array('generate:voryx:rest'))
-        ;
+            ->setAliases(array('generate:voryx:rest'));
     }
 
     /**
@@ -71,7 +94,12 @@ EOT
         $dialog = $this->getDialogHelper();
 
         if ($input->isInteractive()) {
-            if (!$dialog->askConfirmation($output, $dialog->getQuestion('Do you confirm generation', 'yes', '?'), true)) {
+            if (!$dialog->askConfirmation(
+                $output,
+                $dialog->getQuestion('Do you confirm generation', 'yes', '?'),
+                true
+            )
+            ) {
                 $output->writeln('<error>Command aborted</error>');
 
                 return 1;
@@ -86,13 +114,14 @@ EOT
 
         $dialog->writeSection($output, 'REST api generation');
 
-        $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace($bundle).'\\'.$entity;
-        $metadata    = $this->getEntityMetadata($entityClass);
-        $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
-        $document    = $input->getOption('document');
+        $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace($bundle) . '\\' . $entity;
+        $metadata = $this->getEntityMetadata($entityClass);
+        $bundle = $this->getContainer()->get('kernel')->getBundle($bundle);
+        $resource = $input->getOption('resource');
+        $document = $input->getOption('document');
 
         $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $document);
+        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $resource, $document);
 
         $output->writeln('Generating the REST api code: <info>OK</info>');
 
@@ -117,7 +146,8 @@ EOT
         $dialog->writeSection($output, 'Welcome to the Doctrine2 REST api generator');
 
         // namespace
-        $output->writeln(array(
+        $output->writeln(
+            array(
                 '',
                 'This command helps you generate a REST api controller.',
                 '',
@@ -127,31 +157,42 @@ EOT
                 '',
                 'You must use the shortcut notation like <comment>AcmeBlogBundle:Post</comment>.',
                 '',
-            ));
+            )
+        );
 
-        $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'));
+        $entity = $dialog->askAndValidate(
+            $output,
+            $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')),
+            array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'),
+            false,
+            $input->getOption('entity')
+        );
         $input->setOption('entity', $entity);
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
 
         // route prefix
         $prefix = $this->getRoutePrefix($input, $entity);
-        $output->writeln(array(
+        $output->writeln(
+            array(
                 '',
                 'Determine the routes prefix (all the routes will be "mounted" under this',
                 'prefix: /prefix/, /prefix/new, ...).',
                 '',
-            ));
-        $prefix = $dialog->ask($output, $dialog->getQuestion('Routes prefix', '/'.$prefix), '/'.$prefix);
+            )
+        );
+        $prefix = $dialog->ask($output, $dialog->getQuestion('Routes prefix', '/' . $prefix), '/' . $prefix);
         $input->setOption('route-prefix', $prefix);
 
         // summary
-        $output->writeln(array(
+        $output->writeln(
+            array(
                 '',
                 $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
                 '',
                 sprintf("You are going to generate a REST api controller for \"<info>%s:%s</info>\"", $bundle, $entity),
                 '',
-            ));
+            )
+        );
     }
 
     /**
@@ -161,38 +202,61 @@ EOT
     {
         try {
             $this->getFormGenerator($bundle)->generate($bundle, $entity, $metadata[0]);
-        } catch (\RuntimeException $e ) {
+        } catch (\RuntimeException $e) {
             // form already exists
         }
     }
 
-    protected function updateRouting(DialogHelper $dialog, InputInterface $input, OutputInterface $output, BundleInterface $bundle, $entity, $prefix)
-    {
+    protected function updateRouting(
+        DialogHelper $dialog,
+        InputInterface $input,
+        OutputInterface $output,
+        BundleInterface $bundle,
+        $entity,
+        $prefix
+    ) {
         $auto = true;
         if ($input->isInteractive()) {
-            $auto = $dialog->askConfirmation($output, $dialog->getQuestion('Confirm automatic update of the Routing', 'yes', '?'), true);
+            $auto = $dialog->askConfirmation(
+                $output,
+                $dialog->getQuestion('Confirm automatic update of the Routing', 'yes', '?'),
+                true
+            );
         }
 
         $output->write('Importing the REST api routes: ');
-        $this->getContainer()->get('filesystem')->mkdir($bundle->getPath().'/Resources/config/');
-        $routing = new RoutingManipulator($bundle->getPath().'/Resources/config/routing.yml');
+        $this->getContainer()->get('filesystem')->mkdir($bundle->getPath() . '/Resources/config/');
+        $routing = new RoutingManipulator($bundle->getPath() . '/Resources/config/routing.yml');
         try {
             // TODO: fix the format parameter - leaving it for now
             $format = "annotation";
-            $ret = $auto ? $routing->addResource($bundle->getName(), $format, '/'.$prefix, 'routing/'.strtolower(str_replace('\\', '_', $entity))) : false;
+            $ret = $auto ? $routing->addResource(
+                $bundle->getName(),
+                $format,
+                '/' . $prefix,
+                'routing/' . strtolower(str_replace('\\', '_', $entity))
+            ) : false;
         } catch (\RuntimeException $exc) {
             $ret = false;
         }
 
         if (!$ret) {
-            $help = sprintf("        <comment>resource: \"@%s/Resources/config/routing/%s.%s\"</comment>\n", $bundle->getName(), strtolower(str_replace('\\', '_', $entity)), $format);
+            $help = sprintf(
+                "        <comment>resource: \"@%s/Resources/config/routing/%s.%s\"</comment>\n",
+                $bundle->getName(),
+                strtolower(str_replace('\\', '_', $entity)),
+                $format
+            );
             $help .= sprintf("        <comment>prefix:   /%s</comment>\n", $prefix);
 
             return array(
                 '- Import the bundle\'s routing resource in the bundle routing file',
-                sprintf('  (%s).', $bundle->getPath().'/Resources/config/routing.yml'),
+                sprintf('  (%s).', $bundle->getPath() . '/Resources/config/routing.yml'),
                 '',
-                sprintf('    <comment>%s:</comment>', $bundle->getName().('' !== $prefix ? '_'.str_replace('/', '_', $prefix) : '')),
+                sprintf(
+                    '    <comment>%s:</comment>',
+                    $bundle->getName() . ('' !== $prefix ? '_' . str_replace('/', '_', $prefix) : '')
+                ),
                 $help,
                 '',
             );

@@ -1,4 +1,4 @@
-/**
+  /**
 {% block phpdoc_method_header %}
     * Update a {{ entity }} entity.
     *
@@ -34,10 +34,10 @@
 {% block method_body %}
         try {
             if (${{ entity|lower }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id)) {
-                $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->put(${{ entity|lower }}, $request->request->all());
+            {{ resource ? "['" ~ entity|lower ~  "']" }}= $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->put(${{ entity|lower }}, $request->request->all());
                 $code = Codes::HTTP_OK;
             } else {
-                $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+                $answer{{ resource ? "['" ~ entity|lower ~  "']" }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
                 $code = Codes::HTTP_CREATED;
             }
         } catch (InvalidFormException $exception) {

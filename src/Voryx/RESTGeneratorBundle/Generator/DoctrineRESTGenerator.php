@@ -59,6 +59,7 @@ class DoctrineRESTGenerator extends Generator
         ClassMetadataInfo $metadata,
         $routePrefix,
         $forceOverwrite,
+        $resource,
         $document
     ) {
         $this->routePrefix = $routePrefix;
@@ -82,7 +83,7 @@ class DoctrineRESTGenerator extends Generator
         $this->metadata = $metadata;
         $this->setFormat('yml');
 
-        $this->generateControllerClass($forceOverwrite, $document);
+        $this->generateControllerClass($forceOverwrite, $document, $resource);
         $this->generateHandler($forceOverwrite);
         $this->generateExceptionClass();
         $this->declareService();
@@ -142,7 +143,7 @@ class DoctrineRESTGenerator extends Generator
      * Generates the controller class only.
      *
      */
-    protected function generateControllerClass($forceOverwrite, $document)
+    protected function generateControllerClass($forceOverwrite, $document, $resource)
     {
         $dir = $this->bundle->getPath();
 
@@ -173,6 +174,7 @@ class DoctrineRESTGenerator extends Generator
                 'namespace' => $this->bundle->getNamespace(),
                 'entity_namespace' => $entityNamespace,
                 'format' => $this->format,
+                'resource' => $resource,
                 'document' => $document,
             )
         );
@@ -287,7 +289,7 @@ class DoctrineRESTGenerator extends Generator
         }
 
         $search = $newXML->xpath("//*[@id='$newId']");
-        if(!$search) {
+        if (!$search) {
             $newServiceTag = $servicesTag->addChild("service");
             $newServiceTag->addAttribute("id", $newId);
             $newServiceTag->addAttribute("class", $handlerClass);
@@ -317,8 +319,8 @@ class DoctrineRESTGenerator extends Generator
 
     private function updateDIFile($fileName)
     {
-        $toInput = PHP_EOL."\t\t\$loader2 = new Loader\\XmlFileLoader(\$container, new FileLocator(__DIR__ . '/../Resources/config'));" .PHP_EOL.
-            "\t\t\$loader2->load('servicesREST.xml');".PHP_EOL."\t";
+        $toInput = PHP_EOL . "\t\t\$loader2 = new Loader\\XmlFileLoader(\$container, new FileLocator(__DIR__ . '/../Resources/config'));" . PHP_EOL .
+            "\t\t\$loader2->load('servicesREST.xml');" . PHP_EOL . "\t";
 
         $text = file_get_contents($fileName);
 

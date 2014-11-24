@@ -1,4 +1,4 @@
-/**
+  /**
 {% block phpdoc_method_header %}
     * Get all {{ entity }} entities.
     *
@@ -39,8 +39,8 @@
         $order_by = $paramFetcher->get('order_by');
         $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
 
-        $answer['{{ entity|lower }}'] =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->getAll($filters, $order_by, $limit, $offset);
-        if ($answer['{{ entity|lower }}']) {
+        $answer{{ resource ? "['" ~ entity|lower ~  "']" }} =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->getAll($filters, $order_by, $limit, $offset);
+        if ($answer{{ resource ? "['" ~ entity|lower ~  "']" }}) {
             return $answer;
         }
         return null;

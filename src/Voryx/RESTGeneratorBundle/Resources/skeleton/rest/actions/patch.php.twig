@@ -1,4 +1,4 @@
-/**
+  /**
 {% block phpdoc_method_header %}
     * Partial Update to a {{ entity }} entity.
     *
@@ -31,7 +31,7 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->patch($this->getOr404($id), $request->request->all());
+        $answer{{ resource ? "['" ~ entity|lower ~  "']" }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->patch($this->getOr404($id), $request->request->all());
         return $answer;
 {% endblock method_body %}
 {% block method_return '' %}

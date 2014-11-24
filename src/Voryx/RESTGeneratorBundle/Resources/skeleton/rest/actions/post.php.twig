@@ -1,4 +1,4 @@
-/**
+  /**
 {% block phpdoc_method_header %}
     * Create a {{ entity }} entity.
     *
@@ -21,9 +21,8 @@
     *
     * @return Response
 {% endblock phpdoc_method_header %}
-*
 {% block phpdoc_method_annotations %}
-    {% if 'annotation' == format %}{% endif %}
+{% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
 */
 {% block method_definition %}
@@ -33,7 +32,7 @@
 {% block method_body %}
         try {
             $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
-            $answer['{{ entity|lower }}'] = $new;
+            {{ resource ? "['" ~ entity|lower ~  "']" }} = $new;
 
             return $answer;
         } catch (InvalidFormException $exception) {
