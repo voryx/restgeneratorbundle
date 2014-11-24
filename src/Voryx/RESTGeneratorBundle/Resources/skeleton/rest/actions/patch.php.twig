@@ -2,19 +2,19 @@
 {% block phpdoc_method_header %}
     * Partial Update to a {{ entity }} entity.
     *
-    {% block documentation %}
-        {% if document %}
-            * @ApiDoc(
-            *   resource = true,
-            *   description = "Partial Update to a {{ entity }} entity.",
-            *   statusCodes = {
-            *     200 = "Updated object.",
-            *     400 = "Bad Request. Verify your params.",
-            *     404 = "Not Found."
-            *   }
-            * )
-        {% endif %}
-    {% endblock documentation %}
+{% block documentation %}
+{% if document %}
+    * @ApiDoc(
+    *   resource = true,
+    *   description = "Partial Update to a {{ entity }} entity.",
+    *   statusCodes = {
+    *     200 = "Updated object.",
+    *     400 = "Bad Request. Verify your params.",
+    *     404 = "Not Found."
+    *   }
+    * )
+{% endif %}
+{% endblock documentation %}
     * @View(serializerEnableMaxDepthChecks=true)
     *
     * @param Request $request

@@ -2,20 +2,20 @@
 {% block phpdoc_method_header %}
     * Update a {{ entity }} entity.
     *
-    {% block documentation %}
-        {% if document %}
-            * @ApiDoc(
-            *   resource = true,
-            *   description = "Update a {{ entity }} entity.",
-            *   statusCodes = {
-            *     200 = "Updated object.",
-            *     201 = "Created object.",
-            *     400 = "Bad Request. Verify your params.",
-            *     404 = "Not Found."
-            *   }
-            * )
-        {% endif %}
-    {% endblock documentation %}
+{% block documentation %}
+{% if document %}
+    * @ApiDoc(
+    *   resource = true,
+    *   description = "Update a {{ entity }} entity.",
+    *   statusCodes = {
+    *     200 = "Updated object.",
+    *     201 = "Created object.",
+    *     400 = "Bad Request. Verify your params.",
+    *     404 = "Not Found."
+    *   }
+    * )
+{% endif %}
+{% endblock documentation %}
     * @View(serializerEnableMaxDepthChecks=true)
     *
     * @param Request $request

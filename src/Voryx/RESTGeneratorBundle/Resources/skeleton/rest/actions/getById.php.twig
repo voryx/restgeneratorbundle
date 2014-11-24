@@ -2,18 +2,18 @@
 {% block phpdoc_method_header %}
     * Get a {{ entity }} entity
     *
-    {% block documentation %}
-        {% if document %}
-            * @ApiDoc(
-            *   resource = true,
-            *   description = "Get a {{ entity }} entity.",
-            *   statusCodes = {
-            *     200 = "{{ entity }}'s object.",
-            *     404 = "Not Found."
-            *   }
-            * )
-        {% endif %}
-    {% endblock documentation %}
+{% block documentation %}
+{% if document %}
+    * @ApiDoc(
+    *   resource = true,
+    *   description = "Get a {{ entity }} entity.",
+    *   statusCodes = {
+    *     200 = "{{ entity }}'s object.",
+    *     404 = "Not Found."
+    *   }
+    * )
+{% endif %}
+{% endblock documentation %}
     * @View(serializerEnableMaxDepthChecks=true)
     *
     * @return Response
