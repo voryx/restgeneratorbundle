@@ -32,7 +32,7 @@
 {% block method_body %}
         try {
             $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
-            {{ resource ? "['" ~ entity|lower ~  "']" }} = $new;
+            $answer{{ resource ? "['" ~ entity|lower ~  "']" }} = $new;
 
             return $answer;
         } catch (InvalidFormException $exception) {
