@@ -30,23 +30,23 @@
 {% block method_definition %}
     public function putAction(Request $request, $id)
 {% endblock method_definition %}
-{
+    {
 {% block method_body %}
-    try {
-    if (${{ entity|lower }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id)) {
-    $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->put(${{ entity|lower }}, $request->request->all());
-    $code = Codes::HTTP_OK;
-    } else {
-    $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
-    $code = Codes::HTTP_CREATED;
-    }
-    } catch (InvalidFormException $exception) {
-    return $exception->getForm();
-    }
+        try {
+            if (${{ entity|lower }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->get($id)) {
+                $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->put(${{ entity|lower }}, $request->request->all());
+                $code = Codes::HTTP_OK;
+            } else {
+                $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+                $code = Codes::HTTP_CREATED;
+            }
+        } catch (InvalidFormException $exception) {
+            return $exception->getForm();
+        }
 
-    $view = $this->view($answer, $code);
-    return $this->handleView($view);
+        $view = $this->view($answer, $code);
+        return $this->handleView($view);
 {% endblock method_body %}
 {% block method_return '' %}
-}
+    }
 {% block form '' %}

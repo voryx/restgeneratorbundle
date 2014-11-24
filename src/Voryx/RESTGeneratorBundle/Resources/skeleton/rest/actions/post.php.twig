@@ -29,16 +29,16 @@
 {% block method_definition %}
     public function postAction(Request $request)
 {% endblock method_definition %}
-{
+    {
 {% block method_body %}
-    try {
-    $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
-    $answer['{{ entity|lower }}'] = $new;
+        try {
+            $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+            $answer['{{ entity|lower }}'] = $new;
 
-    return $answer;
-    } catch (InvalidFormException $exception) {
-    return $exception->getForm();
-    }
+            return $answer;
+        } catch (InvalidFormException $exception) {
+            return $exception->getForm();
+        }
 {% endblock method_body %}
-}
+    }
 {% block form '' %}

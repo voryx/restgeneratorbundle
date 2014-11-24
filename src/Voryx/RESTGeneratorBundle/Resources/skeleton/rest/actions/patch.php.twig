@@ -29,11 +29,11 @@
 {% block method_definition %}
     public function patchAction(Request $request, $id)
 {% endblock method_definition %}
-{
+    {
 {% block method_body %}
-    $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->patch($this->getOr404($id), $request->request->all());
-    return $answer;
+        $answer['{{ entity|lower }}'] = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->patch($this->getOr404($id), $request->request->all());
+        return $answer;
 {% endblock method_body %}
 {% block method_return '' %}
-}
+    }
 {% block form '' %}

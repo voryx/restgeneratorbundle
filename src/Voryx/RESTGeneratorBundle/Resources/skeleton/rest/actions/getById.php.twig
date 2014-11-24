@@ -18,7 +18,6 @@
     *
     * @return Response
 {% endblock phpdoc_method_header %}
-*
 {% block phpdoc_method_annotations %}
     {% if 'annotation' == format %}
     {% endif %}
@@ -27,11 +26,11 @@
 {% block method_definition %}
     public function getAction($id)
 {% endblock method_definition %}
-{
+    {
 {% block method_body %}
-    $answer['{{ entity|lower }}'] = $this->getOr404($id);
-    return $answer;
+        $answer['{{ entity|lower }}'] = $this->getOr404($id);
+        return $answer;
 {% endblock method_body %}
 {% block method_return '' %}
-}
+    }
 {% block form '' %}

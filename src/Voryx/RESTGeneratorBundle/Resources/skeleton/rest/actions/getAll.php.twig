@@ -32,19 +32,19 @@
 {% block method_definition %}
     public function cgetAction(ParamFetcherInterface $paramFetcher)
 {% endblock method_definition %}
-{
+    {
 {% block method_body %}
-    $offset = $paramFetcher->get('offset');
-    $limit = $paramFetcher->get('limit');
-    $order_by = $paramFetcher->get('order_by');
-    $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
+        $offset = $paramFetcher->get('offset');
+        $limit = $paramFetcher->get('limit');
+        $order_by = $paramFetcher->get('order_by');
+        $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
 
-    $answer['{{ entity|lower }}'] =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->getAll($filters, $order_by, $limit, $offset);
-    if ($answer['{{ entity|lower }}']) {
-    return $answer;
-    }
-    return null;
+        $answer['{{ entity|lower }}'] =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->getAll($filters, $order_by, $limit, $offset);
+        if ($answer['{{ entity|lower }}']) {
+            return $answer;
+        }
+        return null;
 {% endblock method_body %}
 {% block method_return '' %}
-}
+    }
 {% block form '' %}

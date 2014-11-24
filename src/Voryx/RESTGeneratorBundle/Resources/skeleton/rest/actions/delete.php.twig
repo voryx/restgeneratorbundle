@@ -29,15 +29,15 @@
 {% block method_definition %}
     public function deleteAction($id)
 {% endblock method_definition %}
-{
+    {
 {% block method_body %}
-    ${{ entity|lower }} = $this->getOr404($id);
-    try {
-    return $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->delete(${{ entity|lower }});
-    } catch (\Exception $exception) {
-    return $exception;
-    }
+        ${{ entity|lower }} = $this->getOr404($id);
+        try {
+            return $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->delete(${{ entity|lower }});
+        } catch (\Exception $exception) {
+            return $exception;
+        }
 {% endblock method_body %}
 {% block method_return '' %}
-}
+    }
 {% block form '' %}
