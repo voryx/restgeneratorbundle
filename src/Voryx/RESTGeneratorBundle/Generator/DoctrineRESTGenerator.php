@@ -310,17 +310,24 @@ class DoctrineRESTGenerator extends Generator
         }
 
         $newXML->saveXML($services);
+        $this->updateDIFile($fileName);
+    }
 
-        $content = file_get_contents($fileName);
-        if (!strpos($content, "servicesREST.xml")) {
-            $content = str_replace("}", "", $content);
+    private function updateDIFile($fileName)
+    {
+        $toInput = PHP_EOL."\t\t\$loader2 = new Loader\\XmlFileLoader(\$container, new FileLocator(__DIR__ . '/../Resources/config'));" .PHP_EOL.
+            "\t\t\$loader2->load('servicesREST.xml');".PHP_EOL."\t";
 
-            $content .= "\t\t\$loader2 = new Loader\\XmlFileLoader(\$container, new FileLocator(__DIR__ . '/../Resources/config'));" . PHP_EOL .
-                "\t\t\$loader2->load('servicesREST.xml');" . PHP_EOL . "\t}" . PHP_EOL . "}";
+        $text = file_get_contents($fileName);
 
-            file_put_contents($fileName, $content);
+        if (strpos($text, "servicesREST.xml") == false) {
+            $position = strpos($text, "}", strpos($text, "function load("));
+
+            $newContent = substr_replace($text, $toInput, $position, 0);
+            file_put_contents($fileName, $newContent);
         }
     }
+
 
     /**
      * Generates the functional test class only.
