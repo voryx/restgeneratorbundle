@@ -1,5 +1,5 @@
 {% block method_definition %}
-    public function getAll($filters, $order_by, $limit, $offset)
+    public function getAll($filters = array(), $order_by = null, $limit = null, $offset = null)
 {% endblock method_definition %}
     {
 {% block method_body %}
