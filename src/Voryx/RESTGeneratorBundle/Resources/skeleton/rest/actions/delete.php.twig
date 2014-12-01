@@ -35,7 +35,7 @@
         try {
             return $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->delete(${{ entity|lower }});
         } catch (\Exception $exception) {
-            return $exception;
+            throw new \RuntimeException("Exclusion not allowed");
         }
 {% endblock method_body %}
 {% block method_return '' %}
