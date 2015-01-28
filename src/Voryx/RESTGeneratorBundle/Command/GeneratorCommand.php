@@ -13,7 +13,7 @@ namespace Voryx\RESTGeneratorBundle\Command;
 
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
+use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Voryx\RESTGeneratorBundle\Generator\Generator;
 
 /**
@@ -66,8 +66,8 @@ abstract class GeneratorCommand extends ContainerAwareCommand
     protected function getDialogHelper()
     {
         $dialog = $this->getHelperSet()->get('dialog');
-        if (!$dialog || get_class($dialog) !== 'Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper') {
-            $this->getHelperSet()->set($dialog = new DialogHelper());
+        if (!$dialog || get_class($dialog) !== 'Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper') {
+            $this->getHelperSet()->set($dialog = new QuestionHelper());
         }
 
         return $dialog;
