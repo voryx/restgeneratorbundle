@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daviddan
- * Date: 4/4/14
- * Time: 4:57 PM
- */
+
 
 namespace Voryx\RESTGeneratorBundle\Form\Type;
 
@@ -14,6 +9,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Voryx\RESTGeneratorBundle\Form\DataTransformer\ArrayToIdTransformer;
 
+/**
+ * Class VoryxEntityType
+ * @package Voryx\RESTGeneratorBundle\Form\Type
+ */
 class VoryxEntityType extends EntityType
 {
 
@@ -31,6 +30,10 @@ class VoryxEntityType extends EntityType
         $this->em = $em;
     }
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $view_transformer = new ArrayToIdTransformer($this->em, null);
@@ -38,6 +41,9 @@ class VoryxEntityType extends EntityType
 //        $model_transformer = new UserToUsernameTransformer()
     }
 
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
@@ -47,11 +53,17 @@ class VoryxEntityType extends EntityType
         );
     }
 
+    /**
+     * @return string
+     */
     public function getParent()
     {
         return 'entity';
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'voryx_entity';

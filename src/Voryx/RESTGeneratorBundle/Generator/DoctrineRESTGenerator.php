@@ -11,6 +11,7 @@
 
 namespace Voryx\RESTGeneratorBundle\Generator;
 
+use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
@@ -38,25 +39,25 @@ class DoctrineRESTGenerator extends Generator
      */
     public function __construct(Filesystem $filesystem)
     {
-        $this->filesystem  = $filesystem;
+        $this->filesystem = $filesystem;
     }
 
     /**
      * Generate the REST controller.
      *
-     * @param BundleInterface   $bundle           A bundle object
-     * @param string            $entity           The entity relative class name
-     * @param ClassMetadataInfo $metadata         The entity class metadata
-     * @param string            $routePrefix      The route name prefix
-     * @param array             $forceOverwrite   Whether or not to overwrite an existing controller
+     * @param BundleInterface $bundle A bundle object
+     * @param string $entity The entity relative class name
+     * @param ClassMetadataInfo $metadata The entity class metadata
+     * @param string $routePrefix The route name prefix
+     * @param array $forceOverwrite Whether or not to overwrite an existing controller
      *
      * @throws \RuntimeException
      */
     public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $routePrefix, $forceOverwrite)
     {
-        $this->routePrefix = $routePrefix;
+        $this->routePrefix     = $routePrefix;
         $this->routeNamePrefix = str_replace('/', '_', $routePrefix);
-        $this->actions = array('getById', 'getAll', 'post', 'put', 'delete');
+        $this->actions         = array('getById', 'getAll', 'post', 'put', 'delete');
 
         if (count($metadata->identifier) > 1) {
             throw new \RuntimeException('The REST api generator does not support entity classes with multiple primary keys.');
@@ -112,13 +113,17 @@ class DoctrineRESTGenerator extends Generator
             $this->format
         );
 
-        $this->renderFile('rest/config/routing.'.$this->format.'.twig', $target, array(
-            'actions'           => $this->actions,
-            'route_prefix'      => $this->routePrefix,
-            'route_name_prefix' => $this->routeNamePrefix,
-            'bundle'            => $this->bundle->getName(),
-            'entity'            => $this->entity,
-        ));
+        $this->renderFile(
+            'rest/config/routing.' . $this->format . '.twig',
+            $target,
+            array(
+                'actions'           => $this->actions,
+                'route_prefix'      => $this->routePrefix,
+                'route_name_prefix' => $this->routeNamePrefix,
+                'bundle'            => $this->bundle->getName(),
+                'entity'            => $this->entity,
+            )
+        );
     }
 
     /**
@@ -129,8 +134,8 @@ class DoctrineRESTGenerator extends Generator
     {
         $dir = $this->bundle->getPath();
 
-        $parts = explode('\\', $this->entity);
-        $entityClass = array_pop($parts);
+        $parts           = explode('\\', $this->entity);
+        $entityClass     = array_pop($parts);
         $entityNamespace = implode('\\', $parts);
 
         $target = sprintf(
@@ -144,17 +149,21 @@ class DoctrineRESTGenerator extends Generator
             throw new \RuntimeException('Unable to generate the controller as it already exists.');
         }
 
-        $this->renderFile('rest/controller.php.twig', $target, array(
-            'actions'           => $this->actions,
-            'route_prefix'      => $this->routePrefix,
-            'route_name_prefix' => $this->routeNamePrefix,
-            'bundle'            => $this->bundle->getName(),
-            'entity'            => $this->entity,
-            'entity_class'      => $entityClass,
-            'namespace'         => $this->bundle->getNamespace(),
-            'entity_namespace'  => $entityNamespace,
-            'format'            => $this->format,
-        ));
+        $this->renderFile(
+            'rest/controller.php.twig',
+            $target,
+            array(
+                'actions'           => $this->actions,
+                'route_prefix'      => $this->routePrefix,
+                'route_name_prefix' => $this->routeNamePrefix,
+                'bundle'            => $this->bundle->getName(),
+                'entity'            => $this->entity,
+                'entity_class'      => $entityClass,
+                'namespace'         => $this->bundle->getNamespace(),
+                'entity_namespace'  => $entityNamespace,
+                'format'            => $this->format,
+            )
+        );
     }
 
     /**
@@ -163,24 +172,28 @@ class DoctrineRESTGenerator extends Generator
      */
     protected function generateTestClass()
     {
-        $parts = explode('\\', $this->entity);
-        $entityClass = array_pop($parts);
+        $parts           = explode('\\', $this->entity);
+        $entityClass     = array_pop($parts);
         $entityNamespace = implode('\\', $parts);
 
-        $dir    = $this->bundle->getPath() .'/Tests/Controller';
-        $target = $dir .'/'. str_replace('\\', '/', $entityNamespace).'/'. $entityClass .'RESTControllerTest.php';
+        $dir    = $this->bundle->getPath() . '/Tests/Controller';
+        $target = $dir . '/' . str_replace('\\', '/', $entityNamespace) . '/' . $entityClass . 'RESTControllerTest.php';
 
-        $this->renderFile('rest/tests/test.php.twig', $target, array(
-            'route_prefix'      => $this->routePrefix,
-            'route_name_prefix' => $this->routeNamePrefix,
-            'entity'            => $this->entity,
-            'bundle'            => $this->bundle->getName(),
-            'entity_class'      => $entityClass,
-            'namespace'         => $this->bundle->getNamespace(),
-            'entity_namespace'  => $entityNamespace,
-            'actions'           => $this->actions,
-            'form_type_name'    => strtolower(str_replace('\\', '_', $this->bundle->getNamespace()).($parts ? '_' : '').implode('_', $parts).'_'.$entityClass.'Type'),
-        ));
+        $this->renderFile(
+            'rest/tests/test.php.twig',
+            $target,
+            array(
+                'route_prefix'      => $this->routePrefix,
+                'route_name_prefix' => $this->routeNamePrefix,
+                'entity'            => $this->entity,
+                'bundle'            => $this->bundle->getName(),
+                'entity_class'      => $entityClass,
+                'namespace'         => $this->bundle->getNamespace(),
+                'entity_namespace'  => $entityNamespace,
+                'actions'           => $this->actions,
+                'form_type_name'    => strtolower(str_replace('\\', '_', $this->bundle->getNamespace()) . ($parts ? '_' : '') . implode('_', $parts) . '_' . $entityClass . 'Type'),
+            )
+        );
     }
 
 }
