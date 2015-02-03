@@ -10,6 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
 use Voryx\RESTGeneratorBundle\Generator\DoctrineRESTGenerator;
@@ -70,7 +72,7 @@ EOT
         $dialog = $this->getDialogHelper();
 
         if ($input->isInteractive()) {
-            if (!$dialog->askConfirmation($output, $dialog->getQuestion('Do you confirm generation', 'yes', '?'), true)) {
+            if (!$dialog->ask($input, $output, new ConfirmationQuestion('Do you confirm generation', 'yes', '?'), true)) {
                 $output->writeln('<error>Command aborted</error>');
 
                 return 1;
@@ -127,7 +129,7 @@ EOT
             '',
         ));
 
-        $entity = $dialog->askAndValidate($output, $dialog->getQuestion('The Entity shortcut name', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'));
+        $entity = $dialog->ask($input, $output, new Question('The Entity shortcut name: ', $input->getOption('entity')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'), false, $input->getOption('entity'));
         $input->setOption('entity', $entity);
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
 
@@ -139,7 +141,7 @@ EOT
             'prefix: /prefix/, /prefix/new, ...).',
             '',
         ));
-        $prefix = $dialog->ask($output, $dialog->getQuestion('Routes prefix', '/'.$prefix), '/'.$prefix);
+        $prefix = $dialog->ask($input, $output, new Question('Routes prefix: ', '/'.$prefix), '/'.$prefix);
         $input->setOption('route-prefix', $prefix);
 
         // summary
@@ -168,7 +170,7 @@ EOT
     {
         $auto = true;
         if ($input->isInteractive()) {
-            $auto = $dialog->askConfirmation($output, $dialog->getQuestion('Confirm automatic update of the Routing', 'yes', '?'), true);
+            $auto = $dialog->ask($output, new ConfirmationQuestion('Confirm automatic update of the Routing: ', 'yes', '?'), true);
         }
 
         $output->write('Importing the REST api routes: ');
