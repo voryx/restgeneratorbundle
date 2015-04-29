@@ -23,9 +23,9 @@
             "Voryx\\RESTGeneratorBundle": "src/"
         }
     },
-	"extra" : {
-		"branch-alias" : {
-			"dev-master" : "0.2-dev"
-		}
-	}
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "0.2-dev"
+        }
+    }
 }
