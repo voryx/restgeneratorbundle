@@ -1,15 +1,11 @@
 <?php
-
 namespace Voryx\RESTGeneratorBundle\Controller;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-
 class VoryxController extends Controller
 {
-
     /**
      * Create a form without a name
      *
@@ -27,10 +23,8 @@ class VoryxController extends Controller
             $data,
             $options
         );
-
         return $form;
     }
-
     /**
      * Get rid on any fields that don't appear in the form
      *

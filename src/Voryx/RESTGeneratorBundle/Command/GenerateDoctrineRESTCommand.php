@@ -5,8 +5,6 @@
 
 namespace Voryx\RESTGeneratorBundle\Command;
 
-
-use Sensio\Bundle\GeneratorBundle\Command\GenerateDoctrineCrudCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,8 +14,10 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Voryx\RESTGeneratorBundle\Generator\DoctrineRESTGenerator;
+use Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator;
+use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
+
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
-use Voryx\RESTGeneratorBundle\Manipulator\RoutingManipulator;
 
 /**
  * Generates a REST api for a Doctrine entity.
@@ -25,9 +25,6 @@ use Voryx\RESTGeneratorBundle\Manipulator\RoutingManipulator;
  */
 class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
 {
-    /**
-     * @var
-     */
     private $formGenerator;
 
     /**
@@ -35,19 +32,39 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
      */
     protected function configure()
     {
-        $this->setDefinition(
-            array(
-                new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
-                new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
-                new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
-                new InputOption('resource', '', InputOption::VALUE_NONE, 'The object will return with the resource name'),
-                new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller'),
+        $this
+            ->setDefinition(
+                array(
+                    new InputOption(
+                        'entity',
+                        '',
+                        InputOption::VALUE_REQUIRED,
+                        'The entity class name to initialize (shortcut notation)'
+                    ),
+                    new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
+                    new InputOption(
+                        'overwrite',
+                        '',
+                        InputOption::VALUE_NONE,
+                        'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'
+                    ),
+                    new InputOption(
+                        'resource',
+                        '',
+                        InputOption::VALUE_NONE,
+                        'The object will return with the resource name'
+                    ),
+                    new InputOption(
+                        'document',
+                        '',
+                        InputOption::VALUE_NONE,
+                        'Use NelmioApiDocBundle to document the controller'
+                    ),
+                )
             )
-        )
             ->setDescription('Generates a REST api based on a Doctrine entity')
-            ->setHelp(
-                <<<EOT
-                The <info>voryx:generate:rest</info> command generates a REST api based on a Doctrine entity.
+            ->setHelp(<<<EOT
+The <info>voryx:generate:rest</info> command generates a REST api based on a Doctrine entity.
 
 <info>php app/console voryx:generate:rest --entity=AcmeBlogBundle:Post --route-prefix=post_admin</info>
 
@@ -77,8 +94,7 @@ EOT
         $questionHelper = $this->getQuestionHelper();
 
         if ($input->isInteractive()) {
-            $question = new ConfirmationQuestion($questionHelper->getQuestion('Do you confirm generation', 'yes', '?'), true);
-            if (!$questionHelper->ask($input, $output, $question)) {
+            if (!$questionHelper->askConfirmation($output, $questionHelper->getQuestion('Do you confirm generation', 'yes', '?'), true)) {
                 $output->writeln('<error>Command aborted</error>');
 
                 return 1;
@@ -118,10 +134,6 @@ EOT
         $questionHelper->writeGeneratorSummary($output, $errors);
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $questionHelper = $this->getQuestionHelper();
@@ -174,7 +186,6 @@ EOT
             )
         );
     }
-
 
     /**
      * @param QuestionHelper $questionHelper

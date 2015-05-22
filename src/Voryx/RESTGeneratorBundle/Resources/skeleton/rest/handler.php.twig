@@ -1,0 +1,43 @@
+<?php
+
+namespace {{ namespace }}\Handler{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+
+{% block use_statements %}
+use {{ namespace }}\Entity\{{ entity }};
+use {{ namespace }}\Form\{{ entity }}Type;
+use {{ namespace }}\Exception\InvalidFormException;
+
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Form\FormFactoryInterface;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ entity_class }}RESTHandler
+{% endblock class_definition %}
+{
+{% block class_parameters %}
+    private $om;
+    private $entityClass;
+    private $repository;
+    private $formFactory;
+
+{% endblock %}
+{% block class_body %}
+    {%- include 'rest/handler/construct.php.twig' %}
+
+    {%- include 'rest/handler/get.php.twig' %}
+
+    {%- include 'rest/handler/getAll.php.twig' %}
+
+    {%- include 'rest/handler/post.php.twig' %}
+
+    {%- include 'rest/handler/put.php.twig' %}
+
+    {%- include 'rest/handler/patch.php.twig' %}
+
+    {%- include 'rest/handler/delete.php.twig' %}
+
+    {%- include 'rest/handler/extras.php.twig' %}
+
+{% endblock class_body %}
+}

@@ -1,0 +1,20 @@
+{% block extras_methods %}
+    private function processForm({{ entity }} ${{ entity|lower }}, array $parameters, $method = "PUT")
+    {
+        $form = $this->formFactory->create(new {{ entity }}Type(), ${{ entity|lower }}, array('method' => $method));
+        $form->submit($parameters, 'PATCH' !== $method);
+        if ($form->isValid()) {
+            ${{ entity|lower }} = $form->getData();
+            $this->om->persist(${{ entity|lower }});
+            $this->om->flush(${{ entity|lower }});
+
+            return ${{ entity|lower }};
+        }
+        throw new InvalidFormException('Invalid submitted data', $form);
+    }
+
+    private function create{{ entity }}()
+    {
+        return new $this->entityClass();
+    }
+{% endblock extras_methods %}

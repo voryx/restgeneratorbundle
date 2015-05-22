@@ -1,24 +1,38 @@
-    /**
+  /**
 {% block phpdoc_method_header %}
-     * Partial Update to a {{ entity }} entity.
-     *
-     * @View(serializerEnableMaxDepthChecks=true)
-     *
-     * @param Request $request
-     * @param $entity
-     *
-     * @return Response
+    * Partial Update to a {{ entity }} entity.
+    *
+{% block documentation %}
+{% if document %}
+    * @ApiDoc(
+    *   resource = true,
+    *   description = "Partial Update to a {{ entity }} entity.",
+    *   statusCodes = {
+    *     200 = "Updated object.",
+    *     400 = "Bad Request. Verify your params.",
+    *     404 = "Not Found."
+    *   }
+    * )
+{% endif %}
+{% endblock documentation %}
+    * @View(serializerEnableMaxDepthChecks=true)
+    *
+    * @param Request $request
+    * @param $id
+    *
+    * @return Response
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
+    {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
 */
 {% block method_definition %}
-    public function patchAction(Request $request, {{ entity }} $entity)
+    public function patchAction(Request $request, $id)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        return $this->putAction($request, $entity);
+        $answer{{ resource ? "['" ~ entity|lower ~  "']" }} = $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->patch($this->getOr404($id), $request->request->all());
+        return $answer;
 {% endblock method_body %}
 {% block method_return '' %}
     }
