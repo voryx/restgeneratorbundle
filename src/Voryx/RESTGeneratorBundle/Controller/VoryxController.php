@@ -9,8 +9,8 @@ class VoryxController extends Controller
     /**
      * Create a form without a name
      *
-     * @param null  $type
-     * @param null  $data
+     * @param null $type
+     * @param null $data
      * @param array $options
      *
      * @return Form|FormInterface
@@ -29,13 +29,13 @@ class VoryxController extends Controller
      * Get rid on any fields that don't appear in the form
      *
      * @param Request $request
-     * @param Form    $form
+     * @param Form $form
      */
     protected function removeExtraFields(Request $request, Form $form)
     {
-        $data = $request->request->all();
+        $data     = $request->request->all();
         $children = $form->all();
-        $data = array_intersect_key($data, $children);
+        $data     = array_intersect_key($data, $children);
         $request->request->replace($data);
     }
 }

@@ -38,7 +38,7 @@ public function registerBundles()
 
 ## Configuration
 
-This bundle depends on a number of other symfony bundles, so they need to be configured in order for the generator to work properly
+This bundle depends on a number of other Symfony bundles, so they need to be configured in order for the generator to work properly
 
 ```yaml
 framework:
@@ -80,11 +80,6 @@ nelmio_api_doc: ~
 
 ## Generating the Controller
 
-Right now, the generator uses forms created by the doctrine generator. You must create these to use the generated controller. (If you don't create them prior to running the voryx:generate:rest command, you will get an error, but it will still work if you just create them afterwards)
-
-```bash
-$ php app/console doctrine:generate:form AcmeDemoBundle:Post
-```
 
 Generate the REST controller
 
@@ -94,14 +89,61 @@ $ php app/console voryx:generate:rest
     
 This will guide you through the generator which will generate a RESTful controller for an entity.
 
-You will still need to Add a route for each generated entity:  (Hopefully this will be added to the generator soon)
 
-```yaml
-api_posts:
-    type:     rest
-    resource: "@AcmeDemoBundle/Controller/PostController.php"
-    prefix: /api
+## Example
+
+Create a new entity called 'Post':
+
+```bash
+$ php app/console doctrine:generate:entity --entity=AppBundle:Post --format=annotation --fields="name:string(255) description:string(255)" --no-interaction
 ```
+
+Update the database schema:
+
+```bash
+$ php app/console doctrine:schema:update --force
+```
+
+Generate the API controller:
+
+```bash
+$ php app/console voryx:generate:rest --entity="AppBundle:Post"
+```
+
+### Using the API
+If you selected the default options you'll be able to start using the API like this:
+
+Creating a new post (`POST`)
+
+```bash
+$ curl -i -H "Content-Type: application/json" -X POST -d '{"name" : "Test Post", "description" : "This is a test post"}' http://localhost/app_dev.php/api/posts
+```
+
+Updating (`PUT`)
+
+```bash
+$ curl -i -H "Content-Type: application/json" -X PUT -d '{"name" : "Test Post 1", "description" : "This is an updated test post"}' http://localhost/app_dev.php/api/posts/1
+```
+
+Get all posts (`GET`)
+
+```bash
+$ curl http://localhost/app_dev.php/api/posts
+```
+
+Get one post (`GET`)
+
+```bash
+$ curl http://localhost/app_dev.php/api/posts/1
+```
+
+
+Delete (`DELETE`)
+
+```bash
+$ curl -X DELETE  http://localhost/app_dev.php/api/posts/1
+```
+
 
 ## Related Entities
 
