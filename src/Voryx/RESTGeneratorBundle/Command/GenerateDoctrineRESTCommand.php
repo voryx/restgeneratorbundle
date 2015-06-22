@@ -241,12 +241,14 @@ EOT
      */
     protected function getSkeletonDirs(BundleInterface $bundle = null)
     {
-        $skeletonDirs = parent::getSkeletonDirs($bundle);
 
         $reflClass = new \ReflectionClass(get_class($this));
 
+        $skeletonDirs = array();
         $skeletonDirs[] = dirname($reflClass->getFileName()) . '/../Resources/skeleton';
         $skeletonDirs[] = dirname($reflClass->getFileName()) . '/../Resources';
+
+        $skeletonDirs = $skeletonDirs + parent::getSkeletonDirs($bundle);
 
         return $skeletonDirs;
     }
