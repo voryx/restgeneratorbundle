@@ -244,11 +244,9 @@ EOT
 
         $reflClass = new \ReflectionClass(get_class($this));
 
-        $skeletonDirs = array();
+        $skeletonDirs = parent::getSkeletonDirs($bundle);
         $skeletonDirs[] = dirname($reflClass->getFileName()) . '/../Resources/skeleton';
         $skeletonDirs[] = dirname($reflClass->getFileName()) . '/../Resources';
-
-        $skeletonDirs = $skeletonDirs + parent::getSkeletonDirs($bundle);
 
         return $skeletonDirs;
     }
