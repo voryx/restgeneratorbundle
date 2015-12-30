@@ -31,6 +31,10 @@
             return $entity;
         }
 
+        if (!$form->isSubmitted()) {
+            $form->submit([]);
+        }
+
 {% endblock method_body %}
 {% block method_return %}
         return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
