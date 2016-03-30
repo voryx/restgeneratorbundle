@@ -1,39 +1,43 @@
-    /**
+  /**
 {% block phpdoc_method_header %}
-     * Create a {{ entity }} entity.
-     *
-     * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
-     *
-     * @param Request $request
-     *
-     * @return Response
+    * Create a {{ entity }} entity.
+    *
+{% block documentation %}
+{% if document %}
+    * @ApiDoc(
+    *   resource = true,
+    *   description = "Create a {{ entity }} entity.",
+    *   statusCodes = {
+    *     201 = "Created object.",
+    *     400 = "Bad Request. Verify your params.",
+    *     404 = "Not Found."
+    *   }
+    * )
+{% endif %}
+{% endblock documentation %}
+    * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
+    *
+    * @param Request $request
+    *
+    * @return Response
 {% endblock phpdoc_method_header %}
-     *
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
-     */
+    */
 {% block method_definition %}
     public function postAction(Request $request)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $entity = new {{ entity }}();
-        $form = $this->createForm(new {{ entity }}Type(), $entity, array("method" => $request->getMethod()));
-        $this->removeExtraFields($request, $form);
-        $form->handleRequest($request);
+        try {
+            $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+            $answer{{ resource ? "['" ~ entity|lower ~  "']" }} = $new;
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $entity;
+            return $answer;
+        } catch (InvalidFormException $exception) {
+            return $exception->getForm();
         }
-
 {% endblock method_body %}
-{% block method_return %}
-        return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
-{% endblock method_return %}
     }
 {% block form '' %}

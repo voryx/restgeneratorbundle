@@ -1,31 +1,40 @@
-    /**
+  /**
 {% block phpdoc_method_header %}
-     * Delete a {{ entity }} entity.
-     *
-     * @View(statusCode=204)
-     *
-     * @param Request $request
-     * @param $entity
-     *
-     * @return Response
+    * Delete a {{ entity }} entity.
+    *
+{% block documentation %}
+{% if document %}
+    * @ApiDoc(
+    *   resource = true,
+    *   description = "Delete a {{ entity }} entity.",
+    *   statusCodes = {
+    *     204 = "No content. Successfully excluded.",
+    *     404 = "Not found."
+    *   }
+    * )
+{% endif %}
+{% endblock documentation %}
+    * @View(statusCode=204)
+    *
+    * @param Request $request
+    * @param $id
+    *
+    * @return Response
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
+    {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
-     */
+*/
 {% block method_definition %}
-    public function deleteAction(Request $request, {{ entity }} $entity)
+    public function deleteAction($id)
 {% endblock method_definition %}
     {
 {% block method_body %}
+        ${{ entity|lower }} = $this->getOr404($id);
         try {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($entity);
-            $em->flush();
-
-            return null;
-        } catch (\Exception $e) {
-            return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->delete(${{ entity|lower }});
+        } catch (\Exception $exception) {
+            throw new \RuntimeException("Exclusion not allowed");
         }
 {% endblock method_body %}
 {% block method_return '' %}

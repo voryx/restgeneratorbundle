@@ -1,23 +1,36 @@
-    /**
+  /**
 {% block phpdoc_method_header %}
-     * Get a {{ entity }} entity
-     *
-     * @View(serializerEnableMaxDepthChecks=true)
-     *
-     * @return Response
-{% endblock phpdoc_method_header %}
-     *
-{% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}
+    * Get a {{ entity }} entity
+    *
+{% block documentation %}
+{% if document %}
+    * @ApiDoc(
+    *   resource = true,
+    *   description = "Get a {{ entity }} entity.",
+    *   statusCodes = {
+    *     200 = "{{ entity }}'s object.",
+    *     404 = "Not Found."
+    *   }
+    * )
 {% endif %}
+{% endblock documentation %}
+    * @View(serializerEnableMaxDepthChecks=true)
+    *
+    * @return Response
+    * @param $id
+{% endblock phpdoc_method_header %}
+{% block phpdoc_method_annotations %}
+    {% if 'annotation' == format %}
+    {% endif %}
 {% endblock phpdoc_method_annotations %}
-     */
+*/
 {% block method_definition %}
-    public function getAction({{ entity }} $entity)
+    public function getAction($id)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        return $entity;
+        $answer{{ resource ? "['" ~ entity|lower ~  "']" }} = $this->getOr404($id);
+        return $answer;
 {% endblock method_body %}
 {% block method_return '' %}
     }

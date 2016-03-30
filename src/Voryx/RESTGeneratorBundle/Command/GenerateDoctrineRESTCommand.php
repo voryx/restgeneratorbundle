@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Voryx\RESTGeneratorBundle\Generator\DoctrineRESTGenerator;
@@ -71,6 +72,9 @@ EOT
 
     /**
      * @see Command
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -100,6 +104,7 @@ EOT
         $resource    = $input->getOption('resource');
         $document    = $input->getOption('document');
 
+        /** @var DoctrineRESTGenerator $generator */
         $generator = $this->getGenerator($bundle);
         $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $resource, $document);
 
@@ -210,7 +215,6 @@ EOT
             );
             $help .= sprintf("        <comment>type:   %s</comment>\n", 'rest');
             $help .= sprintf("        <comment>prefix:   /%s</comment>\n", $prefix);
-
             return array(
                 '- Import this resource into the Apps routing file',
                 sprintf('  (%s).', $this->getContainer()->getParameter('kernel.root_dir') . '/config/routing.yml'),
@@ -232,7 +236,10 @@ EOT
      */
     protected function createGenerator($bundle = null)
     {
-        return new DoctrineRESTGenerator($this->getContainer()->get('filesystem'));
+        /** @var Filesystem $fileSystem */
+        $fileSystem = $this->getContainer()->get('filesystem');
+
+        return new DoctrineRESTGenerator($fileSystem);
     }
 
     /**
