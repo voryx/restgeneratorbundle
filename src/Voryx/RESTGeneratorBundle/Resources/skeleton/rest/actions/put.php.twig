@@ -20,7 +20,6 @@
 {% block method_body %}
         try {
             $em = $this->getDoctrine()->getManager();
-            $request->setMethod('PATCH'); //Treat all PUTs as PATCH
             $form = $this->createForm(new {{ entity }}Type(), $entity, array("method" => $request->getMethod()));
             $this->removeExtraFields($request, $form);
             $form->handleRequest($request);
