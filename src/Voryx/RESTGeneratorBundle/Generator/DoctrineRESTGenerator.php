@@ -335,6 +335,10 @@ class DoctrineRESTGenerator extends Generator
         $toInput = PHP_EOL . "\t\t\$loader2 = new Loader\\XmlFileLoader(\$container, new FileLocator(__DIR__ . '/../Resources/config'));" . PHP_EOL .
             "\t\t\$loader2->load('servicesREST.xml');" . PHP_EOL . "\t";
 
+        if (!file_exists($this->bundle->getPath().DIRECTORY_SEPARATOR.'DependencyInjection'))
+        {
+            mkdir($this->bundle->getPath().DIRECTORY_SEPARATOR.'DependencyInjection');
+        }
         $text = file_get_contents($fileName);
 
         if (strpos($text, "servicesREST.xml") == false) {
