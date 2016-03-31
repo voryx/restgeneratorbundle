@@ -1,32 +1,32 @@
-  /**
+    /**
 {% block phpdoc_method_header %}
-    * Update a {{ entity }} entity.
-    *
+     * Update a {{ entity }} entity.
+     *
 {% block documentation %}
 {% if document %}
-    * @ApiDoc(
-    *   resource = true,
-    *   description = "Update a {{ entity }} entity.",
-    *   statusCodes = {
-    *     200 = "Updated object.",
-    *     201 = "Created object.",
-    *     400 = "Bad Request. Verify your params.",
-    *     404 = "Not Found."
-    *   }
-    * )
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Update a {{ entity }} entity.",
+     *   statusCodes = {
+     *     200 = "Updated object.",
+     *     201 = "Created object.",
+     *     400 = "Bad Request. Verify your params.",
+     *     404 = "Not Found."
+     *   }
+     * )
 {% endif %}
 {% endblock documentation %}
-    * @View(serializerEnableMaxDepthChecks=true)
-    *
-    * @param Request $request
-    * @param $id
-    *
-    * @return Response
+     * @View(serializerEnableMaxDepthChecks=true)
+     *
+     * @param Request $request
+     * @param $id
+     *
+     * @return Response
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
     {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
-*/
+     */
 {% block method_definition %}
     public function putAction(Request $request, $id)
 {% endblock method_definition %}
@@ -50,3 +50,4 @@
 {% block method_return '' %}
     }
 {% block form '' %}
+

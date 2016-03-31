@@ -1,10 +1,10 @@
 {% if document %}
     /**
-    * @param {{ entity }} ${{ entity|lower }}
-    * @param array $parameters
-    * @return {{ entity }} ${{ entity|lower }}
-    * @throws InvalidFormException
-    */
+     * @param {{ entity }} ${{ entity|lower }}
+     * @param array $parameters
+     * @return {{ entity }} ${{ entity|lower }}
+     * @throws InvalidFormException
+     */
 {% endif %}
 {% block method_definition %}
     public function patch({{ entity }} ${{ entity|lower }}, array $parameters)

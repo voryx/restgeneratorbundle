@@ -1,30 +1,29 @@
-  /**
+    /**
 {% block phpdoc_method_header %}
-    * Delete a {{ entity }} entity.
-    *
+     * Delete a {{ entity }} entity.
+     *
 {% block documentation %}
 {% if document %}
-    * @ApiDoc(
-    *   resource = true,
-    *   description = "Delete a {{ entity }} entity.",
-    *   statusCodes = {
-    *     204 = "No content. Successfully excluded.",
-    *     404 = "Not found."
-    *   }
-    * )
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Delete a {{ entity }} entity.",
+     *   statusCodes = {
+     *     204 = "No content. Successfully excluded.",
+     *     404 = "Not found."
+     *   }
+     * )
 {% endif %}
 {% endblock documentation %}
-    * @View(statusCode=204)
-    *
-    * @param Request $request
-    * @param $id
-    *
-    * @return Response
+     * @View(statusCode=204)
+     *
+     * @param $id
+     *
+     * @return Response
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
     {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
-*/
+     */
 {% block method_definition %}
     public function deleteAction($id)
 {% endblock method_definition %}
@@ -40,3 +39,4 @@
 {% block method_return '' %}
     }
 {% block form '' %}
+

@@ -1,9 +1,9 @@
 {% if document %}
     /**
-    * @param {{ entity }} ${{ entity|lower }}
-    * @return null
-    * @throws \RuntimeException
-    */
+     * @param {{ entity }} ${{ entity|lower }}
+     * @return null
+     * @throws \RuntimeException
+     */
 {% endif %}
 {% block method_definition %}
     public function delete({{ entity }} ${{ entity|lower }})

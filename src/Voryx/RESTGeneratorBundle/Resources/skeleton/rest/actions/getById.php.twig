@@ -1,23 +1,23 @@
-  /**
+    /**
 {% block phpdoc_method_header %}
-    * Get a {{ entity }} entity
-    *
+     * Get a {{ entity }} entity
+     *
 {% block documentation %}
 {% if document %}
-    * @ApiDoc(
-    *   resource = true,
-    *   description = "Get a {{ entity }} entity.",
-    *   statusCodes = {
-    *     200 = "{{ entity }}'s object.",
-    *     404 = "Not Found."
-    *   }
-    * )
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Get a {{ entity }} entity.",
+     *   statusCodes = {
+     *     200 = "{{ entity }}'s object.",
+     *     404 = "Not Found."
+     *   }
+     * )
 {% endif %}
 {% endblock documentation %}
-    * @View(serializerEnableMaxDepthChecks=true)
-    *
-    * @return Response
-    * @param $id
+     * @View(serializerEnableMaxDepthChecks=true)
+     *
+     * @return Response
+     * @param $id
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
     {% if 'annotation' == format %}
@@ -35,3 +35,4 @@
 {% block method_return '' %}
     }
 {% block form '' %}
+

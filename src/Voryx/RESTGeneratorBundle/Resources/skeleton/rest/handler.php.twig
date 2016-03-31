@@ -12,10 +12,10 @@ use Symfony\Component\Form\FormFactoryInterface;
 {% endblock use_statements %}
 
 {% if document %}
-    /**
-     * Class {{ entity_class }}RESTHandler
-     * @package AppBundle\Handler
-     */
+/**
+ * Class {{ entity_class }}RESTHandler
+ * @package AppBundle\Handler
+ */
 {% endif %}
 {% block class_definition %}
 class {{ entity_class }}RESTHandler
