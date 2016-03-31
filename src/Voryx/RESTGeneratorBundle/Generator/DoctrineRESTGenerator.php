@@ -332,14 +332,20 @@ class DoctrineRESTGenerator extends Generator
 
     private function updateDIFile($fileName)
     {
+        /** @var BundleInterface $bundle */
+        $bundle = $this->bundle;
         $toInput = PHP_EOL . "\t\t\$loader2 = new Loader\\XmlFileLoader(\$container, new FileLocator(__DIR__ . '/../Resources/config'));" . PHP_EOL .
             "\t\t\$loader2->load('servicesREST.xml');" . PHP_EOL . "\t";
 
-        if (!file_exists($fileName))
+        $text = '';
+        if (!file_exists($bundle->getPath().DIRECTORY_SEPARATOR.'DependencyInjection'))
         {
-            mkdir($fileName, 0777, true);
+            mkdir($bundle->getPath().DIRECTORY_SEPARATOR.'DependencyInjection');
         }
-        $text = file_get_contents($fileName);
+        if (file_exists($fileName))
+        {
+            $text = file_get_contents($fileName);
+        }
 
         if (strpos($text, "servicesREST.xml") == false) {
             $position = strpos($text, "}", strpos($text, "function load("));
