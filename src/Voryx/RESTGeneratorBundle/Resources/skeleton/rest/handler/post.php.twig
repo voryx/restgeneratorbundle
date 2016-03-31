@@ -1,3 +1,10 @@
+{% if document %}
+    /**
+    * @param array $parameters
+    * @return {{ entity }} ${{ entity|lower }}
+    * @throws InvalidFormException
+    */
+{% endif %}
 {% block method_definition %}
     public function post($parameters)
 {% endblock method_definition %}

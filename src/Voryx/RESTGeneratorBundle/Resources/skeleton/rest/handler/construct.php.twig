@@ -1,3 +1,11 @@
+{% if document %}
+    /**
+     * {{ entity }}RESTHandler constructor.
+     * @param ObjectManager $om
+     * @param $entityClass
+     * @param FormFactoryInterface $formFactory
+     */
+{% endif %}
 {% block method_definition %}
     public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory)
 {% endblock method_definition %}

@@ -1,3 +1,9 @@
+{% if document %}
+    /**
+     * @param int $id
+     * @return {{ entity }} ${{ entity|lower }}
+     */
+{% endif %}
 {% block method_definition %}
     public function get($id)
 {% endblock method_definition %}

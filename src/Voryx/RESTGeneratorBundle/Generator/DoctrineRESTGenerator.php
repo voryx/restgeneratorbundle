@@ -78,7 +78,7 @@ class DoctrineRESTGenerator extends Generator
         $this->setFormat('yml');
 
         $this->generateControllerClass($forceOverwrite, $document, $resource);
-        $this->generateHandler($forceOverwrite);
+        $this->generateHandler($forceOverwrite, $document);
         $this->generateExceptionClass();
         $this->declareService();
     }
@@ -186,8 +186,9 @@ class DoctrineRESTGenerator extends Generator
     /**
      * Generates the Handle only.
      * @param bool $forceOverwrite
+     * @param bool $document
      */
-    protected function generateHandler($forceOverwrite)
+    protected function generateHandler($forceOverwrite, $document)
     {
         /** @var BundleInterface $bundle */
         $bundle = $this->bundle;
@@ -225,10 +226,14 @@ class DoctrineRESTGenerator extends Generator
                 'namespace' => $bundle->getNamespace(),
                 'entity_namespace' => $entityNamespace,
                 'format' => $this->format,
+                'document' => $document
             )
         );
     }
 
+    /**
+     *
+     */
     public function generateExceptionClass()
     {
         /** @var BundleInterface $bundle */
@@ -330,22 +335,24 @@ class DoctrineRESTGenerator extends Generator
         $this->updateDIFile($fileName);
     }
 
+    /**
+     * @param $fileName
+     */
     private function updateDIFile($fileName)
     {
-        /** @var BundleInterface $bundle */
-        $bundle = $this->bundle;
         $toInput = PHP_EOL . "\t\t\$loader2 = new Loader\\XmlFileLoader(\$container, new FileLocator(__DIR__ . '/../Resources/config'));" . PHP_EOL .
             "\t\t\$loader2->load('servicesREST.xml');" . PHP_EOL . "\t";
 
         $text = '';
-        if (!file_exists($bundle->getPath().DIRECTORY_SEPARATOR.'DependencyInjection'))
+        if (!file_exists(dirname($fileName)))
         {
-            mkdir($bundle->getPath().DIRECTORY_SEPARATOR.'DependencyInjection');
+            mkdir(dirname($fileName), 0777, true);
         }
-        if (file_exists($fileName))
+        if (!file_exists($fileName))
         {
-            $text = file_get_contents($fileName);
+            $this->handleExtensionFileCreation($fileName);
         }
+        $text = file_get_contents($fileName);
 
         if (strpos($text, "servicesREST.xml") == false) {
             $position = strpos($text, "}", strpos($text, "function load("));
@@ -355,6 +362,27 @@ class DoctrineRESTGenerator extends Generator
         }
     }
 
+    /**
+     * @param $fileName
+     */
+    private function handleExtensionFileCreation($fileName)
+    {
+        /** @var BundleInterface $bundle */
+        $bundle = $this->bundle;
+
+        $parts           = explode('\\', $this->entity);
+        $entityNamespace = implode('\\', $parts);
+
+        $this->renderFile(
+            'rest/extension.php.twig',
+            $fileName,
+            array(
+                'file_name'         => $fileName,
+                'namespace'         => $bundle->getNamespace(),
+                'entity_namespace'  => $entityNamespace,
+            )
+        );
+    }
 
     /**
      * Generates the functional test class only.

@@ -1,4 +1,13 @@
 {% block extras_methods %}
+    {% if document %}
+    /**
+    * @param {{ entity }} ${{ entity|lower }}
+    * @param array $parameters
+    * @param string $method
+    * @return {{ entity }} ${{ entity|lower }}
+    * @throws InvalidFormException
+    */
+    {% endif %}
     private function processForm({{ entity }} ${{ entity|lower }}, array $parameters, $method = "PUT")
     {
         $form = $this->formFactory->create(new {{ entity }}Type(), ${{ entity|lower }}, array('method' => $method));
@@ -6,13 +15,18 @@
         if ($form->isValid()) {
             ${{ entity|lower }} = $form->getData();
             $this->om->persist(${{ entity|lower }});
-            $this->om->flush(${{ entity|lower }});
+            $this->om->flush();
 
             return ${{ entity|lower }};
         }
         throw new InvalidFormException('Invalid submitted data', $form);
     }
 
+    {% if document %}
+    /**
+    * @return {{ entity }} ${{ entity|lower }}
+    */
+    {% endif %}
     private function create{{ entity }}()
     {
         return new $this->entityClass();

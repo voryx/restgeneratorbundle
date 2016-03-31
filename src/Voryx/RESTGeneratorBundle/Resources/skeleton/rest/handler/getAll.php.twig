@@ -1,3 +1,12 @@
+{% if document %}
+    /**
+    * @param array $filters
+    * @param string|null $order_by The field to order by
+    * @param int|null $limit The limit
+    * @param int|null $offset The offset from the first record
+    * @return {{ entity }}[] ${{ entity|lower }}s
+    */
+{% endif %}
 {% block method_definition %}
     public function getAll($filters = array(), $order_by = null, $limit = null, $offset = null)
 {% endblock method_definition %}
