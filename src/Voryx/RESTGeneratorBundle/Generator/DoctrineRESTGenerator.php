@@ -24,11 +24,16 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
  */
 class DoctrineRESTGenerator extends Generator
 {
+    /** @var Filesystem */
     protected $filesystem;
     protected $routePrefix;
     protected $routeNamePrefix;
+
+    /** @var BundleInterface */
     protected $bundle;
     protected $entity;
+
+    /** @var  ClassMetadataInfo */
     protected $metadata;
     protected $format;
     protected $actions;
@@ -113,12 +118,9 @@ class DoctrineRESTGenerator extends Generator
             return;
         }
 
-        /** @var BundleInterface $bundle */
-        $bundle = $this->bundle;
-
         $target = sprintf(
             '%s/Resources/config/routing/%s.%s',
-            $bundle->getPath(),
+            $this->bundle->getPath(),
             strtolower(str_replace('\\', '_', $this->entity)),
             $this->format
         );
@@ -130,7 +132,7 @@ class DoctrineRESTGenerator extends Generator
                 'actions'           => $this->actions,
                 'route_prefix'      => $this->routePrefix,
                 'route_name_prefix' => $this->routeNamePrefix,
-                'bundle'            => $bundle->getName(),
+                'bundle'            => $this->bundle->getName(),
                 'entity'            => $this->entity,
             )
         );
@@ -144,10 +146,7 @@ class DoctrineRESTGenerator extends Generator
      */
     protected function generateControllerClass($forceOverwrite, $document, $resource)
     {
-        /** @var BundleInterface $bundle */
-        $bundle = $this->bundle;
-
-        $dir = $bundle->getPath();
+        $dir = $this->bundle->getPath();
 
         $parts           = explode('\\', $this->entity);
         $entityClass     = array_pop($parts);
@@ -171,10 +170,10 @@ class DoctrineRESTGenerator extends Generator
                 'actions'           => $this->actions,
                 'route_prefix' => $this->routePrefix,
                 'route_name_prefix' => $this->routeNamePrefix,
-                'bundle' => $bundle->getName(),
+                'bundle' => $this->bundle->getName(),
                 'entity' => $this->entity,
                 'entity_class' => $entityClass,
-                'namespace' => $bundle->getNamespace(),
+                'namespace' => $this->bundle->getNamespace(),
                 'entity_namespace' => $entityNamespace,
                 'format' => $this->format,
                 'resource' => $resource,
@@ -190,10 +189,7 @@ class DoctrineRESTGenerator extends Generator
      */
     protected function generateHandler($forceOverwrite, $document)
     {
-        /** @var BundleInterface $bundle */
-        $bundle = $this->bundle;
-
-        $dir = $bundle->getPath();
+        $dir = $this->bundle->getPath();
 
         $parts = explode('\\', $this->entity);
         $entityClass = array_pop($parts);
@@ -220,10 +216,10 @@ class DoctrineRESTGenerator extends Generator
             array(
                 'route_prefix' => $this->routePrefix,
                 'route_name_prefix' => $this->routeNamePrefix,
-                'bundle' => $bundle->getName(),
+                'bundle' => $this->bundle->getName(),
                 'entity' => $this->entity,
                 'entity_class' => $entityClass,
-                'namespace' => $bundle->getNamespace(),
+                'namespace' => $this->bundle->getNamespace(),
                 'entity_namespace' => $entityNamespace,
                 'format' => $this->format,
                 'document' => $document
@@ -236,10 +232,7 @@ class DoctrineRESTGenerator extends Generator
      */
     public function generateExceptionClass()
     {
-        /** @var BundleInterface $bundle */
-        $bundle = $this->bundle;
-
-        $dir = $bundle->getPath();
+        $dir = $this->bundle->getPath();
 
         $target = sprintf('%s/Exception/InvalidFormException.php', $dir);
 
@@ -250,7 +243,7 @@ class DoctrineRESTGenerator extends Generator
         $this->renderFile(
             'rest/form_exception.php.twig',
             $target,
-            array('namespace' => $bundle->getNamespace())
+            array('namespace' => $this->bundle->getNamespace())
         );
     }
 
@@ -259,17 +252,14 @@ class DoctrineRESTGenerator extends Generator
      */
     public function declareService()
     {
-        /** @var BundleInterface $bundle */
-        $bundle = $this->bundle;
-
-        $dir = $bundle->getPath();
+        $dir = $this->bundle->getPath();
 
         $parts = explode('\\', $this->entity);
         $entityClass = array_pop($parts);
         $entityNamespace = implode('\\', $parts);
-        $namespace = $bundle->getNamespace();
+        $namespace = $this->bundle->getNamespace();
 
-        $bundleName = strtolower($bundle->getName());
+        $bundleName = strtolower($this->bundle->getName());
         $entityName = strtolower($this->entity);
 
         $services = sprintf(
@@ -293,7 +283,7 @@ class DoctrineRESTGenerator extends Generator
         $fileName = sprintf(
             "%s/DependencyInjection/%s.php",
             $dir,
-            str_replace("Bundle", "Extension", $bundle->getName())
+            str_replace("Bundle", "Extension", $this->bundle->getName())
         );
 
         if (!is_file($services)) {
@@ -367,18 +357,15 @@ class DoctrineRESTGenerator extends Generator
      */
     private function handleExtensionFileCreation($fileName)
     {
-        /** @var BundleInterface $bundle */
-        $bundle = $this->bundle;
-
         $parts           = explode('\\', $this->entity);
         $entityNamespace = implode('\\', $parts);
 
         $this->renderFile(
-            'rest/extension.php.twig',
+            'rest//extension.php.twig',
             $fileName,
             array(
-                'file_name'         => $fileName,
-                'namespace'         => $bundle->getNamespace(),
+                'class_name'        => str_replace("Bundle", "Extension", $this->bundle->getName()),
+                'namespace'         => $this->bundle->getNamespace(),
                 'entity_namespace'  => $entityNamespace,
             )
         );
@@ -390,10 +377,7 @@ class DoctrineRESTGenerator extends Generator
      */
     protected function generateTestClass()
     {
-        /** @var BundleInterface $bundle */
-        $bundle = $this->bundle;
-
-        $dir = $bundle->getPath() . '/Tests/Controller';
+        $dir = $this->bundle->getPath() . '/Tests/Controller';
 
         $parts           = explode('\\', $this->entity);
         $entityClass     = array_pop($parts);
@@ -408,12 +392,12 @@ class DoctrineRESTGenerator extends Generator
                 'route_prefix'      => $this->routePrefix,
                 'route_name_prefix' => $this->routeNamePrefix,
                 'entity'            => $this->entity,
-                'bundle'            => $bundle->getName(),
+                'bundle'            => $this->bundle->getName(),
                 'entity_class'      => $entityClass,
-                'namespace'         => $bundle->getNamespace(),
+                'namespace'         => $this->bundle->getNamespace(),
                 'entity_namespace'  => $entityNamespace,
                 'actions'           => $this->actions,
-                'form_type_name'    => strtolower(str_replace('\\', '_', $bundle->getNamespace()) . ($parts ? '_' : '') . implode('_', $parts) . '_' . $entityClass . 'Type'),
+                'form_type_name'    => strtolower(str_replace('\\', '_', $this->bundle->getNamespace()) . ($parts ? '_' : '') . implode('_', $parts) . '_' . $entityClass . 'Type'),
             )
         );
     }
