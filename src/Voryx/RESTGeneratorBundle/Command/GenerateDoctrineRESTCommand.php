@@ -40,6 +40,7 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
             array(
                 new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
                 new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
+                new InputOption('format', '', InputOption::VALUE_OPTIONAL, 'The format used for generation of routing (yml or annotation)', 'yml'),
                 new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
                 new InputOption('resource', '', InputOption::VALUE_NONE, 'The object will return with the resource name'),
                 new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller'),
@@ -92,7 +93,7 @@ EOT
         $entity = Validators::validateEntityName($input->getOption('entity'));
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
 
-        $format         = "rest";
+        $format         = $input->getOption('format');
         $prefix         = $this->getRoutePrefix($input, $entity);
         /** @var bool $forceOverwrite */
         $forceOverwrite = $input->getOption('overwrite');
@@ -107,7 +108,7 @@ EOT
 
         /** @var DoctrineRESTGenerator $generator */
         $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $resource, $document);
+        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $resource, $document, $format);
 
         $output->writeln('Generating the REST api code: <info>OK</info>');
 
@@ -119,7 +120,10 @@ EOT
         $output->writeln('Generating the Form code: <info>OK</info>');
 
         // create route
-        $runner($this->updateRouting($questionHelper, $input, $output, $bundle, $format, $entity, $prefix));
+        if ($format !== 'annotation')
+        {
+            $runner($this->updateRouting($questionHelper, $input, $output, $bundle, $format, $entity, $prefix));
+        }
 
         $questionHelper->writeGeneratorSummary($output, $errors);
     }
@@ -187,6 +191,7 @@ EOT
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param BundleInterface $bundle
+     * @param $format
      * @param $entity
      * @param $prefix
      * @return array

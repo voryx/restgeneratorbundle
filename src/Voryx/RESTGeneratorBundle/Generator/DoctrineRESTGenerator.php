@@ -58,8 +58,9 @@ class DoctrineRESTGenerator extends Generator
      * @param bool $forceOverwrite Whether or not to overwrite an existing controller
      * @param bool $resource
      * @param bool $document
+     * @param string $format
      */
-    public function generate(BundleInterface $bundle,$entity,ClassMetadataInfo $metadata,$routePrefix,$forceOverwrite,$resource,$document)
+    public function generate(BundleInterface $bundle,$entity,ClassMetadataInfo $metadata,$routePrefix,$forceOverwrite,$resource,$document,$format)
     {
         $this->routePrefix = $routePrefix;
         $this->routeNamePrefix = str_replace('/', '_', $routePrefix);
@@ -80,7 +81,7 @@ class DoctrineRESTGenerator extends Generator
         $this->entity = $entity;
         $this->bundle = $bundle;
         $this->metadata = $metadata;
-        $this->setFormat('yml');
+        $this->setFormat($format);
 
         $this->generateControllerClass($forceOverwrite, $document, $resource);
         $this->generateHandler($forceOverwrite, $document);
