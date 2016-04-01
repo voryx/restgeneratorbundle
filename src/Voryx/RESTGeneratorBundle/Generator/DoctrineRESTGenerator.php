@@ -291,6 +291,7 @@ class DoctrineRESTGenerator extends Generator
             $this->renderFile("rest/service/services.xml.twig", $services, array());
         }
 
+        //this could be saved more readable by using dom_import_simplexml (http://stackoverflow.com/questions/1191167/format-output-of-simplexml-asxml)
         $newXML = simplexml_load_file($services);
 
         if (!($servicesTag = $newXML->services)) {
@@ -322,7 +323,12 @@ class DoctrineRESTGenerator extends Generator
             $formFactoryTag->addAttribute("id", "form.factory");
         }
 
-        $newXML->saveXML($services);
+        $dom = new \DOMDocument("1.0");
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+        $dom->loadXML($newXML->asXML());
+        $dom->saveHTMLFile($services);
+        //$newXML->saveXML($services);
         $this->updateDIFile($fileName);
     }
 
