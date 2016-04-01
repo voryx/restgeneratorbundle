@@ -21,9 +21,13 @@
      * @return Response
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
-    {% if 'annotation' == format %}{% endif %}
+{% if 'annotation' == format %}
+     *
+     * @RESTDelete("/{id}.{_format}")
+     *
+{% endif %}
 {% endblock phpdoc_method_annotations %}
- */
+     */
 {% block method_definition %}
     public function deleteAction($id)
 {% endblock method_definition %}

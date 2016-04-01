@@ -1,10 +1,10 @@
-{% if document %}
     /**
+{% block phpdoc_method_header %}
      * @param {{ entity }} ${{ entity|lower }}
      * @return null
      * @throws \RuntimeException
+{% endblock phpdoc_method_header %}
      */
-{% endif %}
 {% block method_definition %}
     public function delete({{ entity }} ${{ entity|lower }})
 {% endblock method_definition %}

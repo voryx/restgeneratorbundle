@@ -26,9 +26,13 @@
      * @QueryParam(name="filters", nullable=true, array=true, description="Filter by fields. Must be an array ie. &filters[id]=3")
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
-    {% if 'annotation' == format %}{% endif %}
+{% if 'annotation' == format %}
+     *
+     * @RESTGet(".{_format}")
+     *
+{% endif %}
 {% endblock phpdoc_method_annotations %}
- */
+     */
 {% block method_definition %}
     public function cgetAction(ParamFetcherInterface $paramFetcher)
 {% endblock method_definition %}

@@ -1,11 +1,11 @@
-{% if document %}
     /**
+{% block phpdoc_method_header %}
      * @param {{ entity }} ${{ entity|lower }}
      * @param array $parameters
      * @return {{ entity }} ${{ entity|lower }}
      * @throws InvalidFormException
+{% endblock phpdoc_method_header %}
      */
-{% endif %}
 {% block method_definition %}
     public function patch({{ entity }} ${{ entity|lower }}, array $parameters)
 {% endblock method_definition %}

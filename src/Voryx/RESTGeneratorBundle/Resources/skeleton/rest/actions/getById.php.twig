@@ -20,10 +20,13 @@
      * @param $id
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
-    {% if 'annotation' == format %}
-    {% endif %}
+{% if 'annotation' == format %}
+     *
+     * @RESTGet("/{id}.{_format}")
+     *
+{% endif %}
 {% endblock phpdoc_method_annotations %}
-*/
+     */
 {% block method_definition %}
     public function getAction($id)
 {% endblock method_definition %}

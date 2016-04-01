@@ -1,13 +1,13 @@
 {% block extras_methods %}
-{% if document %}
     /**
+{% block phpdoc_method_header %}
      * @param {{ entity }} ${{ entity|lower }}
      * @param array $parameters
      * @param string $method
      * @return {{ entity }} ${{ entity|lower }}
      * @throws InvalidFormException
+{% endblock phpdoc_method_header %}
      */
-{% endif %}
     private function processForm({{ entity }} ${{ entity|lower }}, array $parameters, $method = "PUT")
     {
         $form = $this->formFactory->create(new {{ entity }}Type(), ${{ entity|lower }}, array('method' => $method));

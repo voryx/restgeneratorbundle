@@ -1,9 +1,9 @@
-{% if document %}
     /**
+{% block phpdoc_method_header %}
      * @param int $id
      * @return {{ entity }} ${{ entity|lower }}
+ {% endblock phpdoc_method_header %}
      */
-{% endif %}
 {% block method_definition %}
     public function get($id)
 {% endblock method_definition %}

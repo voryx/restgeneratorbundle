@@ -18,6 +18,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use FOS\RestBundle\Controller\Annotations\Get as RESTGet;
+use FOS\RestBundle\Controller\Annotations\Put as RESTPut;
+use FOS\RestBundle\Controller\Annotations\Patch as RESTPatch;
+use FOS\RestBundle\Controller\Annotations\Post as RESTPost;
+use FOS\RestBundle\Controller\Annotations\Delete as RESTDelete;
 {%- endif %}
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;

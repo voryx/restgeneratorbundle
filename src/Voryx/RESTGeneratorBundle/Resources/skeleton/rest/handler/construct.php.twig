@@ -1,11 +1,11 @@
-{% if document %}
     /**
+{% block phpdoc_method_header %}
      * {{ entity }}RESTHandler constructor.
      * @param ObjectManager $om
      * @param $entityClass
      * @param FormFactoryInterface $formFactory
+{% endblock phpdoc_method_header %}
      */
-{% endif %}
 {% block method_definition %}
     public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory)
 {% endblock method_definition %}
