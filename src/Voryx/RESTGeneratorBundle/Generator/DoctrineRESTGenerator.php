@@ -323,12 +323,7 @@ class DoctrineRESTGenerator extends Generator
             $formFactoryTag->addAttribute("id", "form.factory");
         }
 
-        $dom = new \DOMDocument("1.0");
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-        $dom->loadXML($newXML->asXML());
-        $dom->saveHTMLFile($services);
-        //$newXML->saveXML($services);
+        $newXML->saveXML($services);
         $this->updateDIFile($fileName);
     }
 
