@@ -167,7 +167,7 @@ class DoctrineRESTGenerator extends Generator
             'rest/controller.php.twig',
             $target,
             array(
-                'actions'           => $this->actions,
+                'actions' => $this->actions,
                 'route_prefix' => $this->routePrefix,
                 'route_name_prefix' => $this->routeNamePrefix,
                 'bundle' => $this->bundle->getName(),

@@ -11,7 +11,9 @@
      *     200 = "Updated object.",
      *     400 = "Bad Request. Verify your params.",
      *     404 = "Not Found."
-     *   }
+     *   },
+     *   input = "{{ namespace }}\Form\{{ entity }}Type",
+     *   output = "{{ namespace }}\Entity\{{ entity }}"
      * )
 {% endif %}
 {% endblock documentation %}
@@ -25,7 +27,7 @@
 {% block phpdoc_method_annotations %}
     {% if 'annotation' == format %}{% endif %}
 {% endblock phpdoc_method_annotations %}
-      */
+ */
 {% block method_definition %}
     public function patchAction(Request $request, $id)
 {% endblock method_definition %}
