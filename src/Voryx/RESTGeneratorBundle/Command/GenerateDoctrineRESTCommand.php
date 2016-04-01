@@ -94,6 +94,7 @@ EOT
 
         $format         = "rest";
         $prefix         = $this->getRoutePrefix($input, $entity);
+        /** @var bool $forceOverwrite */
         $forceOverwrite = $input->getOption('overwrite');
 
         $questionHelper->writeSection($output, 'REST api generation');
@@ -114,7 +115,7 @@ EOT
         $runner = $questionHelper->getRunner($output, $errors);
 
         // form
-        $this->generateForm($bundle, $entity, $metadata);
+        $this->generateForm($bundle, $entity, $metadata, $forceOverwrite);
         $output->writeln('Generating the Form code: <info>OK</info>');
 
         // create route
