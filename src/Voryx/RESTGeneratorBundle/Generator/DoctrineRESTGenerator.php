@@ -395,7 +395,7 @@ class DoctrineRESTGenerator extends Generator
         $target = $dir . '/' . str_replace('\\', '/', $entityNamespace) . '/' . $entityClass . 'RESTControllerTest.php';
 
         $this->renderFile(
-            'rest/tests/test.php.twig',
+            'rest/test.php.twig',
             $target,
             array(
                 'format'            => $format,
