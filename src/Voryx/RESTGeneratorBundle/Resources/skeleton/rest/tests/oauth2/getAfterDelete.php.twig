@@ -1,0 +1,5 @@
+public function testGetOnDeletedItem()
+{
+    $crawler = self::$client->request('GET', '/{{ route_prefix }}/{{ entity|lower }}/'.self::$id.'.json?access_token='.self::$access_token);
+    $this->assertEquals(200, self::$client->getResponse()->getStatusCode(), 'Expected a 200 response status after requesting /{{ route_prefix }}/{{ entity|lower }}/'.self::$id.'.json, got '.self::$client->getResponse()->getStatusCode());
+}

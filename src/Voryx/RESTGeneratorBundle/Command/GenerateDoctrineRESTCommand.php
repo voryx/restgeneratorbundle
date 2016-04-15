@@ -41,9 +41,10 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
                 new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
                 new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
                 new InputOption('format', '', InputOption::VALUE_OPTIONAL, 'The format used for generation of routing (yml or annotation)', 'yml'),
+                new InputOption('test', '', InputOption::VALUE_OPTIONAL, 'Generate a test for the given authentication mode (oauth2, no-authentication, none, csrf)', 'none'),
                 new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
                 new InputOption('resource', '', InputOption::VALUE_NONE, 'The object will return with the resource name'),
-                new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller'),
+                new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller')
             )
         )
             ->setDescription('Generates a REST api based on a Doctrine entity')
@@ -97,6 +98,7 @@ EOT
         $prefix         = $this->getRoutePrefix($input, $entity);
         /** @var bool $forceOverwrite */
         $forceOverwrite = $input->getOption('overwrite');
+        $test           = $input->getOption('test');
 
         $questionHelper->writeSection($output, 'REST api generation');
 
@@ -108,9 +110,13 @@ EOT
 
         /** @var DoctrineRESTGenerator $generator */
         $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $resource, $document, $format);
+        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $resource, $document, $format, $test);
 
         $output->writeln('Generating the REST api code: <info>OK</info>');
+        if ($test === 'oauth2')
+        {
+            $output->writeln('Please make sure you check the Tests/oauthBase.php and fill in a correct username/password on line 17/18 before running the test.');
+        }
 
         $errors = array();
         $runner = $questionHelper->getRunner($output, $errors);
@@ -159,6 +165,20 @@ EOT
         $input->setOption('entity', $entity);
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
 
+        //routing format
+        $output->writeln(
+            array(
+                '',
+                'Determine the routing format.',
+                ''
+            )
+        );
+        $question = new Question($questionHelper->getQuestion('Routing format', $input->getOption('format')));
+        $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateFormat'));
+        $format = $questionHelper->ask($input, $output, $question);
+
+        $input->setOption('format',$format);
+
         // route prefix
         $prefix = 'api';
         $output->writeln(
@@ -173,6 +193,27 @@ EOT
         $prefix = $questionHelper->ask($input, $output, new Question($questionHelper->getQuestion('Routes prefix', '/' . $prefix), '/' . $prefix));
         $input->setOption('route-prefix', $prefix);
 
+        //testing mode
+        $output->writeln(
+            array(
+                '',
+                'Determine what kind of test you want to have generated (if any)',
+                '',
+                'Possible values are none, no-authentication, csrf and oauth2',
+                ''
+            )
+        );
+        $question = new Question($questionHelper->getQuestion('What type of tests do you want to generate?', $input->getOption('test')));
+        $question->setValidator(array('Voryx\RESTGeneratorBundle\Command\Validators', 'validateTestFormat'));
+        $test = $questionHelper->ask($input, $output, $question);
+
+        $input->setOption('test',$test);
+
+        if ($test === 'oauth')
+        {
+            $this->interactWithOAuthTestMode($input, $output);
+        }
+
         // summary
         $output->writeln(
             array(
@@ -185,6 +226,22 @@ EOT
         );
     }
 
+
+    public function interactWithOAuthTestMode(InputInterface $input, OutputInterface $output)
+    {
+        $questionHelper = $this->getQuestionHelper();
+
+        $input->setOption('test_username', 'apiuser');
+        $input->setOption('test_password', 'password');
+
+        $question = new Question($questionHelper->getQuestion('With what username should we try to authenticate using OAuth2?', $input->getOption('test_username')));
+        $test_username = $questionHelper->ask($input, $output, $question);
+        $input->setOption('test_username', $test_username);
+
+        $question = new Question($questionHelper->getQuestion('And what is the password for '.$test_username.'?', $input->getOption('test_password')));
+        $test_password = $questionHelper->ask($input, $output, $question);
+        $input->setOption('test_password', $test_password);
+    }
 
     /**
      * @param QuestionHelper $questionHelper

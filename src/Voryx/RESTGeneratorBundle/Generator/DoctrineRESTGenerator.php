@@ -57,10 +57,11 @@ class DoctrineRESTGenerator extends Generator
      * @param string $routePrefix The route name prefix
      * @param bool $forceOverwrite Whether or not to overwrite an existing controller
      * @param bool $resource
-     * @param bool $document
-     * @param string $format
+     * @param bool $document Whether or not to use Nelmio api documentation
+     * @param string $format Format of routing
+     * @param string $test Test-mode (none, oauth or no-authentication)
      */
-    public function generate(BundleInterface $bundle,$entity,ClassMetadataInfo $metadata,$routePrefix,$forceOverwrite,$resource,$document,$format)
+    public function generate(BundleInterface $bundle,$entity,ClassMetadataInfo $metadata,$routePrefix,$forceOverwrite,$resource,$document,$format, $test)
     {
         $this->routePrefix = $routePrefix;
         $this->routeNamePrefix = str_replace('/', '_', $routePrefix);
@@ -87,6 +88,7 @@ class DoctrineRESTGenerator extends Generator
         $this->generateHandler($forceOverwrite, $document);
         $this->generateExceptionClass();
         $this->declareService();
+        $this->generateTestClass($test);
     }
 
     /**
@@ -375,10 +377,15 @@ class DoctrineRESTGenerator extends Generator
 
     /**
      * Generates the functional test class only.
-     *
+     * @param string $format either none, no-authentication or oauth
      */
-    protected function generateTestClass()
+    protected function generateTestClass($format)
     {
+        if ($format === 'none')
+        {
+            return;
+        }
+
         $dir = $this->bundle->getPath() . '/Tests/Controller';
 
         $parts           = explode('\\', $this->entity);
@@ -391,6 +398,8 @@ class DoctrineRESTGenerator extends Generator
             'rest/tests/test.php.twig',
             $target,
             array(
+                'format'            => $format,
+                'fields'            => $this->metadata->fieldMappings,
                 'route_prefix'      => $this->routePrefix,
                 'route_name_prefix' => $this->routeNamePrefix,
                 'entity'            => $this->entity,

@@ -1,0 +1,59 @@
+<?php
+
+namespace {{ namespace }}\Tests\Controller\Base{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+
+use {{ namespace }}\Command\CreateOAuthClientCommand;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Tester\CommandTester;
+
+class OAuthApiCase extends WebTestCase
+{
+    protected static $client_id;
+    protected static $client_secret;
+    protected static $access_token;
+
+    private $username = null;
+    private $password = null;
+
+    public function setUp()
+    {
+        if ($username === null || $password === null)
+        {
+            die('Please make sure to fill in an API user username/password in this file (path/to/Tests/oauthBase.php)');
+        }
+        parent::__construct();
+        $client      = static::createClient();
+        $application = new Application($client->getKernel());
+        $application->add(new CreateOAuthClientCommand());
+
+        /** @var Command $command */
+        $command       = $application->find('extendas:oauth-server:client:create');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+        'command'      => $command->getName(),
+        '--grant-type' => ['authorization_code', 'password', 'refresh_token', 'client_credentials'],
+        ]);
+
+        $response = $commandTester->getDisplay();
+        $this->assertEquals(0, strpos($response, 'Added a new client with public id'));
+        $keys           = preg_split('/,/', $response);
+        $public_id_text = trim($keys[0]);
+        $secret_id_text = trim($keys[1]);
+
+        $public_key_split = preg_split('/ /', $public_id_text);
+        $secret_key_split = preg_split('/ /', $secret_id_text);
+
+        self::$client_id     = end($public_key_split);
+        self::$client_secret = end($secret_key_split);
+        $this->assertNotEquals(self::$client_id, null);
+        $this->assertNotEquals(self::$client_secret, null);
+
+        $url = "/oauth/v2/token?client_id=".self::$client_id.'&client_secret='.self::$client_secret.'&grant_type=password'.
+        '&username='.$this->username.'&password='.$this->password;
+        $crawler = $client->request('GET', $url, array(), array(), array('HTTP_ACCEPT' => 'application/json', 'HTTP_CONTENT_TYPE' => 'application/json'));
+        $json_object        = json_decode($client->getResponse()->getContent());
+        self::$access_token = $json_object->access_token;
+    }
+}
