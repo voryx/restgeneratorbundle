@@ -19,22 +19,22 @@ class {{ entity_class }}RESTControllerTest{%- if format == 'oauth2' %} extends O
 {
 {% block class_body %}
 
-    {%- include 'rest/tests/'{{ format }}'/setup.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/setup.php.twig' %}#}
 
-    {%- include 'rest/tests/'{{ format }}'/getAllWithoutContent.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/getAllWithoutContent.php.twig' %}#}
 
-    {%- include 'rest/tests/'{{ format }}'/post.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/post.php.twig' %}#}
 
-    {%- include 'rest/tests/'{{ format }}'/getAll.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/getAll.php.twig' %}#}
 
-    {%- include 'rest/tests/'{{ format }}'/get.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/get.php.twig' %}#}
 
-    {%- include 'rest/tests/'{{ format }}'/put.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/put.php.twig' %}#}
 
-    {%- include 'rest/tests/'{{ format }}'/patch.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/patch.php.twig' %}#}
 
-    {%- include 'rest/tests/'{{ format }}'/delete.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/delete.php.twig' %}#}
 
-    {%- include 'rest/tests/'{{ format }}'/getAfterDelete.php.twig' %}
+    {#{%- include 'rest/tests/'{{ format }}'/getAfterDelete.php.twig' %}#}
 {% endblock class_body %}
 }

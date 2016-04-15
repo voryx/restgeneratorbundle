@@ -27,7 +27,6 @@ public function setUp()
     {# implement support for array types. #}
     {%- else %}
     {{ field }}.{{ info.type }}
-    {{ dump(info) }}
     {%- endif %}
     {%- endfor %}
 
