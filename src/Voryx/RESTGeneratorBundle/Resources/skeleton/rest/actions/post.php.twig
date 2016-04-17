@@ -19,7 +19,7 @@
     {
 {% block method_body %}
         $entity = new {{ entity }}();
-        $form = $this->createForm({{ entity }}Type::class, $entity, array("method" => $request->getMethod()));
+        $form = $this->createForm(get_class(new {{ entity }}Type()), $entity, array("method" => $request->getMethod()));
         $this->removeExtraFields($request, $form);
         $form->handleRequest($request);
 
