@@ -21,7 +21,7 @@
         try {
             $em = $this->getDoctrine()->getManager();
             $request->setMethod('PATCH'); //Treat all PUTs as PATCH
-            $form = $this->createForm(new {{ entity }}Type(), $entity, array("method" => $request->getMethod()));
+            $form = $this->createForm(get_class(new {{ entity }}Type()), $entity, array("method" => $request->getMethod()));
             $this->removeExtraFields($request, $form);
             $form->handleRequest($request);
             if ($form->isValid()) {
