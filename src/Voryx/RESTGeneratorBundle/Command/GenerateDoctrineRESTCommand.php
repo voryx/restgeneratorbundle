@@ -13,9 +13,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Voryx\RESTGeneratorBundle\Generator\DoctrineRESTGenerator;
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
 use Voryx\RESTGeneratorBundle\Manipulator\RoutingManipulator;
@@ -40,8 +42,9 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
             array(
                 new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
                 new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
-                new InputOption('format', '', InputOption::VALUE_OPTIONAL, 'The format used for generation of routing (yml or annotation)', 'yml'),
-                new InputOption('test', '', InputOption::VALUE_OPTIONAL, 'Generate a test for the given authentication mode (oauth2, no-authentication, none, csrf)', 'none'),
+                new InputOption('route-format', '', InputOption::VALUE_REQUIRED, 'The format used for generation of routing (yml or annotation)', 'yml'),
+                new InputOption('service-format', '', InputOption::VALUE_REQUIRED, 'The format used for generation of services (yml or xml)', 'yml'),
+                new InputOption('test', '', InputOption::VALUE_REQUIRED, 'Generate a test for the given authentication mode (oauth2, no-authentication, none)', 'none'),
                 new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
                 new InputOption('resource', '', InputOption::VALUE_NONE, 'The object will return with the resource name'),
                 new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller')
@@ -94,7 +97,8 @@ EOT
         $entity = Validators::validateEntityName($input->getOption('entity'));
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
 
-        $format         = $input->getOption('format');
+        $format         = $input->getOption('route-format');
+        $service_format = $input->getOption('service-format');
         $prefix         = $this->getRoutePrefix($input, $entity);
         /** @var bool $forceOverwrite */
         $forceOverwrite = $input->getOption('overwrite');
@@ -107,10 +111,43 @@ EOT
         $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
         $resource    = $input->getOption('resource');
         $document    = $input->getOption('document');
+        $constraints = array();
+
+        $constraintMetadata = null;
+        try
+        {
+            /** @var \Symfony\Component\Validator\Validator\RecursiveValidator $validator */
+            $validator = $this->getContainer()->get('validator');
+
+            /** @var ClassMetadata $constraintMetadata */
+            $constraintMetadata = $validator->getMetadataFor(new $entityClass);
+            foreach($constraintMetadata->getConstrainedProperties() as $property)
+            {
+                //var_dump($constraint_metadata->getPropertyMetadata($property));
+                $constraints[$property] = $constraintMetadata->getPropertyMetadata($property)[0]->constraints;
+            }
+        }
+        catch(ServiceNotFoundException $snfex)
+        {
+            //no constraints are checked
+            $output->writeln($snfex->getMessage());
+        }
+        catch(\Exception $ex)
+        {
+            $output->writeln($ex->getMessage());
+        }
+
+        if ($constraintMetadata === null)
+        {
+            if ($test !== 'none')
+            {
+                $output->writeln('<error>No class constraint metadata found for entity ' . $entityClass . '</error>');
+            }
+        }
 
         /** @var DoctrineRESTGenerator $generator */
         $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $resource, $document, $format, $test);
+        $generator->generate($bundle, $entity, $metadata[0], $constraints, $prefix, $forceOverwrite, $resource, $document, $format, $service_format, $test);
 
         $output->writeln('Generating the REST api code: <info>OK</info>');
         if ($test === 'oauth2')
@@ -166,18 +203,19 @@ EOT
         list($bundle, $entity) = $this->parseShortcutNotation($entity);
 
         //routing format
+        $format = $input->getOption('route-format');
         $output->writeln(
             array(
                 '',
-                'Determine the routing format.',
+                'Determine the routing format (yml or annotation).',
                 ''
             )
         );
-        $question = new Question($questionHelper->getQuestion('Routing format', $input->getOption('format')));
+        $question = new Question($questionHelper->getQuestion('Routing format', $format), $format);
         $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateFormat'));
         $format = $questionHelper->ask($input, $output, $question);
 
-        $input->setOption('format',$format);
+        $input->setOption('route-format',$format);
 
         // route prefix
         $prefix = 'api';
@@ -193,26 +231,35 @@ EOT
         $prefix = $questionHelper->ask($input, $output, new Question($questionHelper->getQuestion('Routes prefix', '/' . $prefix), '/' . $prefix));
         $input->setOption('route-prefix', $prefix);
 
+        //service format
+        $serviceFormat = $input->getOption('service-format');
+        $output->writeln(
+            array(
+                '',
+                'Determine the service format (yml or xml).',
+                ''
+            )
+        );
+        $question = new Question($questionHelper->getQuestion('Service format', $serviceFormat), $serviceFormat);
+        $question->setValidator(array('Voryx\RESTGeneratorBundle\Command\Validators', 'validateServiceFormat'));
+        $serviceFormat = $questionHelper->ask($input, $output, $question);
+
+        $input->setOption('service-format',$serviceFormat);
+
         //testing mode
         $output->writeln(
             array(
                 '',
                 'Determine what kind of test you want to have generated (if any)',
-                '',
-                'Possible values are none, no-authentication, csrf and oauth2',
+                'Possible values are none (no tests), no-authentication and oauth2',
                 ''
             )
         );
-        $question = new Question($questionHelper->getQuestion('What type of tests do you want to generate?', $input->getOption('test')));
+        $question = new Question($questionHelper->getQuestion('What type of tests do you want to generate?', $input->getOption('test')),$input->getOption('test'));
         $question->setValidator(array('Voryx\RESTGeneratorBundle\Command\Validators', 'validateTestFormat'));
         $test = $questionHelper->ask($input, $output, $question);
 
         $input->setOption('test',$test);
-
-        if ($test === 'oauth')
-        {
-            $this->interactWithOAuthTestMode($input, $output);
-        }
 
         // summary
         $output->writeln(
@@ -224,23 +271,6 @@ EOT
                 '',
             )
         );
-    }
-
-
-    public function interactWithOAuthTestMode(InputInterface $input, OutputInterface $output)
-    {
-        $questionHelper = $this->getQuestionHelper();
-
-        $input->setOption('test_username', 'apiuser');
-        $input->setOption('test_password', 'password');
-
-        $question = new Question($questionHelper->getQuestion('With what username should we try to authenticate using OAuth2?', $input->getOption('test_username')));
-        $test_username = $questionHelper->ask($input, $output, $question);
-        $input->setOption('test_username', $test_username);
-
-        $question = new Question($questionHelper->getQuestion('And what is the password for '.$test_username.'?', $input->getOption('test_password')));
-        $test_password = $questionHelper->ask($input, $output, $question);
-        $input->setOption('test_password', $test_password);
     }
 
     /**

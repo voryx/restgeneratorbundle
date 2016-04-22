@@ -110,6 +110,27 @@ Generate the API controller:
 $ php app/console voryx:generate:rest --entity="AppBundle:Post"
 ```
 
+Full example with all parameters
+
+```bash
+$ php app/console voryx:generate:rest --entity="AppBundle:Post" --document --resource --overwrite --route-prefix="api" --route-format="yml" --service-format="yml" --test="none"
+$ php app/console voryx:generate:rest --entity="AppBundle:User/Domain" --document --overwrite --route-prefix="api" --route-format="annotation" --service-format="yml" --test="oauth2"
+```
+
+possible values for all parameters
+
+| Parameter | Explanation | Values  |
+| --------- | ----------- | ------- |
+| entity         | The entity for which the REST api should be generated            | **AppBundle:Post**, **AppBundle:Blog\Post**
+| document       | Whether or not you want API's documented by Nelmio               | Yes if present, else No
+| overwrite      | Whether or not you want to overwrite existing generated files    | Yes if present, else No
+| resource       | -                                                                | Yes if present, else No
+| route-prefix   | The route to prefix the generated Controller with (default api)  | Any string
+| route-format   | The format that routing is generated in (default yml)            | **yml** or **annotation**
+| service-format | The format that the service is generated in (default yml)        | **yml** or **xml**
+| test           | The type of test that should be generated                        | **none**, **oauth** or **no-authentication**
+
+
 ### Using the API
 If you selected the default options you'll be able to start using the API like this:
 

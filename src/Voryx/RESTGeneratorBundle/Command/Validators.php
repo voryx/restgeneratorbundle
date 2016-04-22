@@ -10,6 +10,11 @@ namespace Voryx\RESTGeneratorBundle\Command;
  */
 class Validators
 {
+    /**
+     * @param string $format
+     * @return string
+     * @throws \RuntimeException
+     */
     public static function validateTestFormat($format)
     {
         if (!$format) {
@@ -22,10 +27,36 @@ class Validators
 
         $format = strtolower($format);
 
-        if (!in_array($format, array('none', 'oauth2', 'no-authentication', 'csrf'))) {
-            throw new \RuntimeException(sprintf('Test format "%s" is not supported, only '.implode(',',$format).' are supported.', $format));
+        $supported = array('none', 'oauth2', 'no-authentication', 'csrf');
+
+        if (!in_array($format, $supported)) {
+            throw new \RuntimeException(sprintf('Test format "%s" is not supported, only '.implode(',',$supported).' are supported.', $format));
         }
 
         return $format;
+    }
+
+    /**
+     * @param string $service_format
+     * @return string
+     * @throws \RuntimeException
+     */
+    public static function validateServiceFormat($service_format)
+    {
+        if (!$service_format)
+        {
+            return 'xml';
+        }
+
+        $service_format = strtolower($service_format);
+
+        $supported_service_formats = array('xml', 'yml');
+
+        if (!in_array($service_format, $supported_service_formats))
+        {
+            throw new \RuntimeException(sprintf('Service format "%s" is not supported, only '.implode(',',$supported_service_formats).' are supported.', $service_format));
+        }
+
+        return $service_format;
     }
 }

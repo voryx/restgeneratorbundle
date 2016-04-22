@@ -43,7 +43,7 @@
         $order_by = $paramFetcher->get('order_by');
         $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
 
-        $answer{{ resource ? "['" ~ entity|lower ~  "']" }} =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->getAll($filters, $order_by, $limit, $offset);
+        $answer{{ resource ? "['" ~ entity|lower ~  "']" }} =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower|replace({"\\":'.'}) }}.handler')->getAll($filters, $order_by, $limit, $offset);
         if ($answer{{ resource ? "['" ~ entity|lower ~  "']" }}) {
             return $answer;
         }

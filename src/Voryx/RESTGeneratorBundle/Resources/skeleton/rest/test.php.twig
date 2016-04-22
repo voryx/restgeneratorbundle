@@ -3,7 +3,7 @@
 namespace {{ namespace }}\Tests\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
 {% block use_statements %}
-use AppBundle\Tests\Base\OAuthApiTest;
+use {{ namespace }}\Tests\Base\{{ friendly_format }}BaseCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 {% endblock use_statements %}
 
@@ -14,27 +14,27 @@ use Symfony\Bundle\FrameworkBundle\Client;
 {% endblock phpdoc_class_header %}
  */
 {% block class_definition %}
-class {{ entity_class }}RESTControllerTest{%- if format == 'oauth2' %} extends OAuthApiTest{%- endif %}
+class {{ entity_class }}RESTControllerTest extends {{ friendly_format }}BaseCase
 {% endblock class_definition %}
 {
 {% block class_body %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/setup.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/setup.php.twig' %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/getAllWithoutContent.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/getAllWithoutContent.php.twig' %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/post.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/post.php.twig' %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/getAll.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/getAll.php.twig' %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/get.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/get.php.twig' %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/put.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/put.php.twig' %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/patch.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/patch.php.twig' %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/delete.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/delete.php.twig' %}
 
-    {#{%- include 'rest/tests/'{{ format }}'/getAfterDelete.php.twig' %}#}
+    {%- include 'rest/tests/' ~ format ~ '/getAfterDelete.php.twig' %}
 {% endblock class_body %}
 }

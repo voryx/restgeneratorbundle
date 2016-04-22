@@ -1,33 +1,33 @@
 {% block extras_methods %}
     /**
 {% block phpdoc_method_header %}
-     * @param {{ entity }} ${{ entity|lower }}
+     * @param {{ entity_class }} ${{ entity_class|lower }}
      * @param array $parameters
      * @param string $method
-     * @return {{ entity }} ${{ entity|lower }}
+     * @return {{ entity_class }} ${{ entity_class|lower }}
      * @throws InvalidFormException
 {% endblock phpdoc_method_header %}
      */
-    private function processForm({{ entity }} ${{ entity|lower }}, array $parameters, $method = "PUT")
+    private function processForm({{ entity_class }} ${{ entity_class|lower }}, array $parameters, $method = "PUT")
     {
-        $form = $this->formFactory->create(new {{ entity }}Type(), ${{ entity|lower }}, array('method' => $method));
+        $form = $this->formFactory->create(new {{ entity_class }}Type(), ${{ entity_class|lower }}, array('method' => $method));
         $form->submit($parameters, 'PATCH' !== $method);
         if ($form->isValid()) {
-            ${{ entity|lower }} = $form->getData();
-            $this->om->persist(${{ entity|lower }});
+            ${{ entity_class|lower }} = $form->getData();
+            $this->om->persist(${{ entity_class|lower }});
             $this->om->flush();
 
-            return ${{ entity|lower }};
+            return ${{ entity_class|lower }};
         }
         throw new InvalidFormException('Invalid submitted data', $form);
     }
 
 {% if document %}
     /**
-     * @return {{ entity }} ${{ entity|lower }}
+     * @return {{ entity_class }} ${{ entity_class|lower }}
      */
 {% endif %}
-    private function create{{ entity }}()
+    private function create{{ entity_class }}()
     {
         return new $this->entityClass();
     }

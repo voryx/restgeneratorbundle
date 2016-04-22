@@ -32,7 +32,7 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $answer{{ resource ? "['" ~ entity|lower ~  "']" }} = $this->getOr404($id);
+        $answer{{ resource ? "['" ~ entity_class|lower ~  "']" }} = $this->getOr404($id);
         return $answer;
 {% endblock method_body %}
 {% block method_return '' %}

@@ -1,14 +1,15 @@
 <?php
 
-namespace {{ namespace }}\Tests\Controller\Base{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+namespace {{ namespace }}\Tests\Base;
 
 use {{ namespace }}\Command\CreateOAuthClientCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use FOS\OAuthServerBundle\Model\Client as OAuthClient;
 
-class OAuthApiCase extends WebTestCase
+class {{ friendly_format }}BaseCase extends WebTestCase
 {
     protected static $client_id;
     protected static $client_secret;
@@ -19,34 +20,24 @@ class OAuthApiCase extends WebTestCase
 
     public function setUp()
     {
-        if ($username === null || $password === null)
+        if ($this->username === null || $this->password === null)
         {
             die('Please make sure to fill in an API user username/password in this file (path/to/Tests/oauthBase.php)');
         }
         parent::__construct();
         $client      = static::createClient();
-        $application = new Application($client->getKernel());
-        $application->add(new CreateOAuthClientCommand());
+        $clientManager = $client->getContainer()->get('fos_oauth_server.client_manager.default');
+        /** @var OAuthClient $oauth_client */
+        $oauth_client = $clientManager->createClient();
+        $oauth_client->setRedirectUris(array());
+        $oauth_client->setAllowedGrantTypes(array('authorization_code', 'password', 'refresh_token', 'client_credentials'));
+        $clientManager->updateClient($oauth_client);
 
-        /** @var Command $command */
-        $command       = $application->find('extendas:oauth-server:client:create');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-        'command'      => $command->getName(),
-        '--grant-type' => ['authorization_code', 'password', 'refresh_token', 'client_credentials'],
-        ]);
+        $public_key_split = $oauth_client->getPublicId();
+        $secret_key_split = $oauth_client->getSecret();
 
-        $response = $commandTester->getDisplay();
-        $this->assertEquals(0, strpos($response, 'Added a new client with public id'));
-        $keys           = preg_split('/,/', $response);
-        $public_id_text = trim($keys[0]);
-        $secret_id_text = trim($keys[1]);
-
-        $public_key_split = preg_split('/ /', $public_id_text);
-        $secret_key_split = preg_split('/ /', $secret_id_text);
-
-        self::$client_id     = end($public_key_split);
-        self::$client_secret = end($secret_key_split);
+        self::$client_id     = $public_key_split;
+        self::$client_secret = $secret_key_split;
         $this->assertNotEquals(self::$client_id, null);
         $this->assertNotEquals(self::$client_secret, null);
 

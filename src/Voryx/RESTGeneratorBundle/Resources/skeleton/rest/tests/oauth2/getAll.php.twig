@@ -1,15 +1,16 @@
-public function testGetAllWithContent()
-{
-    $crawler = self::$client->request('GET', '/{{ route_prefix }}/{{ entity|lower }}.json');
-    $this->assertEquals(401, self::$client->getResponse()->getStatusCode(), 'Expected a 401 response status after requesting /{{ route_prefix }}/{{ entity|lower }}.json without access token, but got '.self::$client->getResponse()->getStatusCode());
+    public function testGetAllWithContent()
+    {
+        $crawler = self::$client->request('GET', '/{{ route_prefix }}/{{ entity|lower }}.json');
+        $this->assertEquals(401, self::$client->getResponse()->getStatusCode(), 'Expected a 401 response status after requesting /{{ route_prefix }}/{{ entity|lower }}.json without access token, but got '.self::$client->getResponse()->getStatusCode()."\r\nResponse:\r\n".self::$client->getResponse()->getContent());
 
-    $crawler = self::$client->request('GET', '/{{ route_prefix }}/{{ entity|lower }}.json?access_token='.self::$access_token);
-    $this->assertEquals(200, self::$client->getResponse()->getStatusCode(), 'Expected a 200 response status after requesting /{{ route_prefix }}/{{ entity|lower }}.json, got '.self::$client->getResponse()->getStatusCode());
+        $crawler = self::$client->request('GET', '/{{ route_prefix }}/{{ entity|lower }}.json?access_token='.self::$access_token);
+        $this->assertEquals(200, self::$client->getResponse()->getStatusCode(), 'Expected a 200 response status after requesting /{{ route_prefix }}/{{ entity|lower }}.json, got '.self::$client->getResponse()->getStatusCode()."\r\nResponse:\r\n".self::$client->getResponse()->getContent());
 
-    $obj = json_decode(self::$client->getResponse()->getContent());
-    $this->assertTrue(is_array($obj), 'expected decoded response content to be array, got '.gettype($obj));
-    $this->assertTrue(count($obj) > 0, 'expected decoded response content to be an array with more then 0 items, got '.count($obj));
-    $first = reset($obj);
-    $this->assertTrue(array_key_exists('id', $first), 'expected first array item to have a key id');
-    self::$id = $first->id;
-}
+        $obj = json_decode(self::$client->getResponse()->getContent());
+        $this->assertTrue(is_array($obj), 'expected decoded response content to be array, got '.gettype($obj));
+        $this->assertTrue(count($obj) > 0, 'expected decoded response content to be an array with more then 0 items, got '.count($obj));
+        $first = reset($obj);
+        $this->assertTrue(array_key_exists('id', $first), 'expected first array item to have a key id');
+        self::$id = $first->id;
+    }
+

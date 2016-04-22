@@ -1,17 +1,17 @@
     /**
 {% block phpdoc_method_header %}
-     * @param {{ entity }} ${{ entity|lower }}
+     * @param {{ entity_class }} ${{ entity_class|lower }}
      * @param array $parameters
-     * @return {{ entity }} ${{ entity|lower }}
+     * @return {{ entity_class }} ${{ entity_class|lower }}
      * @throws InvalidFormException
 {% endblock phpdoc_method_header %}
      */
 {% block method_definition %}
-    public function patch({{ entity }} ${{ entity|lower }}, array $parameters)
+    public function patch({{ entity_class }} ${{ entity_class|lower }}, array $parameters)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        return $this->processForm(${{ entity|lower }}, $parameters, 'PATCH');
+        return $this->processForm(${{ entity_class|lower }}, $parameters, 'PATCH');
 {% endblock method_body %}
     }
 

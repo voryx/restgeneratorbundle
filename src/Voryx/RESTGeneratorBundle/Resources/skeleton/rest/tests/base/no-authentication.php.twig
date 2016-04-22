@@ -1,0 +1,18 @@
+<?php
+
+namespace {{ namespace }}\Tests\Base{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+
+use {{ namespace }}\Command\CreateOAuthClientCommand;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Tester\CommandTester;
+
+class {{ friendly_format }}BaseCase extends WebTestCase
+{
+
+    public function setUp()
+    {
+
+    }
+}

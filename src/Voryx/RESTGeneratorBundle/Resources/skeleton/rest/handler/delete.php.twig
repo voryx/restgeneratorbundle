@@ -1,17 +1,17 @@
     /**
 {% block phpdoc_method_header %}
-     * @param {{ entity }} ${{ entity|lower }}
+     * @param {{ entity_class }} ${{ entity_class|lower }}
      * @return null
      * @throws \RuntimeException
 {% endblock phpdoc_method_header %}
      */
 {% block method_definition %}
-    public function delete({{ entity }} ${{ entity|lower }})
+    public function delete({{ entity_class }} ${{ entity_class|lower }})
 {% endblock method_definition %}
     {
 {% block method_body %}
         try {
-            $this->om->remove(${{ entity|lower }});
+            $this->om->remove(${{ entity_class|lower }});
             $this->om->flush();
 
             return null;

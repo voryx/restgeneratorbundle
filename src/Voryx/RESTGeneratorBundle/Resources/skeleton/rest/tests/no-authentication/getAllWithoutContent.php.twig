@@ -1,0 +1,6 @@
+    public function testGetAllWithoutContent()
+    {
+        $crawler = self::$client->request('GET', '/{{ route_prefix }}/{{ entity|lower }}.json');
+        $this->assertEquals(204, self::$client->getResponse()->getStatusCode(), 'Expected a 204 response status after requesting /{{ route_prefix }}/{{ entity|lower }}.json, got '.self::$client->getResponse()->getStatusCode());
+    }
+

@@ -35,7 +35,7 @@
     {
 {% block method_body %}
         try {
-            $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower }}.handler')->post($request->request->all());
+            $new  =  $this->container->get('{{ bundle|replace({'Bundle': ''})|lower}}.{{ entity|lower|replace({"\\":'.'}) }}.handler')->post($request->request->all());
             $answer{{ resource ? "['" ~ entity|lower ~  "']" }} = $new;
 
             return $answer;
