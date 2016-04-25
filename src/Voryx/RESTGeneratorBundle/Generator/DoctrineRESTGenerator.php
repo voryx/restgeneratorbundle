@@ -362,6 +362,10 @@ class DoctrineRESTGenerator extends Generator
     {
         $yml_file = Yaml::parse(file_get_contents($services));
         $params = $yml_file['parameters'];
+        if (!is_array($params))
+        {
+            $params = array();
+        }
         $yml_file['parameters'] =
             array_merge(
                 $params,
@@ -376,6 +380,10 @@ class DoctrineRESTGenerator extends Generator
                 )
             );
         $yml_services = $yml_file['services'];
+        if (!is_array($yml_services))
+        {
+            $yml_services = array();
+        }
         $yml_file['services'] =
             array_merge(
                 $yml_services,
