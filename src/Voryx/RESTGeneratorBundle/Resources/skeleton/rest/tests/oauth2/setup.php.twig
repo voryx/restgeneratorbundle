@@ -80,7 +80,7 @@
                         {%- elseif 'LengthValidator' in constraint.validatedBy() %}
                             {% set random_number = random(constraint.max - constraint.min) + constraint.min %}
                             {% set test_data = '' %}
-                            {% for 0..random_number %}
+                            {% for i in 1..random_number %}
                                 {% set test_data = test_data ~ random('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890') %}
                             {% endfor %}
                         {%- elseif 'UuidValidator' in constraint.validatedBy() %}
