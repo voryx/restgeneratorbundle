@@ -18,6 +18,8 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 use Voryx\RESTGeneratorBundle\Generator\DoctrineRESTGenerator;
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
 use Voryx\RESTGeneratorBundle\Manipulator\RoutingManipulator;
@@ -163,10 +165,8 @@ EOT
         $output->writeln('Generating the Form code: <info>OK</info>');
 
         // create route
-        if ($format !== 'annotation')
-        {
-            $runner($this->updateRouting($questionHelper, $input, $output, $bundle, $format, $entity, $prefix));
-        }
+        $runner($this->updateRouting($questionHelper, $input, $output, $bundle, $format, $entity, $prefix));
+
 
         $questionHelper->writeGeneratorSummary($output, $errors);
     }
@@ -293,7 +293,59 @@ EOT
 
         $output->write('Importing the REST api routes: ');
         $this->getContainer()->get('filesystem')->mkdir($bundle->getPath() . '/Resources/config/');
+
+        if ($format === 'annotation')
+        {
+            $bundle_name = str_replace("Bundle", "", $bundle->getName());
+            $route_name = strtolower($bundle_name);
+            $yml_file_location = $this->getContainer()->getParameter('kernel.root_dir') . '/config/routing.yml';
+            try
+            {
+                $yml_file = Yaml::parse(file_get_contents($yml_file_location));
+            }
+            catch(ParseException $pex)
+            {
+                return array(
+                    '<error>Could not read yaml file '.$yml_file_location.'</error>',
+                    'On line',
+                    'parsed line: '.$pex->getParsedLine() . ' and current line '. $pex->getLine(),
+                    'With snippet '.$pex->getSnippet(),
+                    'Exception message:',
+                    '<error>'.$pex->getMessage().'</error>'
+                    );
+            }
+            $resource_location = sprintf('@%s/Controller/', $bundle->getName());
+
+            $bundle_routing = null;
+            if (array_key_exists($route_name, $yml_file))
+            {
+                $bundle_routing = $yml_file[$route_name];
+            }
+
+            if (is_array($bundle_routing))
+            {
+                if (array_key_exists('type',$bundle_routing) && array_key_exists('resource',$bundle_routing) && $bundle_routing['type'] === $format && $bundle_routing['resource'] === $resource_location)
+                {
+                    //all is good
+                    return array();
+                }
+            }
+
+            $bundle_routing = array(
+                'resource' => $resource_location,
+                'type' => $format
+            );
+
+            $yml_file[$route_name] = $bundle_routing;
+
+            $yml_content = Yaml::dump($yml_file, 2);
+            file_put_contents($yml_file_location, $yml_content);
+
+            return array();
+        }
+
         $routing = new RoutingManipulator($this->getContainer()->getParameter('kernel.root_dir') . '/config/routing.yml');
+
         try {
             $ret = $auto ? $routing->addResource($bundle->getName(), '/' . $prefix, $entity) : false;
         } catch (\RuntimeException $exc) {
