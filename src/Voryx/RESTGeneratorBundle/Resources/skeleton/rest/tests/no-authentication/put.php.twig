@@ -2,8 +2,8 @@
     {
         $json = json_encode(self::$sample_object);
 
-        $crawler = self::$client->request('PUT', '/{{ route_prefix }}/{{ entity|lower }}/'.self::$id.'.json', array(), array(), ['HTTP_CONTENT_TYPE' => 'application/json', 'CONTENT_TYPE' => 'application/json'], $json);
-        $this->assertEquals(200, self::$client->getResponse()->getStatusCode(), 'Expected a 200 response status after requesting PUT /{{ route_prefix }}/{{ entity|lower }}/'.self::$id.'.json, got '.self::$client->getResponse()->getStatusCode());
+        $crawler = self::$client->request('PUT', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json', array(), array(), ['HTTP_CONTENT_TYPE' => 'application/json', 'CONTENT_TYPE' => 'application/json'], $json);
+        $this->assertEquals(200, self::$client->getResponse()->getStatusCode(), 'Expected a 200 response status after requesting PUT /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json, got '.self::$client->getResponse()->getStatusCode());
 
         $obj = json_decode(self::$client->getResponse()->getContent());
         //test response content

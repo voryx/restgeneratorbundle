@@ -1,14 +1,14 @@
     public function testPost()
     {
-        $crawler = self::$client->request('POST', '/{{ route_prefix }}/{{ entity|lower }}.json');
+        $crawler = self::$client->request('POST', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}.json');
         $this->assertEquals(401, self::$client->getResponse()->getStatusCode(), 'Expected a 401 response status after posting to api/post.json without access token, but got '.self::$client->getResponse()->getStatusCode()."\r\nResponse:\r\n".self::$client->getResponse()->getContent());
 
         $extra_help = 'If this test fails with a 500 status code, make sure the properties in the entity that should be required are annotated with @Symfony\Component\Validator\Constraints\NotBlank (or @Constraints\NotBlank and use Symfony\Component\Validator\Constraints;), remove this test if it doesn\'t apply to u.';
-        $crawler = self::$client->request('POST', '/{{ route_prefix }}/{{ entity|lower }}.json?access_token='.self::$access_token);
-        $this->assertEquals(400, self::$client->getResponse()->getStatusCode(), "Expected a 400 response status after posting to /{{ route_prefix }}/{{ entity|lower }}.json without content, but got ".self::$client->getResponse()->getStatusCode().".\r\n".$extra_help."\r\n\r\nResponse:\r\n".self::$client->getResponse()->getContent());
+        $crawler = self::$client->request('POST', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}.json?access_token='.self::$access_token);
+        $this->assertEquals(400, self::$client->getResponse()->getStatusCode(), "Expected a 400 response status after posting to /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}.json without content, but got ".self::$client->getResponse()->getStatusCode().".\r\n".$extra_help."\r\n\r\nResponse:\r\n".self::$client->getResponse()->getContent());
 
         $json = json_encode(self::$sample_object);
-        $crawler = self::$client->request('POST', '/{{ route_prefix }}/{{ entity|lower }}.json?access_token='.self::$access_token, array(), array(), ['HTTP_CONTENT_TYPE' => 'application/json', 'CONTENT_TYPE' => 'application/json'], $json);
-        $this->assertEquals(201, self::$client->getResponse()->getStatusCode(), "Expected a 201 response status after posting to /{{ route_prefix }}/{{ entity|lower }}.json with content, but got ".self::$client->getResponse()->getStatusCode()."\r\nResponse:\r\n".self::$client->getResponse()->getContent());
+        $crawler = self::$client->request('POST', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}.json?access_token='.self::$access_token, array(), array(), ['HTTP_CONTENT_TYPE' => 'application/json', 'CONTENT_TYPE' => 'application/json'], $json);
+        $this->assertEquals(201, self::$client->getResponse()->getStatusCode(), "Expected a 201 response status after posting to /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}.json with content, but got ".self::$client->getResponse()->getStatusCode()."\r\nResponse:\r\n".self::$client->getResponse()->getContent());
     }
 

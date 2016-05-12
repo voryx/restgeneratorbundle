@@ -1,7 +1,7 @@
     public function testPost()
     {
         $json = json_encode(self::$sample_object);
-        $crawler = self::$client->request('POST', '/{{ route_prefix }}/{{ entity|lower }}.json', array(), array(), ['HTTP_CONTENT_TYPE' => 'application/json', 'CONTENT_TYPE' => 'application/json'], $json);
-        $this->assertEquals(201, self::$client->getResponse()->getStatusCode(), "Expected a 201 response status after posting to /{{ route_prefix }}/{{ entity|lower }}.json with content, but got ".self::$client->getResponse()->getStatusCode());
+        $crawler = self::$client->request('POST', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}.json', array(), array(), ['HTTP_CONTENT_TYPE' => 'application/json', 'CONTENT_TYPE' => 'application/json'], $json);
+        $this->assertEquals(201, self::$client->getResponse()->getStatusCode(), "Expected a 201 response status after posting to /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}.json with content, but got ".self::$client->getResponse()->getStatusCode());
     }
 

@@ -24,6 +24,7 @@ use FOS\RestBundle\Controller\Annotations\Patch as RESTPatch;
 use FOS\RestBundle\Controller\Annotations\Post as RESTPost;
 use FOS\RestBundle\Controller\Annotations\Delete as RESTDelete;
 {%- endif %}
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,12 +39,12 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
 {% block phpdoc_class_header %}
- * {{ entity }} controller.
+ * {{ entity|replace({"\\":'/'}) }} controller.
 {% endblock phpdoc_class_header %}
  * @RouteResource("{{ entity }}")
 {% block phpdoc_class_annotations %}
 {% if 'annotation' == format %}
- * @Route("/{{ route_prefix }}/{{ entity|lower }}")
+ * @Route("/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}")
 {% endif %}
 {% endblock phpdoc_class_annotations %}
  */
