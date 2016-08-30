@@ -4,6 +4,8 @@
      *
      * @View(serializerEnableMaxDepthChecks=true)
      *
+     * @Secure("")
+     *
      * @param Request $request
      * @param $entity
      *
@@ -18,8 +20,9 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        return $this->putAction($request, $entity);
 {% endblock method_body %}
-{% block method_return '' %}
+{% block method_return %}
+		return $this->patch($request, get_class(new {{ entity }}Type()), $entity);
+{% endblock method_return %}
     }
 {% block form '' %}

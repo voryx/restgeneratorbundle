@@ -76,18 +76,18 @@ EOT
     {
         $questionHelper = $this->getQuestionHelper();
 
-        if ($input->isInteractive()) {
-            $question = new ConfirmationQuestion($questionHelper->getQuestion('Do you confirm generation', 'yes', '?'), true);
-            if (!$questionHelper->ask($input, $output, $question)) {
-                $output->writeln('<error>Command aborted</error>');
+//         if ($input->isInteractive()) {
+//             $question = new ConfirmationQuestion($questionHelper->getQuestion('Do you confirm generation', 'yes', '?'), true);
+//             if (!$questionHelper->ask($input, $output, $question)) {
+//                 $output->writeln('<error>Command aborted</error>');
 
-                return 1;
-            }
-        }
+//                 return 1;
+//             }
+//         }
 
-        $entity = Validators::validateEntityName($input->getOption('entity'));
-        list($bundle, $entity) = $this->parseShortcutNotation($entity);
-
+        $entity = $input->getOption('entity');
+        //list($bundle, $entity) = $this->parseShortcutNotation($entity);
+		$bundle = 'NoIncQrisDataBundle';
         $format         = "rest";
         $prefix         = $this->getRoutePrefix($input, $entity);
         $forceOverwrite = $input->getOption('overwrite');
@@ -137,28 +137,22 @@ EOT
                 'You can give an entity that does not exist yet and the wizard will help',
                 'you defining it.',
                 '',
-                'You must use the shortcut notation like <comment>AcmeBlogBundle:Post</comment>.',
+                'Ex: <comment>Post</comment>.',
                 '',
             )
         );
 
         $question = new Question($questionHelper->getQuestion('The Entity shortcut name', $input->getOption('entity')), $input->getOption('entity'));
-        $question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
+        //$question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
         $entity = $questionHelper->ask($input, $output, $question);
 
         $input->setOption('entity', $entity);
-        list($bundle, $entity) = $this->parseShortcutNotation($entity);
-
+        //list($bundle, $entity) = $this->parseShortcutNotation($entity);
+		
+        $bundle = 'NoIncQrisDataBundle';
+        
         // route prefix
-        $prefix = 'api';
-        $output->writeln(
-            array(
-                '',
-                'Determine the routes prefix (all the API routes will be "mounted" under this',
-                'prefix: /prefix/, /prefix/posts, ...).',
-                '',
-            )
-        );
+        $prefix = 'api/v1';
 
         $prefix = $questionHelper->ask($input, $output, new Question($questionHelper->getQuestion('Routes prefix', '/' . $prefix), '/' . $prefix));
         $input->setOption('route-prefix', $prefix);
@@ -188,10 +182,10 @@ EOT
     protected function updateRouting(QuestionHelper $questionHelper, InputInterface $input, OutputInterface $output, BundleInterface $bundle, $format, $entity, $prefix)
     {
         $auto = true;
-        if ($input->isInteractive()) {
-            $question = new ConfirmationQuestion($questionHelper->getQuestion('Confirm automatic update of the Routing', 'yes', '?'), true);
-            $auto     = $questionHelper->ask($input, $output, $question);
-        }
+//         if ($input->isInteractive()) {
+//             $question = new ConfirmationQuestion($questionHelper->getQuestion('Confirm automatic update of the Routing', 'yes', '?'), true);
+//             $auto     = $questionHelper->ask($input, $output, $question);
+//         }
 
         $output->write('Importing the REST api routes: ');
         $this->getContainer()->get('filesystem')->mkdir($bundle->getPath() . '/Resources/config/');

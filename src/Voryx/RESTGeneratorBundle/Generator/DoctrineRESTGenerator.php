@@ -73,7 +73,8 @@ class DoctrineRESTGenerator extends Generator
         $this->setFormat('yml');
 
         $this->generateControllerClass($forceOverwrite);
-
+		$this->generateBaseRESTControllerClass();
+		$this->generateDataTablesClass();
     }
 
     /**
@@ -125,7 +126,59 @@ class DoctrineRESTGenerator extends Generator
             )
         );
     }
+    
+    /**
+     * Generates the controller class only.
+     *
+     */
+    protected function generateBaseRESTControllerClass()
+    {
+    	$dir = $this->bundle->getPath();
 
+    	
+    	$parts           = explode('\\', $this->entity);
+    	$entityNamespace = implode('\\', $parts);
+    
+    	$target = sprintf(
+    		'%s/Controller/NoIncBaseRESTController.php',
+    		$dir
+    	);
+    
+    	if (!file_exists($target)) {
+	    	$this->renderFile(
+	    		'rest/base_controller.php.twig',
+	    		$target,
+	    		array()
+	    	);
+    	}
+    
+    }
+    
+    /**
+     * Generates Data Tables class.
+     */
+    protected function generateDataTablesClass()
+    {
+    	$dir = $this->bundle->getPath();
+    	 
+    	$parts           = explode('\\', $this->entity);
+    	$entityNamespace = implode('\\', $parts);
+    
+    	$target = sprintf(
+    		'%s/Serialization/DataTables.php',
+    		$dir
+    	);
+    
+    	if (!file_exists($target)) {
+    		$this->renderFile(
+    			'rest/data_tables.php.twig',
+    			$target,
+    			array()
+    		);
+    	}
+    
+    }
+    
     /**
      * Generates the controller class only.
      *

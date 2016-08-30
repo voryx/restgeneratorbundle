@@ -4,6 +4,8 @@
      *
      * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
      *
+     * @Secure("")
+     *
      * @param Request $request
      *
      * @return Response
@@ -18,22 +20,12 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $entity = new {{ entity }}();
-        $form = $this->createForm(get_class(new {{ entity }}Type()), $entity, array("method" => $request->getMethod()));
-        $this->removeExtraFields($request, $form);
-        $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $entity;
-        }
+		$entity = new {{ entity }}();
 
 {% endblock method_body %}
 {% block method_return %}
-        return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
+        return $this->post($request, get_class(new {{ entity }}Type()), $entity);
 {% endblock method_return %}
     }
 {% block form '' %}

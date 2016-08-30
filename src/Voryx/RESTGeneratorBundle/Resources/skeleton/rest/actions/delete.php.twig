@@ -4,6 +4,8 @@
      *
      * @View(statusCode=204)
      *
+     * @Secure("")
+     *
      * @param Request $request
      * @param $entity
      *
@@ -18,16 +20,10 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        try {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($entity);
-            $em->flush();
 
-            return null;
-        } catch (\Exception $e) {
-            return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
-        }
 {% endblock method_body %}
-{% block method_return '' %}
+{% block method_return  %}
+		$this->delete($request, $entity);
+{% endblock method_return %}
     }
 {% block form '' %}

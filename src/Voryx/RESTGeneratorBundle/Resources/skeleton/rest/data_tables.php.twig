@@ -1,0 +1,159 @@
+<?php
+
+namespace Voryx\RESTGeneratorBundle\Serialization;
+
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\Type;
+
+/**
+ * Class that serializes data for data tables.
+ * 
+ * @ExclusionPolicy("none")
+ */
+final class DataTables
+{
+
+    /**
+     * @Expose
+     * @Groups({"DataTables"})
+     */
+    private $draw;
+
+    /**
+     * @Expose
+     * @Groups({"DataTables"})
+     * @SerializedName("recordsTotal")
+     * @Type("integer")
+     */
+    private $recordsTotal;
+
+    /**
+     * @Expose
+     * @Groups({"DataTables"})
+     * @SerializedName("recordsFiltered")
+     * @Type("integer")
+     */
+    private $recordsFiltered;
+
+    /**
+     * @Expose
+     * @Groups({"DataTables"})
+     */
+    private $data = [];
+
+    /**
+     * @Expose
+     * @Groups({"DataTables"})
+     */
+    private $error;
+
+    /**
+     *
+     * @return the $draw
+     *
+     */
+    public function getDraw()
+    {
+        return $this->draw;
+    }
+
+    /**
+     *
+     * @return the $recordsTotal
+     *
+     */
+    public function getRecordsTotal()
+    {
+        return $this->recordsTotal;
+    }
+
+    /**
+     *
+     * @return the $recordsFiltered
+     *
+     */
+    public function getRecordsFiltered()
+    {
+        return $this->recordsFiltered;
+    }
+
+    /**
+     *
+     * @return the $data
+     *
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     *
+     * @return the $error
+     *
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     *
+     * @param field_type $draw
+     *
+     */
+    public function setDraw($draw)
+    {
+        $this->draw = $draw;
+        return $this;
+    }
+
+    /**
+     *
+     * @param field_type $recordsTotal
+     *
+     */
+    public function setRecordsTotal($recordsTotal)
+    {
+        $this->recordsTotal = $recordsTotal;
+        return $this;
+    }
+
+    /**
+     *
+     * @param field_type $recordsFiltered
+     *
+     */
+    public function setRecordsFiltered($recordsFiltered)
+    {
+        $this->recordsFiltered = $recordsFiltered;
+        return $this;
+    }
+
+    /**
+     *
+     * @param field_type $data
+     *
+     */
+    public function setData($data)
+    {
+
+        $this->data = $data;
+        return $this;
+
+    }
+
+    /**
+     *
+     * @param field_type $error
+     *
+     */
+    public function setError($error)
+    {
+        $this->error = $error;
+        return $this;
+    }
+}

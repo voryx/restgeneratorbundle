@@ -1,0 +1,199 @@
+<?php
+
+namespace NoInc\Qris\DataBundle\Controller;
+
+{% block use_statements %}
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+use FOS\RestBundle\Controller\Annotations\RouteResource;
+use FOS\RestBundle\Controller\Annotations\View;
+use FOS\RestBundle\Request\ParamFetcherInterface;
+use FOS\RestBundle\Util\Codes;
+use FOS\RestBundle\View\View as FOSView;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\Response;
+use Voryx\RESTGeneratorBundle\Serialization\DataTables;
+
+{% endblock use_statements %}
+
+/**
+{% block phpdoc_class_header %}
+ * Base controller for all the rest controllers. 
+ * Includes methods from Voryx controller.
+ * https://github.com/voryx/restgeneratorbundle/blob/master/src/Voryx/RESTGeneratorBundle/Controller/VoryxController.php
+{% endblock phpdoc_class_header %}
+ */
+{% block class_definition %}
+abstract class NoIncBaseRESTController extends Controller
+{% endblock class_definition %}
+{
+{% block class_body %}
+    /**
+     * Get an entity.
+     * 
+     * @param $entity
+     * 
+     * @return Response
+     */
+    public function get($entity)
+    {
+        return $entity;
+    }
+    
+    /**
+     * Get paginated entities.
+     *
+     * @param ParamFetcherInterface $paramFetcher
+     * @param string $entity_name
+     *
+     * @return Response
+     *
+     */
+    public function cget(ParamFetcherInterface $paramFetcher = null)
+    {
+        try {
+        	
+            $repository = $this->getDoctrine()->getManager()->getRepository('NoIncQrisDataBundle:' . $this->getEntityName());
+            
+        	if ($paramFetcher->get('dataTables')) {
+
+        		$start = $paramFetcher->get('start');
+	            $length = $paramFetcher->get('length');
+	            $draw = (int) $paramFetcher->get('draw');
+	            $search = $paramFetcher->get('search');
+        		
+	            $total_count = $repository->getAllCount();
+	            $entities = $repository->getAll($start, $length);
+	            
+	           	return (new DataTables())->setDraw($draw)->setRecordsFiltered($total_count)->setRecordsTotal($total_count)->setData($entities);
+        	
+        	} else {
+        		$entities = $repository->findAll();
+        		return $entities;
+        	} 
+
+        } catch (\Exception $e) {
+
+        	return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
+        
+        }
+    }
+    /**
+     * Create an entity.
+     *
+     * @param Request $request
+     * @param string $form_class
+     * @param $entity
+     *
+     * @return Response
+     *
+     */
+    public function post(Request $request, $form_class, $entity)
+    {
+    	$form = $this->createForm($form_class, $entity, ["method" => $request->getMethod()]);
+        $this->removeExtraFields($request, $form);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+
+            return $entity;
+        }
+
+        return FOSView::create(['errors' => $form->getErrors()], Codes::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Partial Update to an entity.
+     *
+     * @param Request $request
+     * @param string $form_class
+     * @param $entity
+     *
+     * @return Response
+     */
+    public function patch(Request $request, $form_class, $entity)
+    {
+        try {
+            $form = $this->createForm($form_class, $entity, ["method" => $request->getMethod()]);
+            $em = $this->getDoctrine()->getManager();
+            $this->removeExtraFields($request, $form);
+            $form->handleRequest($request);
+            
+            if ($form->isValid()) {
+            	
+                $em->flush();
+                return $entity;
+            }
+
+            return FOSView::create(['errors' => $form->getErrors()], Codes::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Exception $e) {
+            return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * Delete an entity.
+     *
+     * @param Request $request
+     * @param $entity
+     *
+     * @return Response
+     */
+    public function delete(Request $request, $entity)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($entity);
+            $em->flush();
+
+            return null;
+        } catch (\Exception $e) {
+            return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    
+    /**
+     * Create a form without a name
+     *
+     * @param null $type
+     * @param null $data
+     * @param array $options
+     *
+     * @return Form|FormInterface
+     */
+    public function createForm($type = null, $data = null, array $options = array())
+    {
+    	$form = $this->container->get('form.factory')->createNamed(
+    		null, //since we're not including the form name in the request, set this to null
+    		$type,
+    		$data,
+    		$options
+    	);
+    
+    	return $form;
+    }
+    
+    /**
+     * Get rid on any fields that don't appear in the form
+     *
+     * @param Request $request
+     * @param Form $form
+     */
+    protected function removeExtraFields(Request $request, Form $form)
+    {
+    	$data     = $request->request->all();
+    	$children = $form->all();
+    	$data     = array_intersect_key($data, $children);
+    	$request->request->replace($data);
+    }
+    
+    abstract function getEntityName();
+    
+{% endblock class_body %}
+}

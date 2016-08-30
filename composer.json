@@ -1,5 +1,5 @@
 {
-    "name": "voryx/restgeneratorbundle",
+    "name": "noinc/restgeneratorbundle",
     "description": "REST API Generator for Symfony 2",
     "type": "symfony-bundle",
     "license": "MIT",
@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Voryx\\RESTGeneratorBundle": "src/"
+            "NoInc\\RESTGeneratorBundle": "src/"
         }
     },
     "extra" : {

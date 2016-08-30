@@ -4,6 +4,8 @@
      *
      * @View(serializerEnableMaxDepthChecks=true)
      *
+     * @Secure("")
+     *
      * @return Response
 {% endblock phpdoc_method_header %}
      *
@@ -17,7 +19,7 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        return $entity;
+        return $this->get($entity);
 {% endblock method_body %}
 {% block method_return '' %}
     }

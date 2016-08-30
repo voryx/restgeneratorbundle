@@ -13,6 +13,8 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View as FOSView;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use JMS\SecurityExtraBundle\Annotation\Secure;
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
 {% if 'annotation' == format -%}
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,7 +25,6 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Voryx\RESTGeneratorBundle\Controller\VoryxController;
 {% endblock use_statements %}
 
 /**
@@ -38,10 +39,14 @@ use Voryx\RESTGeneratorBundle\Controller\VoryxController;
 {% endblock phpdoc_class_annotations %}
  */
 {% block class_definition %}
-class {{ entity_class }}RESTController extends VoryxController
+class {{ entity_class }}RESTController extends NoIncBaseRESTController
 {% endblock class_definition %}
 {
 {% block class_body %}
+
+	const ENTITY_NAME = '{{ entity }}';
+	
+
     {%- include 'rest/actions/getById.php.twig' %}
 
     {%- include 'rest/actions/getAll.php.twig' %}
@@ -53,5 +58,14 @@ class {{ entity_class }}RESTController extends VoryxController
     {%- include 'rest/actions/patch.php.twig' %}
 
     {%- include 'rest/actions/delete.php.twig' %}
+    
+    /**
+     * Get entity name.
+     * @return string
+     */
+    public function getEntityName() 
+    {
+    	return self::ENTITY_NAME;
+    }
 {% endblock class_body %}
 }
