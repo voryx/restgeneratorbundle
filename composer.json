@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-0": {
-            "NoInc\\RESTGeneratorBundle": "src/"
+            "Voryx\\RESTGeneratorBundle": "src/"
         }
     },
     "minimum-stability": "dev",
