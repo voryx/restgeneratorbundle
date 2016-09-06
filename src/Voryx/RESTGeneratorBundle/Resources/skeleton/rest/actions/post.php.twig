@@ -1,10 +1,11 @@
+
     /**
 {% block phpdoc_method_header %}
      * Create a {{ entity }} entity.
      *
      * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
      *
-     * @Secure("")
+     * @Secure(roles="{{ role_all }}, {{ role_create }}")
      *
      * @param Request $request
      *

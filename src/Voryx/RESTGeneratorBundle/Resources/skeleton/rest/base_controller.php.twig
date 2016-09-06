@@ -47,7 +47,6 @@ abstract class NoIncBaseRESTController extends Controller
      * Get paginated entities.
      *
      * @param ParamFetcherInterface $paramFetcher
-     * @param string $entity_name
      *
      * @return Response
      *
@@ -55,32 +54,14 @@ abstract class NoIncBaseRESTController extends Controller
     public function cget(ParamFetcherInterface $paramFetcher = null)
     {
         try {
-        	
             $repository = $this->getDoctrine()->getManager()->getRepository('NoIncQrisDataBundle:' . $this->getEntityName());
-            
-        	if ($paramFetcher->get('dataTables')) {
-
-        		$start = $paramFetcher->get('start');
-	            $length = $paramFetcher->get('length');
-	            $draw = (int) $paramFetcher->get('draw');
-	            $search = $paramFetcher->get('search');
-        		
-	            $total_count = $repository->getAllCount();
-	            $entities = $repository->getAll($start, $length);
-	            
-	           	return (new DataTables())->setDraw($draw)->setRecordsFiltered($total_count)->setRecordsTotal($total_count)->setData($entities);
-        	
-        	} else {
-        		$entities = $repository->findAll();
-        		return $entities;
-        	} 
-
+            $entities = $repository->findAll();
+            return $entities;
         } catch (\Exception $e) {
-
         	return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
-        
         }
     }
+
     /**
      * Create an entity.
      *
@@ -136,6 +117,7 @@ abstract class NoIncBaseRESTController extends Controller
             return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
     /**
      * Delete an entity.
      *
@@ -156,8 +138,7 @@ abstract class NoIncBaseRESTController extends Controller
             return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
+
     /**
      * Create a form without a name
      *

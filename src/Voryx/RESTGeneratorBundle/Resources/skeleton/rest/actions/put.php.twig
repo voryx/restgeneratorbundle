@@ -1,10 +1,11 @@
+
     /**
 {% block phpdoc_method_header %}
      * Update a {{ entity }} entity.
      *
      * @View(serializerEnableMaxDepthChecks=true)
      *
-     * @Secure("")
+     * @Secure(roles="{{ role_all }}, {{ role_update }}")
      *
      * @param Request $request
      * @param $entity

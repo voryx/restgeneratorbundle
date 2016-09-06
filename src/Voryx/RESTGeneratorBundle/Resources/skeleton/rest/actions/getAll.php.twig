@@ -1,20 +1,15 @@
+
     /**
 {% block phpdoc_method_header %}
      * Get all {{ entity }} entities.
      *
      * @View(serializerEnableMaxDepthChecks=true)
      *
-     * @Secure("")
+     * @Secure(roles="{{ role_all }}, {{ role_read }}")
      *
      * @param ParamFetcherInterface $paramFetcher
      *
      * @return Response
-     *
-     * @QueryParam(name="draw", nullable=true, requirements="\d+")
-     * @QueryParam(name="start", nullable=true, requirements="\d+", default="0")
-     * @QueryParam(name="length", nullable=true, requirements="\d+", default="10")
-     * @QueryParam(name="search", nullable=true, array=true, default="")
-     * @QueryParam(name="dataTables", nullable=true, default="true")
 {% endblock phpdoc_method_header %}
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}{% endif %}

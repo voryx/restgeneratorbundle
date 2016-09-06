@@ -43,6 +43,11 @@ class {{ entity_class }}RESTController extends NoIncBaseRESTController
 {% endblock class_definition %}
 {
 {% block class_body %}
+{% set role_all    =  'ROLE_' ~ entity | upper ~ '_ALL'    %}
+{% set role_create =  'ROLE_' ~ entity | upper ~ '_CREATE' %}
+{% set role_read   =  'ROLE_' ~ entity | upper ~ '_READ'   %}
+{% set role_update =  'ROLE_' ~ entity | upper ~ '_UPDATE' %}
+{% set role_delete =  'ROLE_' ~ entity | upper ~ '_DELETE' %}
 
 	const ENTITY_NAME = '{{ entity }}';
 	

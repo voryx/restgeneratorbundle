@@ -1,10 +1,11 @@
+
     /**
 {% block phpdoc_method_header %}
      * Delete a {{ entity }} entity.
      *
      * @View(statusCode=204)
      *
-     * @Secure("")
+     * @Secure(roles="{{ role_all }}, {{ role_delete }}")
      *
      * @param Request $request
      * @param $entity
