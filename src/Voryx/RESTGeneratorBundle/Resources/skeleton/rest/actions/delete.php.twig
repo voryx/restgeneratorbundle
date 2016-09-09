@@ -1,30 +1,17 @@
 
     /**
-{% block phpdoc_method_header %}
      * Delete a {{ entity }} entity.
      *
+     * @Delete("/{id}")
      * @View(statusCode=204)
-     *
-     * @Secure(roles="{{ role_all }}, {{ role_delete }}")
+     * @Secure(roles="{{ roles['all'] }}, {{ roles['delete'] }}")
      *
      * @param Request $request
      * @param $entity
      *
      * @return Response
-{% endblock phpdoc_method_header %}
-{% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
-{% endblock phpdoc_method_annotations %}
      */
-{% block method_definition %}
     public function deleteAction(Request $request, {{ entity }} $entity)
-{% endblock method_definition %}
     {
-{% block method_body %}
-
-{% endblock method_body %}
-{% block method_return  %}
 		$this->delete($request, $entity);
-{% endblock method_return %}
     }
-{% block form '' %}

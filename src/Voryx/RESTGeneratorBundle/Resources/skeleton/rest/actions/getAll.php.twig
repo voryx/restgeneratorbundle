@@ -1,28 +1,16 @@
 
     /**
-{% block phpdoc_method_header %}
      * Get all {{ entity }} entities.
      *
+     * @Get("")
      * @View(serializerEnableMaxDepthChecks=true)
-     *
-     * @Secure(roles="{{ role_all }}, {{ role_read }}")
+     * @Secure(roles="{{ roles['all'] }}, {{ roles['read'] }}")
      *
      * @param ParamFetcherInterface $paramFetcher
      *
      * @return Response
-{% endblock phpdoc_method_header %}
-{% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
-{% endblock phpdoc_method_annotations %}
      */
-{% block method_definition %}
     public function cgetAction(ParamFetcherInterface $paramFetcher)
-{% endblock method_definition %}
     {
-{% block method_body %}
-{% endblock method_body %}
-{% block method_return %}
 		return $this->cget($paramFetcher);
-{% endblock method_return %}
     }
-{% block form '' %}

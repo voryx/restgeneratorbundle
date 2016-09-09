@@ -75,24 +75,11 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $questionHelper = $this->getQuestionHelper();
-
-//         if ($input->isInteractive()) {
-//             $question = new ConfirmationQuestion($questionHelper->getQuestion('Do you confirm generation', 'yes', '?'), true);
-//             if (!$questionHelper->ask($input, $output, $question)) {
-//                 $output->writeln('<error>Command aborted</error>');
-
-//                 return 1;
-//             }
-//         }
-
         $entity = $input->getOption('entity');
-        //list($bundle, $entity) = $this->parseShortcutNotation($entity);
 		$bundle = 'NoIncQrisDataBundle';
-        $format         = "rest";
-        $prefix         = $this->getRoutePrefix($input, $entity);
         $forceOverwrite = $input->getOption('overwrite');
 
-        $questionHelper->writeSection($output, 'REST api generation');
+        $questionHelper->writeSection($output, 'REST api generation for "' . $entity . '"');
 
         $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace($bundle) . '\\' . $entity;
         $metadata    = $this->getEntityMetadata($entityClass);
@@ -101,19 +88,15 @@ EOT
         $document    = $input->getOption('document');
 
         $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $entity, $metadata[0], $prefix, $forceOverwrite, $resource, $document);
+        $generator->generate($bundle, $entity, $metadata[0], $forceOverwrite, $resource, $document);
 
         $output->writeln('Generating the REST api code: <info>OK</info>');
 
         $errors = array();
-        $runner = $questionHelper->getRunner($output, $errors);
 
         // form
         $this->generateForm($bundle, $entity, $metadata);
         $output->writeln('Generating the Form code: <info>OK</info>');
-
-        // create route
-        $runner($this->updateRouting($questionHelper, $input, $output, $bundle, $format, $entity, $prefix));
 
         $questionHelper->writeGeneratorSummary($output, $errors);
     }

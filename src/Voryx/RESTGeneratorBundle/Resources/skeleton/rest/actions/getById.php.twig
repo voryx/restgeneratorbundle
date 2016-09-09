@@ -1,28 +1,13 @@
-
-
-    /**
-{% block phpdoc_method_header %}
+/**
      * Get a {{ entity }} entity
      *
+     * @Get("/{id}")
      * @View(serializerEnableMaxDepthChecks=true)
-     *
-     * @Secure(roles="{{ role_all }}, {{ role_read }}")
+     * @Secure(roles="{{ roles['all'] }}, {{ roles['read'] }}")
      *
      * @return Response
-{% endblock phpdoc_method_header %}
-     *
-{% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}
-{% endif %}
-{% endblock phpdoc_method_annotations %}
      */
-{% block method_definition %}
     public function getAction({{ entity }} $entity)
-{% endblock method_definition %}
     {
-{% block method_body %}
         return $this->get($entity);
-{% endblock method_body %}
-{% block method_return '' %}
     }
-{% block form '' %}

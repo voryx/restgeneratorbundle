@@ -11,6 +11,7 @@
 
 namespace Voryx\RESTGeneratorBundle\Generator;
 
+use Doctrine\Common\Inflector\Inflector;
 use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -53,11 +54,19 @@ class DoctrineRESTGenerator extends Generator
      *
      * @throws \RuntimeException
      */
-    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $routePrefix, $forceOverwrite)
+    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $forceOverwrite)
     {
-        $this->routePrefix     = $routePrefix;
-        $this->routeNamePrefix = str_replace('/', '_', $routePrefix);
-        $this->actions         = array('getById', 'getAll', 'post', 'put', 'delete');
+        $pluralEntity = Inflector::pluralize(strtolower($entity));
+        $this->routePrefix     = '/' . $pluralEntity;
+        $this->routeNamePrefix = 'noinc_' . $pluralEntity . '_';
+        $this->actions         = array('getById', 'getAll', 'post', 'put', 'patch', 'delete');
+        $this->roles           = [
+            'all'    =>  'ROLE_' . strtoupper($entity) . '_ALL',
+            'create' =>  'ROLE_' . strtoupper($entity) . '_CREATE',
+            'read'   =>  'ROLE_' . strtoupper($entity) . '_READ',
+            'update' =>  'ROLE_' . strtoupper($entity) . '_UPDATE',
+            'delete' =>  'ROLE_' . strtoupper($entity) . '_DELETE'
+        ];
 
         if (count($metadata->identifier) > 1) {
             throw new \RuntimeException('The REST api generator does not support entity classes with multiple primary keys.');
@@ -74,7 +83,6 @@ class DoctrineRESTGenerator extends Generator
 
         $this->generateControllerClass($forceOverwrite);
 		$this->generateBaseRESTControllerClass();
-		$this->generateDataTablesClass();
     }
 
     /**
@@ -128,17 +136,13 @@ class DoctrineRESTGenerator extends Generator
     }
     
     /**
-     * Generates the controller class only.
+     * Generates the base controller class only (all generated controllers will inherit from this base controller).
      *
      */
     protected function generateBaseRESTControllerClass()
     {
     	$dir = $this->bundle->getPath();
 
-    	
-    	$parts           = explode('\\', $this->entity);
-    	$entityNamespace = implode('\\', $parts);
-    
     	$target = sprintf(
     		'%s/Controller/NoIncBaseRESTController.php',
     		$dir
@@ -151,36 +155,10 @@ class DoctrineRESTGenerator extends Generator
 	    		array()
 	    	);
     	}
-    
     }
     
     /**
-     * Generates Data Tables class.
-     */
-    protected function generateDataTablesClass()
-    {
-    	$dir = $this->bundle->getPath();
-    	 
-    	$parts           = explode('\\', $this->entity);
-    	$entityNamespace = implode('\\', $parts);
-    
-    	$target = sprintf(
-    		'%s/Serialization/DataTables.php',
-    		$dir
-    	);
-    
-    	if (!file_exists($target)) {
-    		$this->renderFile(
-    			'rest/data_tables.php.twig',
-    			$target,
-    			array()
-    		);
-    	}
-    
-    }
-    
-    /**
-     * Generates the controller class only.
+     * Generates the entity rest controller class.
      *
      */
     protected function generateControllerClass($forceOverwrite)
@@ -215,6 +193,7 @@ class DoctrineRESTGenerator extends Generator
                 'namespace'         => $this->bundle->getNamespace(),
                 'entity_namespace'  => $entityNamespace,
                 'format'            => $this->format,
+                'roles'              => $this->roles
             )
         );
     }

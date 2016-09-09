@@ -2,7 +2,6 @@
 
 namespace NoInc\Qris\DataBundle\Controller;
 
-{% block use_statements %}
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -17,20 +16,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
 use Voryx\RESTGeneratorBundle\Serialization\DataTables;
 
-{% endblock use_statements %}
-
 /**
-{% block phpdoc_class_header %}
- * Base controller for all the rest controllers. 
+ * Base controller for all the rest controllers.
  * Includes methods from Voryx controller.
  * https://github.com/voryx/restgeneratorbundle/blob/master/src/Voryx/RESTGeneratorBundle/Controller/VoryxController.php
-{% endblock phpdoc_class_header %}
  */
-{% block class_definition %}
 abstract class NoIncBaseRESTController extends Controller
-{% endblock class_definition %}
 {
-{% block class_body %}
     /**
      * Get an entity.
      * 
@@ -44,7 +36,7 @@ abstract class NoIncBaseRESTController extends Controller
     }
     
     /**
-     * Get paginated entities.
+     * Get all entities.
      *
      * @param ParamFetcherInterface $paramFetcher
      *
@@ -107,7 +99,6 @@ abstract class NoIncBaseRESTController extends Controller
             $form->handleRequest($request);
             
             if ($form->isValid()) {
-            	
                 $em->flush();
                 return $entity;
             }
@@ -175,6 +166,4 @@ abstract class NoIncBaseRESTController extends Controller
     }
     
     abstract function getEntityName();
-    
-{% endblock class_body %}
 }

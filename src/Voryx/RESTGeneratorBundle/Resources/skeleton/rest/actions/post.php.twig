@@ -1,32 +1,18 @@
 
     /**
-{% block phpdoc_method_header %}
      * Create a {{ entity }} entity.
      *
+     * @Post("")
      * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
-     *
-     * @Secure(roles="{{ role_all }}, {{ role_create }}")
+     * @Secure(roles="{{ roles['all'] }}, {{ roles['create']}}")
      *
      * @param Request $request
      *
      * @return Response
-{% endblock phpdoc_method_header %}
      *
-{% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
-{% endblock phpdoc_method_annotations %}
      */
-{% block method_definition %}
     public function postAction(Request $request)
-{% endblock method_definition %}
     {
-{% block method_body %}
-
 		$entity = new {{ entity }}();
-
-{% endblock method_body %}
-{% block method_return %}
         return $this->post($request, get_class(new {{ entity }}Type()), $entity);
-{% endblock method_return %}
     }
-{% block form '' %}
