@@ -3,6 +3,9 @@
 namespace {{ namespace }}\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
 use {{ namespace }}\Entity\{{ entity }};
+{% if parent %}
+use {{ namespace }}\Entity\{{ parent }};
+{% endif %}
 use {{ namespace }}\Form\{{ entity }}Type;
 
 use FOS\RestBundle\Controller\Annotations\Get;
@@ -11,18 +14,14 @@ use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Delete;
 use FOS\RestBundle\Controller\Annotations\Patch;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Prefix;
 use FOS\RestBundle\Controller\Annotations\View;
-use FOS\RestBundle\Request\ParamFetcherInterface;
 use JMS\SecurityExtraBundle\Annotation\Secure;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * {{ entity }} controller.
  *
- * @Prefix("{{ route_prefix }}")
  * @NamePrefix("{{ route_name_prefix }}")
  */
 class {{ entity_class }}RESTController extends NoIncBaseRESTController
@@ -32,6 +31,12 @@ class {{ entity_class }}RESTController extends NoIncBaseRESTController
     {% for action in actions %}
     {%- include 'rest/actions/' ~ action ~ '.php.twig' %}
     {% endfor %}
+
+    {% if parent %}
+    {% for parent_action in parent_actions %}
+    {%- include 'rest/actions/' ~ parent_action ~ '.php.twig' %}
+    {% endfor %}
+    {% endif %}
 
     /**
      * Get entity name.

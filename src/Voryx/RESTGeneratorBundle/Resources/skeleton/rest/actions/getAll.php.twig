@@ -2,15 +2,13 @@
     /**
      * Get all {{ entity }} entities.
      *
-     * @Get("")
+     * @Get("/{{ route_prefix }}", name="_all")
      * @View(serializerEnableMaxDepthChecks=true)
      * @Secure(roles="{{ roles['all'] }}, {{ roles['read'] }}")
      *
-     * @param ParamFetcherInterface $paramFetcher
-     *
      * @return Response
      */
-    public function cgetAction(ParamFetcherInterface $paramFetcher)
+    public function cgetAction()
     {
-		return $this->cget($paramFetcher);
+		return $this->cget();
     }

@@ -15,6 +15,7 @@ use FOS\RestBundle\View\View as FOSView;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
 use Voryx\RESTGeneratorBundle\Serialization\DataTables;
+use Doctrine\Common\Inflector\Inflector;
 
 /**
  * Base controller for all the rest controllers.
@@ -38,12 +39,9 @@ abstract class NoIncBaseRESTController extends Controller
     /**
      * Get all entities.
      *
-     * @param ParamFetcherInterface $paramFetcher
-     *
      * @return Response
-     *
      */
-    public function cget(ParamFetcherInterface $paramFetcher = null)
+    public function cget()
     {
         try {
             $repository = $this->getDoctrine()->getManager()->getRepository('NoIncQrisDataBundle:' . $this->getEntityName());
@@ -55,6 +53,19 @@ abstract class NoIncBaseRESTController extends Controller
     }
 
     /**
+    * Get all entities that are children of given entity.
+    *
+    * @param $entity the parent entity under which the collection being retrieved is nested
+    *
+    * @return Response
+    */
+    public function cgetByParent($entity)
+    {
+        $getter = "get" . Inflector::pluralize($this->getEntityName());
+        return $entity->{$getter}();
+    }
+
+    /**
      * Create an entity.
      *
      * @param Request $request
@@ -62,7 +73,6 @@ abstract class NoIncBaseRESTController extends Controller
      * @param $entity
      *
      * @return Response
-     *
      */
     public function post(Request $request, $form_class, $entity)
     {

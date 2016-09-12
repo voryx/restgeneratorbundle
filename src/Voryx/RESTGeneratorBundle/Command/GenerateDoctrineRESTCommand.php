@@ -38,6 +38,7 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
         $this->setDefinition(
             array(
                 new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
+                new InputOption('parent', '', InputOption::VALUE_OPTIONAL, 'The parent of the entity (used to create additional endpoints nested under the parent)'),
                 new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
                 new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
                 new InputOption('resource', '', InputOption::VALUE_NONE, 'The object will return with the resource name'),
@@ -78,6 +79,7 @@ EOT
         $entity = $input->getOption('entity');
 		$bundle = 'NoIncQrisDataBundle';
         $forceOverwrite = $input->getOption('overwrite');
+        $parent = $input->getOption('parent');
 
         $questionHelper->writeSection($output, 'REST api generation for "' . $entity . '"');
 
@@ -88,7 +90,7 @@ EOT
         $document    = $input->getOption('document');
 
         $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $entity, $metadata[0], $forceOverwrite, $resource, $document);
+        $generator->generate($bundle, $entity, $parent, $metadata[0], $forceOverwrite, $resource, $document);
 
         $output->writeln('Generating the REST api code: <info>OK</info>');
 

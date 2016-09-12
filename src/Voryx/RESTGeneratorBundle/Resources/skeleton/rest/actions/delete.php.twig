@@ -2,7 +2,7 @@
     /**
      * Delete a {{ entity }} entity.
      *
-     * @Delete("/{id}")
+     * @Delete("/{{ route_prefix }}/{id}")
      * @View(statusCode=204)
      * @Secure(roles="{{ roles['all'] }}, {{ roles['delete'] }}")
      *

@@ -29,9 +29,13 @@ class DoctrineRESTGenerator extends Generator
     protected $routeNamePrefix;
     protected $bundle;
     protected $entity;
+    protected $parent;
+    protected $parentActions;
+    protected $parentRoute;
     protected $metadata;
     protected $format;
     protected $actions;
+    protected $roles;
 
     /**
      * Constructor.
@@ -48,18 +52,18 @@ class DoctrineRESTGenerator extends Generator
      *
      * @param BundleInterface $bundle A bundle object
      * @param string $entity The entity relative class name
+     * @param string $parent The parent entity class name
      * @param ClassMetadataInfo $metadata The entity class metadata
-     * @param string $routePrefix The route name prefix
-     * @param array $forceOverwrite Whether or not to overwrite an existing controller
+     * @param boolean $forceOverwrite Whether or not to overwrite an existing controller
      *
      * @throws \RuntimeException
      */
-    public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $forceOverwrite)
+    public function generate(BundleInterface $bundle, $entity, $parent, ClassMetadataInfo $metadata, $forceOverwrite)
     {
-        $pluralEntity = Inflector::pluralize(strtolower($entity));
-        $this->routePrefix     = '/' . $pluralEntity;
-        $this->routeNamePrefix = 'noinc_' . $pluralEntity . '_';
+        $this->routePrefix     = Inflector::pluralize(strtolower($entity));
+        $this->routeNamePrefix = 'noinc_' . $this->routePrefix . '_';
         $this->actions         = array('getById', 'getAll', 'post', 'put', 'patch', 'delete');
+        $this->parentActions   = array('getAllByParent', 'postByParent');
         $this->roles           = [
             'all'    =>  'ROLE_' . strtoupper($entity) . '_ALL',
             'create' =>  'ROLE_' . strtoupper($entity) . '_CREATE',
@@ -78,6 +82,10 @@ class DoctrineRESTGenerator extends Generator
 
         $this->entity   = $entity;
         $this->bundle   = $bundle;
+        $this->parent   = $parent;
+        if ($parent) {
+            $this->parentRoute = Inflector::pluralize(strtolower($parent));
+        }
         $this->metadata = $metadata;
         $this->setFormat('yml');
 
@@ -107,7 +115,6 @@ class DoctrineRESTGenerator extends Generator
 
     /**
      * Generates the routing configuration.
-     *
      */
     protected function generateConfiguration()
     {
@@ -137,7 +144,6 @@ class DoctrineRESTGenerator extends Generator
     
     /**
      * Generates the base controller class only (all generated controllers will inherit from this base controller).
-     *
      */
     protected function generateBaseRESTControllerClass()
     {
@@ -156,10 +162,11 @@ class DoctrineRESTGenerator extends Generator
 	    	);
     	}
     }
-    
+
     /**
      * Generates the entity rest controller class.
      *
+     * @param boolean $forceOverwrite whether to overwrite controller class if it exists
      */
     protected function generateControllerClass($forceOverwrite)
     {
@@ -190,10 +197,13 @@ class DoctrineRESTGenerator extends Generator
                 'bundle'            => $this->bundle->getName(),
                 'entity'            => $this->entity,
                 'entity_class'      => $entityClass,
+                'parent'            => $this->parent,
+                'parent_route'      => $this->parentRoute,
+                'parent_actions'    => $this->parentActions,
                 'namespace'         => $this->bundle->getNamespace(),
                 'entity_namespace'  => $entityNamespace,
                 'format'            => $this->format,
-                'roles'              => $this->roles
+                'roles'             => $this->roles
             )
         );
     }
