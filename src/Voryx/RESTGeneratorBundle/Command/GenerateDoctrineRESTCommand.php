@@ -21,17 +21,19 @@ use Voryx\RESTGeneratorBundle\Manipulator\RoutingManipulator;
 
 /**
  * Generates a REST api for a Doctrine entity.
- *
  */
 class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
 {
+	
+	const DATA_BUNDLE = 'NoIncQrisDataBundle';
+	const API_BUNDLE = 'NoIncQrisApiBundle';
     /**
      * @var
      */
     private $formGenerator;
 
     /**
-     * @see Command
+     * Configure the command
      */
     protected function configure()
     {
@@ -46,64 +48,16 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
             )
         )
             ->setDescription('Generates a REST api based on a Doctrine entity')
-            ->setHelp(
-                <<<EOT
-                The <info>voryx:generate:rest</info> command generates a REST api based on a Doctrine entity.
-
-<info>php app/console voryx:generate:rest --entity=AcmeBlogBundle:Post --route-prefix=post_admin</info>
-
-Every generated file is based on a template. There are default templates but they can be overriden by placing custom templates in one of the following locations, by order of priority:
-
-<info>BUNDLE_PATH/Resources/SensioGeneratorBundle/skeleton/rest
-APP_PATH/Resources/SensioGeneratorBundle/skeleton/rest</info>
-
-And
-
-<info>__bundle_path__/Resources/SensioGeneratorBundle/skeleton/form
-__project_root__/app/Resources/SensioGeneratorBundle/skeleton/form</info>
-
-You can check https://github.com/sensio/SensioGeneratorBundle/tree/master/Resources/skeleton
-in order to know the file structure of the skeleton
-EOT
-            )
+            ->setHelp($this->getHelpText())
             ->setName('voryx:generate:rest')
             ->setAliases(array('generate:voryx:rest'));
     }
-
+    
     /**
-     * @see Command
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $questionHelper = $this->getQuestionHelper();
-        $entity = $input->getOption('entity');
-		$bundle = 'NoIncQrisDataBundle';
-        $forceOverwrite = $input->getOption('overwrite');
-        $parent = $input->getOption('parent');
-
-        $questionHelper->writeSection($output, 'REST api generation for "' . $entity . '"');
-
-        $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace($bundle) . '\\' . $entity;
-        $metadata    = $this->getEntityMetadata($entityClass);
-        $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
-        $resource    = $input->getOption('resource');
-        $document    = $input->getOption('document');
-
-        $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $entity, $parent, $metadata[0], $forceOverwrite, $resource, $document);
-
-        $output->writeln('Generating the REST api code: <info>OK</info>');
-
-        $errors = array();
-
-        // form
-        $this->generateForm($bundle, $entity, $metadata);
-        $output->writeln('Generating the Form code: <info>OK</info>');
-
-        $questionHelper->writeGeneratorSummary($output, $errors);
-    }
-
-    /**
+     * This method is executed BEFORE execute().
+     * Its purpose is to check if some of the options/arguments are missing and interactively ask the user for those values. 
+     * This is the last place where you can ask for missing options/arguments. 
+     * After this command, missing options/arguments will result in an error.
      * @param InputInterface $input
      * @param OutputInterface $output
      */
@@ -127,18 +81,18 @@ EOT
             )
         );
 
+        // entity name
         $question = new Question($questionHelper->getQuestion('The Entity shortcut name', $input->getOption('entity')), $input->getOption('entity'));
-        //$question->setValidator(array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateEntityName'));
         $entity = $questionHelper->ask($input, $output, $question);
-
         $input->setOption('entity', $entity);
-        //list($bundle, $entity) = $this->parseShortcutNotation($entity);
-		
-        $bundle = 'NoIncQrisDataBundle';
+        
+        // entity's parent
+        $question = new Question($questionHelper->getQuestion('Entity\'s parent', $input->getOption('parent')), $input->getOption('parent'));
+        $parent = $questionHelper->ask($input, $output, $question);
+        $input->setOption('parent', $parent);
         
         // route prefix
         $prefix = 'api/v1';
-
         $prefix = $questionHelper->ask($input, $output, new Question($questionHelper->getQuestion('Routes prefix', '/' . $prefix), '/' . $prefix));
         $input->setOption('route-prefix', $prefix);
 
@@ -148,11 +102,46 @@ EOT
                 '',
                 $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
                 '',
-                sprintf("You are going to generate a REST api controller for \"<info>%s:%s</info>\"", $bundle, $entity),
+                sprintf("You are going to generate a REST api controller for \"<info>%s:%s</info>\"", self::DATA_BUNDLE, $entity),
                 '',
             )
         );
     }
+
+    /**
+     * @see Command
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $entity = $input->getOption('entity');
+        $forceOverwrite = $input->getOption('overwrite');
+        $parent = $input->getOption('parent');
+        $resource    = $input->getOption('resource');
+        $document    = $input->getOption('document');
+
+        $questionHelper = $this->getQuestionHelper();
+        $questionHelper->writeSection($output, 'REST api generation for "' . $entity . '"');
+
+        $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace(self::DATA_BUNDLE) . '\\' . $entity;
+        $metadata    = $this->getEntityMetadata($entityClass);
+        $bundle      = $this->getContainer()->get('kernel')->getBundle(self::DATA_BUNDLE);
+        $targetBundle = $this->getContainer()->get('kernel')->getBundle(self::API_BUNDLE);
+
+        $generator = $this->getGenerator($bundle);
+        $generator->generate($bundle, $targetBundle, $entity, $parent, $metadata[0], $forceOverwrite, $resource, $document);
+
+        $output->writeln('Generating the REST api code: <info>OK</info>');
+
+        $errors = array();
+
+        // form, override every time.
+        
+        $this->generateForm($bundle, $entity, $metadata, true);
+        $output->writeln('Generating the Form code: <info>OK</info>');
+
+        $questionHelper->writeGeneratorSummary($output, $errors);
+    }
+
 
 
     /**
@@ -167,10 +156,6 @@ EOT
     protected function updateRouting(QuestionHelper $questionHelper, InputInterface $input, OutputInterface $output, BundleInterface $bundle, $format, $entity, $prefix)
     {
         $auto = true;
-//         if ($input->isInteractive()) {
-//             $question = new ConfirmationQuestion($questionHelper->getQuestion('Confirm automatic update of the Routing', 'yes', '?'), true);
-//             $auto     = $questionHelper->ask($input, $output, $question);
-//         }
 
         $output->write('Importing the REST api routes: ');
         $this->getContainer()->get('filesystem')->mkdir($bundle->getPath() . '/Resources/config/');
@@ -230,4 +215,29 @@ EOT
         return $skeletonDirs;
     }
 
+    /**
+     * Command description shown when running the command with the "--help" option
+     * @return string
+     */
+    protected function getHelpText()
+    {
+    	return <<<EOT
+The <info>voryx:generate:rest</info> command generates a REST api based on a Doctrine entity.
+
+<info>php app/console voryx:generate:rest --entity=AcmeBlogBundle:Post --route-prefix=post_admin</info>
+
+Every generated file is based on a template. There are default templates but they can be overriden by placing custom templates in one of the following locations, by order of priority:
+
+<info>BUNDLE_PATH/Resources/SensioGeneratorBundle/skeleton/rest
+APP_PATH/Resources/SensioGeneratorBundle/skeleton/rest</info>
+
+And
+
+<info>__bundle_path__/Resources/SensioGeneratorBundle/skeleton/form
+__project_root__/app/Resources/SensioGeneratorBundle/skeleton/form</info>
+
+You can check https://github.com/sensio/SensioGeneratorBundle/tree/master/Resources/skeleton
+in order to know the file structure of the skeleton
+EOT;
+    }
 }
