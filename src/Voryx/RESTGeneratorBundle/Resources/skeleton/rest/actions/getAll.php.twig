@@ -1,33 +1,14 @@
+
     /**
-{% block phpdoc_method_header %}
      * Get all {{ entity }} entities.
      *
+     * @Get("/{{ route_prefix }}", name="_all")
      * @View(serializerEnableMaxDepthChecks=true)
-     *
-     * @Secure("")
-     *
-     * @param ParamFetcherInterface $paramFetcher
+     * @Secure(roles="{{ roles['all'] }}, {{ roles['read'] }}")
      *
      * @return Response
-     *
-     * @QueryParam(name="draw", nullable=true, requirements="\d+")
-     * @QueryParam(name="start", nullable=true, requirements="\d+", default="0")
-     * @QueryParam(name="length", nullable=true, requirements="\d+", default="10")
-     * @QueryParam(name="search", nullable=true, array=true, default="")
-     * @QueryParam(name="dataTables", nullable=true, default="true")
-{% endblock phpdoc_method_header %}
-{% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
-{% endblock phpdoc_method_annotations %}
      */
-{% block method_definition %}
-    public function cgetAction(ParamFetcherInterface $paramFetcher)
-{% endblock method_definition %}
+    public function cgetAction()
     {
-{% block method_body %}
-{% endblock method_body %}
-{% block method_return %}
-		return $this->cget($paramFetcher);
-{% endblock method_return %}
+		return $this->cget();
     }
-{% block form '' %}

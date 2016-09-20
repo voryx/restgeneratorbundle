@@ -1,31 +1,19 @@
+
     /**
-{% block phpdoc_method_header %}
      * Update a {{ entity }} entity.
      *
+     * @Put("/{{ route_prefix }}/{id}")
      * @View(serializerEnableMaxDepthChecks=true)
      *
-     * @Secure("")
+     * @Secure(roles="{{ roles['all'] }}, {{ roles['update'] }}")
      *
      * @param Request $request
      * @param $entity
      *
      * @return Response
-{% endblock phpdoc_method_header %}
-{% block phpdoc_method_annotations %}
-{% if 'annotation' == format %}{% endif %}
-{% endblock phpdoc_method_annotations %}
      */
-{% block method_definition %}
     public function putAction(Request $request, {{ entity }} $entity)
-{% endblock method_definition %}
     {
-{% block method_body %}
-        
-            $request->setMethod('PATCH'); //Treat all PUTs as PATCH
-
-{% endblock method_body %}
-{% block method_return %}
+        $request->setMethod('PATCH'); //Treat all PUTs as PATCH
 		return $this->patch($request, get_class(new {{ entity }}Type()), $entity);
-{% endblock method_return %}
     }
-{% block form '' %}

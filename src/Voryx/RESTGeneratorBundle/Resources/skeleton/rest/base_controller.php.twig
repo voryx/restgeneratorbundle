@@ -2,7 +2,6 @@
 
 namespace NoInc\Qris\DataBundle\Controller;
 
-{% block use_statements %}
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -16,21 +15,15 @@ use FOS\RestBundle\View\View as FOSView;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
 use Voryx\RESTGeneratorBundle\Serialization\DataTables;
-
-{% endblock use_statements %}
+use Doctrine\Common\Inflector\Inflector;
 
 /**
-{% block phpdoc_class_header %}
- * Base controller for all the rest controllers. 
+ * Base controller for all the rest controllers.
  * Includes methods from Voryx controller.
  * https://github.com/voryx/restgeneratorbundle/blob/master/src/Voryx/RESTGeneratorBundle/Controller/VoryxController.php
-{% endblock phpdoc_class_header %}
  */
-{% block class_definition %}
 abstract class NoIncBaseRESTController extends Controller
-{% endblock class_definition %}
 {
-{% block class_body %}
     /**
      * Get an entity.
      * 
@@ -44,43 +37,34 @@ abstract class NoIncBaseRESTController extends Controller
     }
     
     /**
-     * Get paginated entities.
-     *
-     * @param ParamFetcherInterface $paramFetcher
-     * @param string $entity_name
+     * Get all entities.
      *
      * @return Response
-     *
      */
-    public function cget(ParamFetcherInterface $paramFetcher = null)
+    public function cget()
     {
         try {
-        	
             $repository = $this->getDoctrine()->getManager()->getRepository('NoIncQrisDataBundle:' . $this->getEntityName());
-            
-        	if ($paramFetcher->get('dataTables')) {
-
-        		$start = $paramFetcher->get('start');
-	            $length = $paramFetcher->get('length');
-	            $draw = (int) $paramFetcher->get('draw');
-	            $search = $paramFetcher->get('search');
-        		
-	            $total_count = $repository->getAllCount();
-	            $entities = $repository->getAll($start, $length);
-	            
-	           	return (new DataTables())->setDraw($draw)->setRecordsFiltered($total_count)->setRecordsTotal($total_count)->setData($entities);
-        	
-        	} else {
-        		$entities = $repository->findAll();
-        		return $entities;
-        	} 
-
+            $entities = $repository->findAll();
+            return $entities;
         } catch (\Exception $e) {
-
         	return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
-        
         }
     }
+
+    /**
+    * Get all entities that are children of given entity.
+    *
+    * @param $entity the parent entity under which the collection being retrieved is nested
+    *
+    * @return Response
+    */
+    public function cgetByParent($entity)
+    {
+        $getter = "get" . Inflector::pluralize($this->getEntityName());
+        return $entity->{$getter}();
+    }
+
     /**
      * Create an entity.
      *
@@ -89,7 +73,6 @@ abstract class NoIncBaseRESTController extends Controller
      * @param $entity
      *
      * @return Response
-     *
      */
     public function post(Request $request, $form_class, $entity)
     {
@@ -126,7 +109,6 @@ abstract class NoIncBaseRESTController extends Controller
             $form->handleRequest($request);
             
             if ($form->isValid()) {
-            	
                 $em->flush();
                 return $entity;
             }
@@ -136,6 +118,7 @@ abstract class NoIncBaseRESTController extends Controller
             return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
     /**
      * Delete an entity.
      *
@@ -156,8 +139,7 @@ abstract class NoIncBaseRESTController extends Controller
             return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
+
     /**
      * Create a form without a name
      *
@@ -194,6 +176,4 @@ abstract class NoIncBaseRESTController extends Controller
     }
     
     abstract function getEntityName();
-    
-{% endblock class_body %}
 }

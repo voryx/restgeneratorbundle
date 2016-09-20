@@ -2,63 +2,42 @@
 
 namespace {{ namespace }}\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
-{% block use_statements %}
 use {{ namespace }}\Entity\{{ entity }};
+{% if parent %}
+use {{ namespace }}\Entity\{{ parent }};
+{% endif %}
 use {{ namespace }}\Form\{{ entity }}Type;
 
-use FOS\RestBundle\Controller\Annotations\QueryParam;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Put;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Delete;
+use FOS\RestBundle\Controller\Annotations\Patch;
+use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\View;
-use FOS\RestBundle\Request\ParamFetcherInterface;
-use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\View\View as FOSView;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use JMS\SecurityExtraBundle\Annotation\Secure;
-use JMS\SecurityExtraBundle\Annotation\SecureParam;
-{% if 'annotation' == format -%}
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-{%- endif %}
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-{% endblock use_statements %}
-
 /**
-{% block phpdoc_class_header %}
  * {{ entity }} controller.
-{% endblock phpdoc_class_header %}
- * @RouteResource("{{ entity }}")
-{% block phpdoc_class_annotations %}
-{% if 'annotation' == format %}
- * @Route("/{{ route_prefix }}")
-{% endif %}
-{% endblock phpdoc_class_annotations %}
+ *
+ * @NamePrefix("{{ route_name_prefix }}")
  */
-{% block class_definition %}
 class {{ entity_class }}RESTController extends NoIncBaseRESTController
-{% endblock class_definition %}
 {
-{% block class_body %}
-
 	const ENTITY_NAME = '{{ entity }}';
-	
 
-    {%- include 'rest/actions/getById.php.twig' %}
+    {% for action in actions %}
+    {%- include 'rest/actions/' ~ action ~ '.php.twig' %}
+    {% endfor %}
 
-    {%- include 'rest/actions/getAll.php.twig' %}
+    {% if parent %}
+    {% for parent_action in parent_actions %}
+    {%- include 'rest/actions/' ~ parent_action ~ '.php.twig' %}
+    {% endfor %}
+    {% endif %}
 
-    {%- include 'rest/actions/post.php.twig' %}
-
-    {%- include 'rest/actions/put.php.twig' %}
-
-    {%- include 'rest/actions/patch.php.twig' %}
-
-    {%- include 'rest/actions/delete.php.twig' %}
-    
     /**
      * Get entity name.
      * @return string
@@ -67,5 +46,4 @@ class {{ entity_class }}RESTController extends NoIncBaseRESTController
     {
     	return self::ENTITY_NAME;
     }
-{% endblock class_body %}
 }

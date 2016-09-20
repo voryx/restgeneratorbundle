@@ -86,7 +86,7 @@ sensio_framework_extra:
 Generate the REST controller
 
 ```bash
-$ php app/console voryx:generate:rest
+$ php bin/console voryx:generate:rest
 ```
     
 This will guide you through the generator which will generate a RESTful controller for an entity.
@@ -97,19 +97,19 @@ This will guide you through the generator which will generate a RESTful controll
 Create a new entity called 'Post':
 
 ```bash
-$ php app/console doctrine:generate:entity --entity=Post --format=annotation --fields="name:string(255) description:string(255)" --no-interaction
+$ php bin/console doctrine:generate:entity --entity=Post --format=annotation --fields="name:string(255) description:string(255)" --no-interaction
 ```
 
 Update the database schema:
 
 ```bash
-$ php app/console doctrine:schema:update --force
+$ php bin/console doctrine:schema:update --force
 ```
 
 Generate the API controller:
 
 ```bash
-$ php app/console voryx:generate:rest --entity="Post"
+$ php bin/console voryx:generate:rest --entity="Post"
 ```
 
 ### Using the API
