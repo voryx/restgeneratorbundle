@@ -31,7 +31,7 @@ class DoctrineRESTGenerator extends Generator
     protected $bundle;
     protected $targetBundle;
     protected $entity;
-    protected $parent;
+    protected $parents;
     protected $parentActions;
     protected $parentRoute;
     protected $metadata;
@@ -61,7 +61,7 @@ class DoctrineRESTGenerator extends Generator
      *
      * @throws \RuntimeException
      */
-    public function generate(BundleInterface $bundle, BundleInterface $targetBundle, $entity, $parent, ClassMetadataInfo $metadata, $forceOverwrite)
+    public function generate(BundleInterface $bundle, BundleInterface $targetBundle, $entity, $parents, ClassMetadataInfo $metadata, $forceOverwrite)
     {
         $this->routePrefix     = Inflector::pluralize(strtolower($entity));
         $this->routeNamePrefix = 'noinc_' . $this->routePrefix . '_';
@@ -83,12 +83,12 @@ class DoctrineRESTGenerator extends Generator
             throw new \RuntimeException('The REST api generator expects the entity object has a primary key field named "id" with a getId() method.');
         }
 
-        $this->entity   = $entity;
-        $this->bundle   = $bundle;
+        $this->entity         = $entity;
+        $this->bundle         = $bundle;
         $this->targetBundle   = $targetBundle;
-        $this->parent   = $parent;
-        if ($parent) {
-            $this->parentRoute = Inflector::pluralize(strtolower($parent));
+        $this->parents        = [];
+        foreach($parents as $parent){
+            $this->parents[$parent] = Inflector::pluralize(strtolower($parent));
         }
         $this->metadata = $metadata;
         $this->setFormat('yml');
@@ -161,7 +161,7 @@ class DoctrineRESTGenerator extends Generator
     	$this->renderFile(
     		'rest/base_controller.php.twig',
     		$target,
-    		array()
+    		array('target_namespace' => $this->targetBundle->getNamespace())
     	);
     }
 
@@ -195,11 +195,12 @@ class DoctrineRESTGenerator extends Generator
                 'bundle'            => $this->bundle->getName(),
                 'entity'            => $this->entity,
                 'entity_class'      => $entityClass,
-                'parent'            => $this->parent,
+                'parents'           => $this->parents,
                 'parent_route'      => $this->parentRoute,
                 'parent_actions'    => $this->parentActions,
                 'namespace'         => $this->bundle->getNamespace(),
                 'entity_namespace'  => $entityNamespace,
+                'target_namespace'  => $this->targetBundle->getNamespace(),
                 'format'            => $this->format,
                 'roles'             => $this->roles
             )

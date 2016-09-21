@@ -24,9 +24,6 @@ use Voryx\RESTGeneratorBundle\Manipulator\RoutingManipulator;
  */
 class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
 {
-	
-	const DATA_BUNDLE = 'NoIncQrisDataBundle';
-	const API_BUNDLE = 'NoIncQrisApiBundle';
     /**
      * @var
      */
@@ -40,11 +37,14 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
         $this->setDefinition(
             array(
                 new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
-                new InputOption('parent', '', InputOption::VALUE_OPTIONAL, 'The parent of the entity (used to create additional endpoints nested under the parent)'),
+                new InputOption('parents', '', InputOption::VALUE_OPTIONAL, 'A comma-separated list of parents (used to create additional endpoints nested under each parent)'),
                 new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
                 new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
                 new InputOption('resource', '', InputOption::VALUE_NONE, 'The object will return with the resource name'),
                 new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller'),
+                new InputOption('config', '', InputOption::VALUE_OPTIONAL, 'Path to the config file to use for API generation'),
+                new InputOption('data-bundle', '', InputOption::VALUE_REQUIRED, 'The bundle in which the doctrine entities exist'),
+                new InputOption('api-bundle', '', InputOption::VALUE_REQUIRED, 'The bundle in which to put the generated controllers')
             )
         )
             ->setDescription('Generates a REST api based on a Doctrine entity')
@@ -102,7 +102,7 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
                 '',
                 $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
                 '',
-                sprintf("You are going to generate a REST api controller for \"<info>%s:%s</info>\"", self::DATA_BUNDLE, $entity),
+                sprintf("You are going to generate a REST api controller for \"<info>%s</info>\"", $entity),
                 '',
             )
         );
@@ -113,36 +113,32 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $entity = $input->getOption('entity');
-        $forceOverwrite = $input->getOption('overwrite');
-        $parent = $input->getOption('parent');
-        $resource    = $input->getOption('resource');
-        $document    = $input->getOption('document');
+        $config = $input->getOption('config');
 
-        $questionHelper = $this->getQuestionHelper();
-        $questionHelper->writeSection($output, 'REST api generation for "' . $entity . '"');
+        $entity          = $input->getOption('entity');
+        $forceOverwrite  = $input->getOption('overwrite');
+        $resource        = $input->getOption('resource');
+        $document        = $input->getOption('document');
+        $dataBundle      = $input->getOption('data-bundle');
+        $apiBundle       = $input->getOption('api-bundle');
+        $parents         = $input->getOption('parents');
+        if ($parents) {
+            $parents = explode(',', $parents);
+        }
+        $entityClass  = $this->getContainer()->get('doctrine')->getAliasNamespace($dataBundle) . '\\' . $entity;
+        $entityBundle = $this->getContainer()->get('kernel')->getBundle($dataBundle);
+        $metadata     = $this->getEntityMetadata($entityClass);
+        $targetBundle = $this->getContainer()->get('kernel')->getBundle($apiBundle);
 
-        $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace(self::DATA_BUNDLE) . '\\' . $entity;
-        $metadata    = $this->getEntityMetadata($entityClass);
-        $bundle      = $this->getContainer()->get('kernel')->getBundle(self::DATA_BUNDLE);
-        $targetBundle = $this->getContainer()->get('kernel')->getBundle(self::API_BUNDLE);
-
-        $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $targetBundle, $entity, $parent, $metadata[0], $forceOverwrite, $resource, $document);
-
-        $output->writeln('Generating the REST api code: <info>OK</info>');
+        $generator = $this->getGenerator($entityBundle);
+        $generator->generate($entityBundle, $targetBundle, $entity, $parents, $metadata[0], $forceOverwrite, $resource, $document);
 
         $errors = array();
 
-        // form, override every time.
-        
-        $this->generateForm($bundle, $entity, $metadata, true);
-        $output->writeln('Generating the Form code: <info>OK</info>');
+        $this->generateForm($entityBundle, $entity, $metadata, true);
 
-        $questionHelper->writeGeneratorSummary($output, $errors);
+        $this->getQuestionHelper()->writeGeneratorSummary($output, $errors);
     }
-
-
 
     /**
      * @param QuestionHelper $questionHelper
