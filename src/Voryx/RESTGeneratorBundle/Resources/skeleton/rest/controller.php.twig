@@ -1,11 +1,11 @@
 <?php
 
-namespace {{ namespace }}\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+namespace {{ target_namespace }}\Controller\Generated{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
 use {{ namespace }}\Entity\{{ entity }};
-{% if parent %}
+{% for parent in parents|keys %}
 use {{ namespace }}\Entity\{{ parent }};
-{% endif %}
+{% endfor %}
 use {{ namespace }}\Form\{{ entity }}Type;
 
 use FOS\RestBundle\Controller\Annotations\Get;
@@ -29,14 +29,14 @@ class {{ entity_class }}RESTController extends NoIncBaseRESTController
 	const ENTITY_NAME = '{{ entity }}';
 
     {% for action in actions %}
-    {%- include 'rest/actions/' ~ action ~ '.php.twig' %}
+        {%- include 'rest/actions/' ~ action ~ '.php.twig' %}
     {% endfor %}
 
-    {% if parent %}
-    {% for parent_action in parent_actions %}
-    {%- include 'rest/actions/' ~ parent_action ~ '.php.twig' %}
+    {% for parent, parent_route in parents %}
+        {% for parent_action in parent_actions %}
+            {%- include 'rest/actions/' ~ parent_action ~ '.php.twig' %}
+        {% endfor %}
     {% endfor %}
-    {% endif %}
 
     /**
      * Get entity name.

@@ -1,0 +1,10 @@
+ 
+    /**
+	 * Test deleting a {{ entity }}
+	 */
+	public function testDelete()
+	{
+		$this->client->request('DELETE', $this->getURL('{{ route_name_prefix }}delete', ['id' => 1]));
+		$response = $this->client->getResponse();
+		$this->assertJsonResponse($response, 204);		
+	}

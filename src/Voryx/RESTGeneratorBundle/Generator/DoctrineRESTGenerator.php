@@ -24,21 +24,23 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
  */
 class DoctrineRESTGenerator extends Generator
 {
-	
     protected $filesystem;
     protected $routePrefix;
     protected $routeNamePrefix;
     protected $bundle;
     protected $targetBundle;
     protected $entity;
-    protected $parent;
+    protected $parents;
     protected $parentActions;
-    protected $parentRoute;
     protected $metadata;
     protected $format;
     protected $actions;
     protected $roles;
+//     protected $tests;
+//     protected $parentTests;
 
+    const ACTIONS = ['get', 'getAll', 'post', 'put', 'patch', 'delete'];
+    const PARENT_ACTIONS = ['getAllByParent', 'postByParent'];
     /**
      * Constructor.
      *
@@ -55,18 +57,20 @@ class DoctrineRESTGenerator extends Generator
      * @param BundleInterface $bundle A bundle where entities live
      * @param BundleInterface $targetBundle A bundle where API will live
      * @param string $entity The entity relative class name
-     * @param string $parent The parent entity class name
+     * @param array $parents The parents array
      * @param ClassMetadataInfo $metadata The entity class metadata
      * @param boolean $forceOverwrite Whether or not to overwrite an existing controller
      *
      * @throws \RuntimeException
      */
-    public function generate(BundleInterface $bundle, BundleInterface $targetBundle, $entity, $parent, ClassMetadataInfo $metadata, $forceOverwrite)
+    public function generate(BundleInterface $bundle, BundleInterface $targetBundle, $entity, $parents, $exclude, ClassMetadataInfo $metadata)
     {
         $this->routePrefix     = Inflector::pluralize(strtolower($entity));
         $this->routeNamePrefix = 'noinc_' . $this->routePrefix . '_';
-        $this->actions         = array('getById', 'getAll', 'post', 'put', 'patch', 'delete');
-        $this->parentActions   = array('getAllByParent', 'postByParent');
+        //$this->tests		   = array('testGetAll', 'testGetById', 'testPost', 'testPut', 'testPatch', 'testDelete');
+        //$this->parentTests   = array('testGetAllByParent', 'testPostByParent');
+        $this->actions         = array_diff(self::ACTIONS, $exclude);
+        $this->parentActions   = self::PARENT_ACTIONS;
         $this->roles           = [
             'all'    =>  'ROLE_' . strtoupper($entity) . '_ALL',
             'create' =>  'ROLE_' . strtoupper($entity) . '_CREATE',
@@ -83,18 +87,25 @@ class DoctrineRESTGenerator extends Generator
             throw new \RuntimeException('The REST api generator expects the entity object has a primary key field named "id" with a getId() method.');
         }
 
-        $this->entity   = $entity;
-        $this->bundle   = $bundle;
-        $this->targetBundle   = $targetBundle;
-        $this->parent   = $parent;
-        if ($parent) {
-            $this->parentRoute = Inflector::pluralize(strtolower($parent));
-        }
-        $this->metadata = $metadata;
+        $this->entity       = $entity;
+        $this->bundle       = $bundle;
+        $this->targetBundle = $targetBundle;
+        $this->exclude      = $exclude;
+        $this->metadata     = $metadata;
+
+        // change parents array from array of entity names to associative array of entity name => entity route
+        // i.e. ["Car", "Truck"] becomes ["Car" => "cars", "Truck" => "trucks"]
+        $this->parents = array_reduce($parents, function($result, $parent) {
+            $result[$parent] = Inflector::pluralize(strtolower($parent));
+            return $result;
+        }, []);
+
         $this->setFormat('yml');
 
         $this->generateControllerClass();
 		$this->generateBaseRESTControllerClass();
+		$this->generateBaseTestControllerClass();
+		$this->generateTestControllerClass();
     }
 
     /**
@@ -154,17 +165,57 @@ class DoctrineRESTGenerator extends Generator
     	$dir = $this->targetBundle->getPath();
     	
     	$target = sprintf(
-    		'%s/Controller/NoIncBaseRESTController.php',
+    		'%s/Controller/Generated/NoIncBaseRESTController.php',
     		$dir
     	);
     
     	$this->renderFile(
     		'rest/base_controller.php.twig',
     		$target,
-    		array()
+    		array('target_namespace' => $this->targetBundle->getNamespace())
     	);
     }
 
+    /**
+     * Generates the test for rest controller class.
+     *
+     */
+    protected function generateTestControllerClass()
+    {
+    	$dir = $this->targetBundle->getPath();
+    
+    	$parts           = explode('\\', $this->entity);
+    	$entityClass     = array_pop($parts);
+    	$entityNamespace = implode('\\', $parts);
+    
+    	$target = sprintf(
+    		'%s/Tests/Controller/Generated/%s/%sRESTControllerTest.php',
+    		$dir,
+    		str_replace('\\', '/', $entityNamespace),
+    		$entityClass
+    	);
+    
+    	$this->renderFile(
+    		'rest/test_controller.php.twig',
+    		$target,
+    		array(
+                'actions'           => $this->actions,
+                'route_prefix'      => $this->routePrefix,
+                'route_name_prefix' => $this->routeNamePrefix,
+                'bundle'            => $this->bundle->getName(),
+                'entity'            => $this->entity,
+                'entity_class'      => $entityClass,
+                'parents'           => $this->parents,
+                'parent_actions'    => $this->parentActions,
+                'namespace'         => $this->bundle->getNamespace(),
+                'entity_namespace'  => $entityNamespace,
+                'target_namespace'  => $this->targetBundle->getNamespace(),
+                'format'            => $this->format,
+                'roles'             => $this->roles
+    		)
+    	);
+    }
+    
     /**
      * Generates the entity rest controller class.
      *
@@ -179,7 +230,7 @@ class DoctrineRESTGenerator extends Generator
         $entityNamespace = implode('\\', $parts);
 
         $target = sprintf(
-            '%s/Controller/%s/%sRESTController.php',
+            '%s/Controller/Generated/%s/%sRESTController.php',
             $dir,
             str_replace('\\', '/', $entityNamespace),
             $entityClass
@@ -195,17 +246,36 @@ class DoctrineRESTGenerator extends Generator
                 'bundle'            => $this->bundle->getName(),
                 'entity'            => $this->entity,
                 'entity_class'      => $entityClass,
-                'parent'            => $this->parent,
-                'parent_route'      => $this->parentRoute,
+                'parents'           => $this->parents,
                 'parent_actions'    => $this->parentActions,
                 'namespace'         => $this->bundle->getNamespace(),
                 'entity_namespace'  => $entityNamespace,
+                'target_namespace'  => $this->targetBundle->getNamespace(),
                 'format'            => $this->format,
                 'roles'             => $this->roles
             )
         );
     }
 
+    /**
+     * Generates the base test controller class only (all generated controllers will inherit from this base controller).
+     */
+    protected function generateBaseTestControllerClass()
+    {
+    	$dir = $this->targetBundle->getPath();
+    	 
+    	$target = sprintf(
+    		'%s/Tests/Controller/Generated/NoIncBaseTestController.php',
+    		$dir
+    	);
+    
+    	$this->renderFile(
+    		'rest/base_test_controller.php.twig',
+    		$target,
+    		array('target_namespace' => $this->targetBundle->getNamespace())
+    	);
+    }
+    
     /**
      * Generates the functional test class only.
      *
@@ -216,7 +286,7 @@ class DoctrineRESTGenerator extends Generator
         $entityClass     = array_pop($parts);
         $entityNamespace = implode('\\', $parts);
 
-        $dir    = $this->bundle->getPath() . '/Tests/Controller';
+        $dir    = $this->bundle->getPath() . '/Tests/Controller/Generated';
         $target = $dir . '/' . str_replace('\\', '/', $entityNamespace) . '/' . $entityClass . 'RESTControllerTest.php';
 
         $this->renderFile(

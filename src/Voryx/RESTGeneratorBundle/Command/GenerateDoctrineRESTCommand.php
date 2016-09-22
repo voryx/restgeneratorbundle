@@ -18,20 +18,13 @@ use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Voryx\RESTGeneratorBundle\Generator\DoctrineRESTGenerator;
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
 use Voryx\RESTGeneratorBundle\Manipulator\RoutingManipulator;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Generates a REST api for a Doctrine entity.
  */
 class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
 {
-	
-	const DATA_BUNDLE = 'NoIncQrisDataBundle';
-	const API_BUNDLE = 'NoIncQrisApiBundle';
-    /**
-     * @var
-     */
-    private $formGenerator;
-
     /**
      * Configure the command
      */
@@ -39,12 +32,12 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
     {
         $this->setDefinition(
             array(
+                new InputOption('data-bundle', '', InputOption::VALUE_REQUIRED, 'The bundle in which the doctrine entities exist'),
+                new InputOption('api-bundle', '', InputOption::VALUE_REQUIRED, 'The bundle in which to put the generated controllers'),
                 new InputOption('entity', '', InputOption::VALUE_REQUIRED, 'The entity class name to initialize (shortcut notation)'),
-                new InputOption('parent', '', InputOption::VALUE_OPTIONAL, 'The parent of the entity (used to create additional endpoints nested under the parent)'),
-                new InputOption('route-prefix', '', InputOption::VALUE_REQUIRED, 'The route prefix'),
-                new InputOption('overwrite', '', InputOption::VALUE_NONE, 'Do not stop the generation if rest api controller already exist, thus overwriting all generated files'),
-                new InputOption('resource', '', InputOption::VALUE_NONE, 'The object will return with the resource name'),
-                new InputOption('document', '', InputOption::VALUE_NONE, 'Use NelmioApiDocBundle to document the controller'),
+                new InputOption('parents', '', InputOption::VALUE_OPTIONAL, 'A comma-separated list of parents (used to create additional endpoints nested under each parent)'),
+                new InputOption('config', '', InputOption::VALUE_OPTIONAL, 'Path to the config file to use for API generation'),
+                new InputOption('exclude', '', InputOption::VALUE_OPTIONAL, 'A comma-separated list of actions to exclude from API generation (i.e. getAll, post, delete)')
             )
         )
             ->setDescription('Generates a REST api based on a Doctrine entity')
@@ -63,49 +56,6 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
-        $questionHelper = $this->getQuestionHelper();
-        $questionHelper->writeSection($output, 'Welcome to the Doctrine2 REST api generator');
-
-        // namespace
-        $output->writeln(
-            array(
-                '',
-                'This command helps you generate a REST api controller.',
-                '',
-                'First, you need to give the entity for which you want to generate a REST api.',
-                'You can give an entity that does not exist yet and the wizard will help',
-                'you defining it.',
-                '',
-                'Ex: <comment>Post</comment>.',
-                '',
-            )
-        );
-
-        // entity name
-        $question = new Question($questionHelper->getQuestion('The Entity shortcut name', $input->getOption('entity')), $input->getOption('entity'));
-        $entity = $questionHelper->ask($input, $output, $question);
-        $input->setOption('entity', $entity);
-        
-        // entity's parent
-        $question = new Question($questionHelper->getQuestion('Entity\'s parent', $input->getOption('parent')), $input->getOption('parent'));
-        $parent = $questionHelper->ask($input, $output, $question);
-        $input->setOption('parent', $parent);
-        
-        // route prefix
-        $prefix = 'api/v1';
-        $prefix = $questionHelper->ask($input, $output, new Question($questionHelper->getQuestion('Routes prefix', '/' . $prefix), '/' . $prefix));
-        $input->setOption('route-prefix', $prefix);
-
-        // summary
-        $output->writeln(
-            array(
-                '',
-                $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
-                '',
-                sprintf("You are going to generate a REST api controller for \"<info>%s:%s</info>\"", self::DATA_BUNDLE, $entity),
-                '',
-            )
-        );
     }
 
     /**
@@ -113,82 +63,59 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $config = $input->getOption('config');
+
+        if ($config) {
+            $this->generateFromConfigFile($config);
+        } else {
+            $this->generateFromCommandLine($input);
+        }
+
+        $this->getQuestionHelper()->writeGeneratorSummary($output, []);
+    }
+
+    private function generateFromConfigFile($configFile) {
+        $yaml = Yaml::parse(file_get_contents($configFile));
+
+        $dataBundle = $yaml["dataBundle"];
+        $apiBundle = $yaml["apiBundle"];
+        $entities = $yaml["entities"];
+        foreach ($entities as $entity => $options) {
+            $parents = $this->getYamlOptionAsArray($options, "parents");
+            $exclude = $this->getYamlOptionAsArray($options, "exclude");
+            $this->generate($dataBundle, $apiBundle, $entity, $parents, $exclude);
+        }
+    }
+
+    private function generateFromCommandLine(InputInterface $input) {
+        $dataBundle = $input->getOption('data-bundle');
+        $apiBundle = $input->getOption('api-bundle');
         $entity = $input->getOption('entity');
-        $forceOverwrite = $input->getOption('overwrite');
-        $parent = $input->getOption('parent');
-        $resource    = $input->getOption('resource');
-        $document    = $input->getOption('document');
+        $parents = $this->getCommandLineOptionAsArray($input, 'parents');
+        $exclude = $this->getCommandLineOptionAsArray($input, 'exclude');
 
-        $questionHelper = $this->getQuestionHelper();
-        $questionHelper->writeSection($output, 'REST api generation for "' . $entity . '"');
-
-        $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace(self::DATA_BUNDLE) . '\\' . $entity;
-        $metadata    = $this->getEntityMetadata($entityClass);
-        $bundle      = $this->getContainer()->get('kernel')->getBundle(self::DATA_BUNDLE);
-        $targetBundle = $this->getContainer()->get('kernel')->getBundle(self::API_BUNDLE);
-
-        $generator = $this->getGenerator($bundle);
-        $generator->generate($bundle, $targetBundle, $entity, $parent, $metadata[0], $forceOverwrite, $resource, $document);
-
-        $output->writeln('Generating the REST api code: <info>OK</info>');
-
-        $errors = array();
-
-        // form, override every time.
-        
-        $this->generateForm($bundle, $entity, $metadata, true);
-        $output->writeln('Generating the Form code: <info>OK</info>');
-
-        $questionHelper->writeGeneratorSummary($output, $errors);
+        $this->generate($dataBundle, $apiBundle, $entity, $parents, $exclude);
     }
 
+    private function generate($dataBundle, $apiBundle, $entity, $parents, $exclude) {
+        $entityClass  = $this->getContainer()->get('doctrine')->getAliasNamespace($dataBundle) . '\\' . $entity;
+        $entityBundle = $this->getContainer()->get('kernel')->getBundle($dataBundle);
+        $targetBundle = $this->getContainer()->get('kernel')->getBundle($apiBundle);
+        $metadata     = $this->getEntityMetadata($entityClass);
 
-
-    /**
-     * @param QuestionHelper $questionHelper
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param BundleInterface $bundle
-     * @param $entity
-     * @param $prefix
-     * @return array
-     */
-    protected function updateRouting(QuestionHelper $questionHelper, InputInterface $input, OutputInterface $output, BundleInterface $bundle, $format, $entity, $prefix)
-    {
-        $auto = true;
-
-        $output->write('Importing the REST api routes: ');
-        $this->getContainer()->get('filesystem')->mkdir($bundle->getPath() . '/Resources/config/');
-        $routing = new RoutingManipulator($this->getContainer()->getParameter('kernel.root_dir') . '/config/routing.yml');
-        try {
-            $ret = $auto ? $routing->addResource($bundle->getName(), '/' . $prefix, $entity) : false;
-        } catch (\RuntimeException $exc) {
-            $ret = false;
-        }
-
-        if (!$ret) {
-            $help = sprintf(
-                "        <comment>resource: \"@%s/Controller/%sRESTController.php\"</comment>\n",
-                $bundle->getName(),
-                $entity
-            );
-            $help .= sprintf("        <comment>type:   %s</comment>\n", 'rest');
-            $help .= sprintf("        <comment>prefix:   /%s</comment>\n", $prefix);
-
-            return array(
-                '- Import this resource into the Apps routing file',
-                sprintf('  (%s).', $this->getContainer()->getParameter('kernel.root_dir') . '/config/routing.yml'),
-                '',
-                sprintf(
-                    '    <comment>%s:</comment>',
-                    substr($bundle->getName(), 0, -6) . '_' . $entity . ('' !== $prefix ? '_' . str_replace('/', '_', $prefix) : '')
-                ),
-                $help,
-                '',
-            );
-        }
+        $generator = $this->getGenerator($entityBundle);
+        $generator->generate($entityBundle, $targetBundle, $entity, $parents, $exclude, $metadata[0]);
+        $this->generateForm($entityBundle, $entity, $metadata, true);
     }
 
+    private function getCommandLineOptionAsArray(InputInterface $input, $option) {
+        $rawOption = $input->getOption($option);
+        return $rawOption ? explode(',', $rawOption) : [];
+    }
+
+    private function getYamlOptionAsArray($options, $key) {
+        return isset($options[$key]) ? $options[$key] : [];
+    }
 
     /**
      * @param null $bundle

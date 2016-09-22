@@ -14,6 +14,6 @@
     public function postBy{{ parent }}Action({{ parent }} ${{ parent | lower }}, Request $request)
     {
 		$entity = new {{ entity }}();
-        $entity.set{{ parent }}(${{ parent | lower }});
+        $entity->set{{ parent }}(${{ parent | lower }});
         return $this->post($request, get_class(new {{ entity }}Type()), $entity);
     }
