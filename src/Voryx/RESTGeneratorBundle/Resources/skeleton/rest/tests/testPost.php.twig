@@ -1,0 +1,10 @@
+
+    /**
+	 * Test creating a {{ entity }}.
+	 */
+	public function testPost()
+	{
+		$this->client->request('POST', $this->getURL('{{ route_name_prefix }}post'), []);
+		$response = $this->client->getResponse();
+		$this->assertJsonResponse($response, 500);
+	}

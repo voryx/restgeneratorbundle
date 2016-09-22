@@ -1,0 +1,49 @@
+<?php
+
+namespace NoInc\Qris\ApiBundle\Tests\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+/**
+ * AUTO GENERATED
+ * Base controller for all the tests for auto generated rest controllers.
+ */
+abstract class NoIncBaseTestController extends WebTestCase
+{
+	
+	/**
+	 * @var Client
+	 */
+	protected $client;
+	
+	/**
+	 * Get Container.
+	 * @return ContainerInterface
+	 */
+	public function getContainer()
+	{
+		return $this->client->getContainer();
+	}
+	
+	/**
+	 * Test json response.
+	 * @param Response $response
+	 * @param integer $statusCode
+	 */
+	public function assertJsonResponse($response, $statusCode = 200) 
+	{
+		$this->assertEquals($statusCode, $response->getStatusCode());
+	}
+	
+	/**
+	 * Get endpoint.
+	 * @param string $routeName
+	 * @param array $params
+	 * @return string
+	 */
+	public function getUrl($routeName, $params = [])
+	{
+		$url = $this->getContainer()->get('router')->generate($routeName, $params);
+		return $url;
+	}
+}

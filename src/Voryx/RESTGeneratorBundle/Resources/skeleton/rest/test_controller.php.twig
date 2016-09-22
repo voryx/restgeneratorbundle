@@ -1,0 +1,32 @@
+<?php
+
+namespace {{ namespace }}\Tests\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+/**
+ * Test controller for {{ entity }} API.
+ */
+class {{ entity_class }}RESTControllerTest extends NoIncBaseTestController
+{
+
+	/**
+	 * Before test methods are ran, this method is called.
+	 * Create the objects against which you will test.
+	 */
+	public function setUp()
+	{
+		$this->client = static::createClient();
+	}
+
+	{% for test in tests %}
+    {%- include 'rest/tests/' ~ test ~ '.php.twig' %}
+    {% endfor %}
+
+    {% if parent %}
+    {% for parent_test in parent_tests %}
+    {%- include 'rest/tests/' ~ parent_test ~ '.php.twig' %}
+    {% endfor %}
+    {% endif %}
+
+}

@@ -1,0 +1,10 @@
+ 
+	/**
+	 * Test patch
+	 */
+	public function testPatch()
+	{
+		$this->client->request('PATCH', $this->getURL('{{ route_name_prefix }}patch', ['id' => 1]), []);
+		$response = $this->client->getResponse();
+		$this->assertJsonResponse($response, 500);
+	}

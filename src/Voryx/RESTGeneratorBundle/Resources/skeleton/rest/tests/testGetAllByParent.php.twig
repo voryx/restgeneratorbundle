@@ -1,0 +1,10 @@
+	
+	/**
+	 * Test getting all {{ entity }} entities by {{ parent }}
+	 */
+	public function testCgetBy{{ parent }}()
+	{
+		$this->client->request('GET', $this->getURL('{{ route_name_prefix }}get_by_{{ parent | lower }}', ['id' => 1]));
+		$response = $this->client->getResponse();
+		$this->assertJsonResponse($response, 200);
+	}
