@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ namespace }}\Tests\Controller;
+namespace {{ target_namespace }}\Tests\Controller\Generated;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -19,14 +19,14 @@ class {{ entity_class }}RESTControllerTest extends NoIncBaseTestController
 		$this->client = static::createClient();
 	}
 
-	{% for test in tests %}
-    {%- include 'rest/tests/' ~ test ~ '.php.twig' %}
+	{% for test in actions %}
+    {%- include 'rest/tests/' ~ test ~ 'Test.php.twig' %}
     {% endfor %}
 
-    {% if parent %}
-    {% for parent_test in parent_tests %}
-    {%- include 'rest/tests/' ~ parent_test ~ '.php.twig' %}
+    {% for parent, parent_route in parents %}
+        {% for parent_action in parent_actions %}
+            {%- include 'rest/tests/' ~ parent_action ~ 'Test.php.twig' %}
+        {% endfor %}
     {% endfor %}
-    {% endif %}
 
 }
