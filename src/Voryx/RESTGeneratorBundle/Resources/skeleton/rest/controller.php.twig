@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ target_namespace }}\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
+namespace {{ target_namespace }}\Controller\Generated{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
 use {{ namespace }}\Entity\{{ entity }};
 {% for parent in parents|keys %}
