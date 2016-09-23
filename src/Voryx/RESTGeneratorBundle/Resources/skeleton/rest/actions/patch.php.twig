@@ -4,7 +4,7 @@
      *
      * @Patch("/{{ route_prefix }}/{id}")
      * @View(serializerEnableMaxDepthChecks=true)
-     * @Secure(roles="{{ roles['all'] }}, {{ roles['update'] }}")
+     * @Secure(roles="{{ roles['update'] }}")
      *
      * @param Request $request
      * @param $entity

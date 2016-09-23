@@ -72,7 +72,6 @@ class DoctrineRESTGenerator extends Generator
         $this->actions         = array_diff(self::ACTIONS, $exclude);
         $this->parentActions   = self::PARENT_ACTIONS;
         $this->roles           = [
-            'all'    =>  'ROLE_' . strtoupper($entity) . '_ALL',
             'create' =>  'ROLE_' . strtoupper($entity) . '_CREATE',
             'read'   =>  'ROLE_' . strtoupper($entity) . '_READ',
             'update' =>  'ROLE_' . strtoupper($entity) . '_UPDATE',

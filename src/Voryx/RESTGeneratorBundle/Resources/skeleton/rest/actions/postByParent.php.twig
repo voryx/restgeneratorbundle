@@ -4,7 +4,7 @@
      *
      * @Post("/{{ parent_route }}/{id}/{{ route_prefix }}")
      * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
-     * @Secure(roles="{{ roles['all'] }}, {{ roles['create']}}")
+     * @Secure(roles="{{ roles['create']}}")
      *
      * @param Request $request
      *

@@ -4,7 +4,7 @@
      *
      * @Get("/{{ parent_route }}/{id}/{{ route_prefix }}")
      * @View(serializerEnableMaxDepthChecks=true)
-     * @Secure(roles="{{ roles['all'] }}, {{ roles['read'] }}")
+     * @Secure(roles="{{ roles['read'] }}")
      *
      * @return Response
      */

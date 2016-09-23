@@ -4,7 +4,7 @@
      *
      * @Delete("/{{ route_prefix }}/{id}")
      * @View(statusCode=204)
-     * @Secure(roles="{{ roles['all'] }}, {{ roles['delete'] }}")
+     * @Secure(roles="{{ roles['delete'] }}")
      *
      * @param Request $request
      * @param $entity

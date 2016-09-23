@@ -5,7 +5,6 @@
 
 namespace Voryx\RESTGeneratorBundle\Command;
 
-
 use Sensio\Bundle\GeneratorBundle\Command\GenerateDoctrineCrudCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -80,11 +79,30 @@ class GenerateDoctrineRESTCommand extends GenerateDoctrineCrudCommand
         $dataBundle = $yaml["dataBundle"];
         $apiBundle = $yaml["apiBundle"];
         $entities = $yaml["entities"];
+        $roles = [];
         foreach ($entities as $entity => $options) {
             $parents = $this->getYamlOptionAsArray($options, "parents");
             $exclude = $this->getYamlOptionAsArray($options, "exclude");
             $this->generate($dataBundle, $apiBundle, $entity, $parents, $exclude);
+            $this->generateRolesForEntity($entity, $roles);
         }
+        $this->generatePermissionsYaml($roles, $apiBundle);
+    }
+
+    private function generatePermissionsYaml($roles, $apiBundle) {
+        $permissions = ['security' => ['role_hierarchy' => $roles]];
+        $fileComment = "# This file is auto-generated as part of the API auto-generation.\n";
+        $targetFile = $this->getContainer()->get('kernel')->getBundle($apiBundle)->getPath() . '/Resources/config/permissions.yml';
+        file_put_contents($targetFile, $fileComment . Yaml::dump($permissions, 4, 4));
+    }
+
+    private function generateRolesForEntity($entity, &$roles) {
+        $roles['ROLE_' . strtoupper($entity) . '_FULL'] = [
+            'ROLE_' . strtoupper($entity) . '_CREATE',
+            'ROLE_' . strtoupper($entity) . '_READ',
+            'ROLE_' . strtoupper($entity) . '_UPDATE',
+            'ROLE_' . strtoupper($entity) . '_DELETE'
+        ];
     }
 
     private function generateFromCommandLine(InputInterface $input) {
