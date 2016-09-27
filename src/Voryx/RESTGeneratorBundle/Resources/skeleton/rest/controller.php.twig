@@ -6,7 +6,7 @@ use {{ namespace }}\Entity\{{ entity }};
 {% for parent in parents|keys %}
 use {{ namespace }}\Entity\{{ parent }};
 {% endfor %}
-use {{ namespace }}\Form\{{ entity }}Type;
+use {{ target_namespace }}\Form\{{ entity }}Type;
 
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Put;
