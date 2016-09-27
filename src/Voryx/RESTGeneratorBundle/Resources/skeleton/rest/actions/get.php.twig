@@ -1,0 +1,13 @@
+/**
+     * Get a {{ entity }} entity
+     *
+     * @Get("/{{ route_prefix }}/{id}")
+     * @View(serializerEnableMaxDepthChecks=true)
+     * @Secure(roles="{{ roles['read'] }}")
+     *
+     * @return Response
+     */
+    public function getAction({{ entity }} $entity)
+    {
+        return $this->get($entity);
+    }

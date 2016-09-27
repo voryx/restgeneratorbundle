@@ -1,0 +1,10 @@
+ 
+    /**
+	 * Test put
+	 */
+	public function testPut()
+	{
+		$this->client->request('PUT', $this->getURL('{{ route_name_prefix }}put', ['id' => 1]), []);
+		$response = $this->client->getResponse();
+		$this->assertJsonResponse($response, 500);
+	}

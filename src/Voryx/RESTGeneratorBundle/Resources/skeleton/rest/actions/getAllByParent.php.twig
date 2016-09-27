@@ -1,0 +1,14 @@
+
+    /**
+     * Get all {{ entity }} entities that are nested under the given {{ parent }} entity.
+     *
+     * @Get("/{{ parent_route }}/{id}/{{ route_prefix }}")
+     * @View(serializerEnableMaxDepthChecks=true)
+     * @Secure(roles="{{ roles['read'] }}")
+     *
+     * @return Response
+     */
+    public function cgetBy{{ parent }}Action({{ parent }} ${{ parent | lower }})
+    {
+		return $this->cgetByParent(${{ parent | lower }});
+    }

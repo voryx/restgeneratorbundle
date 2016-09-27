@@ -1,0 +1,10 @@
+
+    /**
+	 * Test getting one {{ entity }}.
+	 */
+	public function testGet()
+	{
+		$this->client->request('GET', $this->getURL('{{ route_name_prefix }}get', ['id' => 1]));
+		$response = $this->client->getResponse();
+		$this->assertJsonResponse($response, 200);
+	}

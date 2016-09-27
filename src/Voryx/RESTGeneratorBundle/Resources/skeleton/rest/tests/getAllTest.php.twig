@@ -1,0 +1,10 @@
+
+    /**
+	 * Test getting all {{ entity }} entities.
+	 */
+	public function testCget()
+	{
+		$this->client->request('GET', $this->getURL('{{ route_name_prefix }}get_all'));
+		$response = $this->client->getResponse();
+		$this->assertJsonResponse($response, 200);
+	}

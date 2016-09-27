@@ -1,0 +1,10 @@
+ 
+	/**
+	 * Test creating {{ entity }} by {{ parent }}
+	 */
+	public function testPostBy{{ parent }}()
+	{
+		$this->client->request('POST', $this->getURL('{{ route_name_prefix }}post_by_{{ parent | lower }}', ['id' => 1]));
+		$response = $this->client->getResponse();
+		$this->assertJsonResponse($response, 500);
+	}

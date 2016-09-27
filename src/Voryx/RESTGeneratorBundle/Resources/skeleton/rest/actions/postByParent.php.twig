@@ -1,8 +1,8 @@
 
     /**
-     * Create a {{ entity }} entity.
+     * Create a {{ entity }} entity and nest it under the given {{ parent }} entity.
      *
-     * @Post("/{{ route_prefix }}")
+     * @Post("/{{ parent_route }}/{id}/{{ route_prefix }}")
      * @View(statusCode=201, serializerEnableMaxDepthChecks=true)
      * @Secure(roles="{{ roles['create']}}")
      *
@@ -11,8 +11,9 @@
      * @return Response
      *
      */
-    public function postAction(Request $request)
+    public function postBy{{ parent }}Action({{ parent }} ${{ parent | lower }}, Request $request)
     {
 		$entity = new {{ entity }}();
+        $entity->set{{ parent }}(${{ parent | lower }});
         return $this->post($request, get_class(new {{ entity }}Type()), $entity);
     }

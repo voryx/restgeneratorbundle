@@ -12,10 +12,21 @@ A CRUD like REST Generator
 
 
 ## Installation
-Require the "voryx/restgeneratorbundle" package in your composer.json and update your dependencies.
+In composer.json:
 
-```bash
-$ php composer.phar require voryx/restgeneratorbundle dev-master
+```php
+"require" : {
+  ...
+  "noinc/restgeneratorbundle": "dev-master"
+  ...
+},
+"repositories" : [ {
+  ...
+}, {
+  "type" : "git",
+  "url" : "git@github.com:noinc/restgeneratorbundle",
+  "name" : "restgeneratorbundle"
+} ],
 ```
 
 Add the VoryxRestGeneratorBundle to your application's kernel along with other dependencies:
@@ -41,18 +52,12 @@ This bundle depends on a number of other Symfony bundles, so they need to be con
 
 ```yaml
 framework:
-    csrf_protection: false #only use for public API
+    csrf_protection: ~
 
-fos_rest:
-    routing_loader:
-        default_format: json
-    param_fetcher_listener: true
-    body_listener: true
-    #disable_csrf_role: ROLE_USER
-    body_converter:
-        enabled: true
-    view:
-        view_response_listener: force
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: NoInc\Qris\DataBundle\Entity\User
 
 nelmio_cors:
     defaults:
@@ -81,7 +86,7 @@ sensio_framework_extra:
 Generate the REST controller
 
 ```bash
-$ php app/console voryx:generate:rest
+$ php bin/console voryx:generate:rest
 ```
     
 This will guide you through the generator which will generate a RESTful controller for an entity.
@@ -92,19 +97,19 @@ This will guide you through the generator which will generate a RESTful controll
 Create a new entity called 'Post':
 
 ```bash
-$ php app/console doctrine:generate:entity --entity=AppBundle:Post --format=annotation --fields="name:string(255) description:string(255)" --no-interaction
+$ php bin/console doctrine:generate:entity --entity=Post --format=annotation --fields="name:string(255) description:string(255)" --no-interaction
 ```
 
 Update the database schema:
 
 ```bash
-$ php app/console doctrine:schema:update --force
+$ php bin/console doctrine:schema:update --force
 ```
 
 Generate the API controller:
 
 ```bash
-$ php app/console voryx:generate:rest --entity="AppBundle:Post"
+$ php bin/console voryx:generate:rest --entity="Post"
 ```
 
 ### Using the API
