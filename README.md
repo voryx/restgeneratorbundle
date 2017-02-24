@@ -121,14 +121,14 @@ possible values for all parameters
 
 | Parameter | Explanation | Values  |
 | --------- | ----------- | ------- |
-| entity         | The entity for which the REST api should be generated            | **AppBundle:Post**, **AppBundle:Blog\Post**
-| document       | Whether or not you want API's documented by Nelmio               | Yes if present, else No
-| overwrite      | Whether or not you want to overwrite existing generated files    | Yes if present, else No
-| resource       | -                                                                | Yes if present, else No
-| route-prefix   | The route to prefix the generated Controller with (default api)  | Any string
-| route-format   | The format that routing is generated in (default yml)            | **yml** or **annotation**
-| service-format | The format that the service is generated in (default yml)        | **yml** or **xml**
-| test           | The type of test that should be generated                        | **none**, **oauth** or **no-authentication**
+| entity         | The entity for which the REST api should be generated                 | **AppBundle:Post**, **AppBundle:Blog\Post**
+| document       | Whether or not you want API's documented by Nelmio                    | Yes if present, else No
+| overwrite      | Whether or not you want to overwrite existing generated files         | Yes if present, else No
+| resource       | Whether or not you want the resource name encapsulating the response  | Yes if present, else No
+| route-prefix   | The route to prefix the generated Controller with (default api)       | Any string
+| route-format   | The format that routing is generated in (default yml)                 | **yml** or **annotation**
+| service-format | The format that the service is generated in (default yml)             | **yml** or **xml**
+| test           | The type of test that should be generated                             | **none**, **oauth** or **no-authentication**
 
 
 ### Using the API
