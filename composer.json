@@ -15,12 +15,12 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.5.9",
         "symfony/symfony": ">=2.8",
         "sensio/generator-bundle": "~3.0",
-        "friendsofsymfony/rest-bundle": "~1.7",
-        "jms/serializer-bundle": "~1.1",
-        "nelmio/cors-bundle": "~1.4",
+        "friendsofsymfony/rest-bundle": "^2.2",
+        "jms/serializer-bundle": "^2.0",
+        "nelmio/cors-bundle": "~1.5",
         "nelmio/api-doc-bundle": "~2.7",
         "doctrine/orm": ">=2.0"
     },
