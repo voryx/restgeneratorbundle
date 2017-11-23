@@ -171,10 +171,12 @@ $ curl -X DELETE  http://localhost/app_dev.php/api/posts/1
 If you want the form to be able to convert related entities into the correct entity id on POST, PUT or PATCH, use the voryx_entity form type
 
 ```php
-#Form/PostType()
+use Voryx\RESTGeneratorBundle\Form\Type\VoryxEntityType;
+
+// ...
 
     ->add(
-        'user', 'voryx_entity', array(
+        'user', VoryxEntityType:class, array(
             'class' => 'Acme\Bundle\Entity\User'
         )
     )
