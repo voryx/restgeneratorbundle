@@ -84,7 +84,7 @@ nelmio_api_doc: ~
 Generate the REST controller
 
 ```bash
-$ php app/console voryx:generate:rest
+$ php bin/console voryx:generate:rest
 ```
     
 This will guide you through the generator which will generate a RESTful controller for an entity.
@@ -95,40 +95,39 @@ This will guide you through the generator which will generate a RESTful controll
 Create a new entity called 'Post':
 
 ```bash
-$ php app/console doctrine:generate:entity --entity=AppBundle:Post --format=annotation --fields="name:string(255) description:string(255)" --no-interaction
+$ php bin/console doctrine:generate:entity --entity=AppBundle:Post --format=annotation --fields="name:string(255) description:string(255)" --no-interaction
 ```
 
 Update the database schema:
 
 ```bash
-$ php app/console doctrine:schema:update --force
+$ php bin/console doctrine:schema:update --force
 ```
 
 Generate the API controller:
 
 ```bash
-$ php app/console voryx:generate:rest --entity="AppBundle:Post"
+$ php bin/console voryx:generate:rest --entity="AppBundle:Post"
 ```
 
 Full example with all parameters
 
 ```bash
-$ php app/console voryx:generate:rest --entity="AppBundle:Post" --document --resource --overwrite --route-prefix="api" --route-format="yml" --service-format="yml" --test="none"
-$ php app/console voryx:generate:rest --entity="AppBundle:User/Domain" --document --overwrite --route-prefix="api" --route-format="annotation" --service-format="yml" --test="oauth2"
+$ php app/console voryx:generate:rest --entity="AppBundle:Post" --document --overwrite --route-prefix="api" --route-format="yml" --service-format="yml" --test="none"
 ```
 
 possible values for all parameters
 
 | Parameter | Explanation | Values  |
 | --------- | ----------- | ------- |
-| entity         | The entity for which the REST api should be generated                 | **AppBundle:Post**, **AppBundle:Blog\Post**
-| document       | Whether or not you want API's documented by Nelmio                    | Yes if present, else No
-| overwrite      | Whether or not you want to overwrite existing generated files         | Yes if present, else No
-| resource       | Whether or not you want the resource name encapsulating the response  | Yes if present, else No
-| route-prefix   | The route to prefix the generated Controller with (default api)       | Any string
-| route-format   | The format that routing is generated in (default yml)                 | **yml** or **annotation**
-| service-format | The format that the service is generated in (default yml)             | **yml** or **xml**
-| test           | The type of test that should be generated                             | **none**, **oauth** or **no-authentication**
+| entity         | The entity for which the REST api should be generated            | **AppBundle:Post**, **AppBundle:Blog\Post**
+| document       | Whether or not you want API's documented by Nelmio               | Yes if present, else No
+| overwrite      | Whether or not you want to overwrite existing generated files    | Yes if present, else No
+| resource       | -                                                                | Yes if present, else No
+| route-prefix   | The route to prefix the generated Controller with (default api)  | Any string
+| route-format   | The format that routing is generated in (default yml)            | **yml** or **annotation**
+| service-format | The format that the service is generated in (default yml)        | **yml** or **xml**
+| test           | The type of test that should be generated                        | **none**, **oauth** or **no-authentication**
 
 
 ### Using the API
@@ -173,7 +172,7 @@ If you want the form to be able to convert related entities into the correct ent
 ```php
 use Voryx\RESTGeneratorBundle\Form\Type\VoryxEntityType;
 
-// ...
+#Form/PostType()
 
     ->add(
         'user', VoryxEntityType:class, array(

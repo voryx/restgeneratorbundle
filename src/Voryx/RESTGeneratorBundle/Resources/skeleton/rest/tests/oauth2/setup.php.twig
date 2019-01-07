@@ -1,0 +1,206 @@
+    /** @var Client */
+    private static $client;
+
+    private static $id;
+
+    private static $sample_object;
+
+    public function setUp()
+    {
+        parent::setUp();
+        self::$client = static::createClient();
+        //$em = self::$client->getContainer()->get('doctrine');
+
+        //create assocation fields (relations from this entity)
+        {%- for key, assoc in assoc_mapping %}
+            {%- if (assoc['type'] == 4 or assoc['type'] == 8) and assoc['targetEntity'] is defined and assoc['targetEntity'] is not null %} {# type 4 == OneToMany, type 8 == ManyToMany #}
+
+        $assoc_{{ key }} = array();
+        $field_{{ assoc['fieldName']|capitalize }} = new \{{ assoc['targetEntity'] }};
+        //set fields of $field_{{ assoc['fieldName']|capitalize }}.
+        $assoc_{{ key }}[] = $field_{{ assoc['fieldName']|capitalize }};
+
+
+            {%- elseif (assoc['type'] == 1 or assoc['type'] == 2) and assoc['targetEntity'] is defined and assoc['targetEntity'] is not null %} {# type 1 == OneToOne, type 2 == ManyToOne #}
+
+        $assoc_{{ key }} = new \{{ assoc['targetEntity'] }};
+
+
+            {%- endif %}
+        {%- endfor %}
+
+        //create main object
+        ${{ entity_class|lower }}_object = array();
+        {%- for field, info in fields if info['id'] is not defined or info['id'] == false -%}
+            {%- if entity_constraints[field] is defined and entity_constraints[field]|length > 0 %}
+                {# Check basic constraints #}
+                {%- for constraint in entity_constraints[field] %}
+                    {%- if 'NotBlankValidator' in constraint.validatedBy() %}
+                        {# do nothing, value will be set on type checking #}
+                    {%- elseif 'BlankValidator' in constraint.validatedBy() %}
+                        {%- set test_data = null %}
+                    {%- elseif 'NotNullValidator' in constraint.validatedBy() %}
+                        {# do nothing #}
+                    {%- elseif 'IsNullValidator' in constraint.validatedBy() %}
+                        {%- set test_data = null %}
+                    {%- endif %}
+                {%- endfor %}
+            {% endif %}
+
+            {%- if info['type'] == 'string' %}
+                {%- set test_data = 'test_' ~ field %}
+                {%- if entity_constraints[field] is defined and entity_constraints[field]|length > 0 %}
+                    {%- for constraint in entity_constraints[field] %}
+                        {%- if 'NotBlankValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'test_required_field_' ~ field %}
+                        {%- elseif 'EmailValidator' in constraint.validatedBy() %}
+                            {%- set test_data = field ~ '@domain.com' %}
+                        {%- elseif 'UrlValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'http://www.' ~ field ~ '.com' %}
+                        {%- elseif 'IpValidator' in constraint.validatedBy() %}
+                            {%- set test_data = '192.168.1.1' %}
+                        {%- elseif 'RegexValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'RegexValidator_test_data' %}
+                        {%- elseif 'IsTrueValidator' in constraint.validatedBy() %}
+                            {%- set test_data = '1' %}
+                        {%- elseif 'IsFalseValidator' in constraint.validatedBy() %}
+                            {%- set test_data = '0' %}
+                        {%- elseif 'BicValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'RABONL2U' %}
+                        {%- elseif 'IbanValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'NL10RABO1234556789' %}
+                        {%- elseif 'CountryValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'NL' %}
+                        {%- elseif 'LocaleValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'nl_NL' %}
+                        {%- elseif 'LanguageValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'nl' %}
+                        {%- elseif 'CurrencyValidator' in constraint.validatedBy() %}
+                            {%- set test_data = 'EUR' %}
+                        {%- elseif 'LengthValidator' in constraint.validatedBy() %}
+                            {% set random_number = random(constraint.max - constraint.min) + constraint.min %}
+                            {% set test_data = '' %}
+                            {% for i in 1..random_number %}
+                                {% set test_data = test_data ~ random('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890') %}
+                            {% endfor %}
+                        {%- elseif 'UuidValidator' in constraint.validatedBy() %}
+                        {#- might want to check uuid versions and strict mode? #}
+                            {%- set test_data = '123e4567-e89b-12d3-a456-426655440000' %}
+                        {%- endif %}
+                    {%- endfor %}
+                {%- endif %}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = '{{ test_data }}';
+
+            {%- elseif info['type'] == 'text' %}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = 'test_{{ field }}_'.substr(str_shuffle(md5(time())),0,255);
+
+            {%- elseif info['type'] == 'integer' or info['type'] == 'smallint' or info['type'] == 'bigint' %}
+            {%- set test_data = 1 %}
+            {%- if entity_constraints[field] is defined and entity_constraints[field]|length > 0 %}
+                {%- for constraint in entity_constraints[field] %}
+                    {%- if 'RangeValidator' in constraint.validatedBy() %}
+                        {%- set test_data = random(constraint.max - constraint.min) + constraint.min  %}
+                    {%- elseif 'IsTrueValidator' in constraint.validatedBy() %}
+                        {%- set test_data = 1 %}
+                    {%- elseif 'IsFalseValidator' in constraint.validatedBy() %}
+                        {%- set test_data = 0 %}
+                    {%- endif %}
+                {%- endfor %}
+            {% endif %}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = {{ test_data }};
+
+            {%- elseif info['type'] == 'decimal' or info['type'] == 'float' %}
+            {%- set test_data = 1.11 %}
+            {%- if entity_constraints[field] is defined and entity_constraints[field]|length > 0 %}
+                {%- for constraint in entity_constraints[field] %}
+                    {%- if 'RangeValidator' in constraint.validatedBy() %}
+                        {%- set test_data = random(constraint.max - constraint.min) + constraint.min  %}
+                    {%- elseif 'IsTrueValidator' in constraint.validatedBy() %}
+                        {%- set test_data = 1 %}
+                    {%- elseif 'IsFalseValidator' in constraint.validatedBy() %}
+                        {%- set test_data = 0 %}
+                    {%- endif %}
+                {%- endfor %}
+            {% endif %}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = {{ test_data }};
+
+            {%- elseif info['type'] == 'boolean' %}
+            {%- set test_data = true %}
+            {%- if entity_constraints[field] is defined and entity_constraints[field]|length > 0 %}
+                {%- for constraint in entity_constraints[field] %}
+                    {%- if 'RangeValidator' in constraint.validatedBy() %}
+                        {%- set test_data = random(constraint.max - constraint.min) + constraint.min  %}
+                    {%- elseif 'IsFalseValidator' in constraint.validatedBy() %}
+                        {%- set test_data = false %}
+                    {%- endif %}
+                {%- endfor %}
+            {% endif %}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = {{ test_data }};
+
+            {%- elseif info['type'] == 'date' or info['type'] == 'datetime' or info['type'] == 'datetimetz' or info['type'] == 'time' %}
+            {%- set test_data = 'now' %}
+            {%- if entity_constraints[field] is defined and entity_constraints[field]|length > 0 %}
+                {%- for constraint in entity_constraints[field] %}
+                    {%- if 'RangeValidator' in constraint.validatedBy() %}
+                        {%- set test_data = constraint.min %}
+                    {%- endif %}
+                {%- endfor %}
+            {% endif %}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = new \DateTime('{{ test_data }}');
+
+            {%- elseif info['type'] == 'dateinterval' %}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = new \DateInterval('P2Y4DT6H8M');
+
+            {%- elseif info['type'] == 'array' or info['type'] == 'simple_array' or info['type'] == 'json_array' %}
+                {%- set plain_test_data = 'array(' %}
+                {%- set test_data = [ field ~ '_1' ] %}
+                {%- if entity_constraints[field] is defined and entity_constraints[field]|length > 0 %}
+                    {%- for constraint in entity_constraints[field] %}
+                        {# the following 2 validators are incompatible at the moment #}
+                        {%- if 'ChoiceValidator' in constraint.validatedBy() %}
+                            {% if constraint.choices is defined and constraint.choices|length > 0 %}
+                                {%- set test_data = constraint.choices %}
+                            {% else %}
+                                {# check the callback here #}
+                            {% endif %}
+                        {%- elseif 'CountValidator' in constraint.validatedBy() %}
+                            {% for i in 1..constraint.min%}
+                                {{ test_data|merge([ field ~ '_' ~ i+1 ]) }}
+                            {% endfor %}
+                        {%- endif %}
+                    {%- endfor %}
+                {%- endif %}
+                {%- for array_item in test_data %}
+                    {%- set plain_test_data = plain_test_data ~ "'" ~ array_item ~ "'," %}
+                {%- endfor %}
+                {%- set plain_test_data = plain_test_data|trim(',') ~ ')'%}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = {{ plain_test_data }};
+
+            {%- else %}
+
+        ${{ entity_class|lower }}_object['{{ field }}'] = 'unknown_field_value';
+
+            {%- endif -%}
+        {%- endfor %}
+
+
+        //add associations to mapping
+        {%- for key, assoc in assoc_mapping %}
+            {%- if (assoc['type'] == 4 or assoc['type'] == 2) and assoc['targetEntity'] is defined and assoc['targetEntity'] is not null %} {# type 2 == ManyToOne, type 4 == OneToMany #}
+
+        ${{ entity_class|lower }}_object['{{ assoc['fieldName'] }}'] = $assoc_{{ key }};
+
+            {%- endif %}
+        {%- endfor %}
+
+        self::$sample_object = ${{ entity_class|lower }}_object;
+    }
+

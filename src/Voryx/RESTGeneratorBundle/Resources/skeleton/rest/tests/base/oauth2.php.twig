@@ -1,0 +1,50 @@
+<?php
+
+namespace {{ namespace }}\Tests\Base;
+
+use {{ namespace }}\Command\CreateOAuthClientCommand;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Tester\CommandTester;
+use FOS\OAuthServerBundle\Model\Client as OAuthClient;
+
+class {{ friendly_format }}BaseCase extends WebTestCase
+{
+    protected static $client_id;
+    protected static $client_secret;
+    protected static $access_token;
+
+    private $username = null;
+    private $password = null;
+
+    public function setUp()
+    {
+        if ($this->username === null || $this->password === null)
+        {
+            die('Please make sure to fill in an API user username/password in this file (path/to/Tests/oauthBase.php)');
+        }
+        parent::__construct();
+        $client      = static::createClient();
+        $clientManager = $client->getContainer()->get('fos_oauth_server.client_manager.default');
+        /** @var OAuthClient $oauth_client */
+        $oauth_client = $clientManager->createClient();
+        $oauth_client->setRedirectUris(array());
+        $oauth_client->setAllowedGrantTypes(array('authorization_code', 'password', 'refresh_token', 'client_credentials'));
+        $clientManager->updateClient($oauth_client);
+
+        $public_key_split = $oauth_client->getPublicId();
+        $secret_key_split = $oauth_client->getSecret();
+
+        self::$client_id     = $public_key_split;
+        self::$client_secret = $secret_key_split;
+        $this->assertNotEquals(self::$client_id, null);
+        $this->assertNotEquals(self::$client_secret, null);
+
+        $url = "/oauth/v2/token?client_id=".self::$client_id.'&client_secret='.self::$client_secret.'&grant_type=password'.
+        '&username='.$this->username.'&password='.$this->password;
+        $crawler = $client->request('GET', $url, array(), array(), array('HTTP_ACCEPT' => 'application/json', 'HTTP_CONTENT_TYPE' => 'application/json'));
+        $json_object        = json_decode($client->getResponse()->getContent());
+        self::$access_token = $json_object->access_token;
+    }
+}

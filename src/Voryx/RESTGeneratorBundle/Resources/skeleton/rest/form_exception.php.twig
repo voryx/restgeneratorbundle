@@ -1,0 +1,29 @@
+<?php
+
+namespace {{ namespace }}\Exception;
+
+{% block use_statements %}
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class InvalidFormException extends BadRequestHttpException
+{% endblock class_definition %}
+{
+{% block class_parameters %}
+    protected $form;
+
+{% endblock class_parameters %}
+{% block class_body %}
+    public function __construct($message, $form = null)
+    {
+        parent::__construct($message);
+        $this->form = $form;
+    }
+
+    public function getForm()
+    {
+        return $this->form;
+    }
+{% endblock class_body %}
+}

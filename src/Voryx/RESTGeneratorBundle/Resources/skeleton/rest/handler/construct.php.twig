@@ -1,0 +1,20 @@
+    /**
+{% block phpdoc_method_header %}
+     * {{ entity_class }}RESTHandler constructor.
+     * @param ObjectManager $om
+     * @param $entityClass
+     * @param FormFactoryInterface $formFactory
+{% endblock phpdoc_method_header %}
+     */
+{% block method_definition %}
+    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $this->om = $om;
+        $this->entityClass = $entityClass;
+        $this->repository = $this->om->getRepository($this->entityClass);
+        $this->formFactory = $formFactory;
+{% endblock method_body %}
+    }
+

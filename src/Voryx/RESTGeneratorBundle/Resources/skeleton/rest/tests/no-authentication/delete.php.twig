@@ -1,0 +1,6 @@
+    public function testDelete()
+    {
+        $crawler = self::$client->request('DELETE', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json');
+        $this->assertEquals(204, self::$client->getResponse()->getStatusCode(), 'Expected a 204 response status after requesting DELETE /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json, got '.self::$client->getResponse()->getStatusCode());
+    }
+

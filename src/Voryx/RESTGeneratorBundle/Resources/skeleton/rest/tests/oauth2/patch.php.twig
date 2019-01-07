@@ -1,0 +1,16 @@
+    public function testPatch()
+    {
+        $crawler = self::$client->request('PATCH', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json');
+        $this->assertEquals(401, self::$client->getResponse()->getStatusCode(), 'Expected a 401 response status after requesting PATCH /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json without access token, but got '.self::$client->getResponse()->getStatusCode()."\r\nResponse:\r\n".self::$client->getResponse()->getContent());
+
+        $crawler = self::$client->request('PATCH', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/999.json?access_token='.self::$access_token);
+        $this->assertEquals(404, self::$client->getResponse()->getStatusCode(), 'Expected a 404 response status after requesting PATCH /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/999.json, got '.self::$client->getResponse()->getStatusCode()."\r\nResponse:\r\n".self::$client->getResponse()->getContent());
+
+        $json = json_encode(self::$sample_object);
+
+        $crawler = self::$client->request('PATCH', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json?access_token='.self::$access_token, array(), array(), ['HTTP_CONTENT_TYPE' => 'application/json', 'CONTENT_TYPE' => 'application/json'], $json);
+        $this->assertEquals(200, self::$client->getResponse()->getStatusCode(), 'Expected a 200 response status after requesting PATCH /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json, got '.self::$client->getResponse()->getStatusCode()."\r\nResponse:\r\n".self::$client->getResponse()->getContent());
+
+        $obj = json_decode(self::$client->getResponse()->getContent());
+    }
+

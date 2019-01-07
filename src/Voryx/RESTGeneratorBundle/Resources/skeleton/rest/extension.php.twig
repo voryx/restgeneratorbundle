@@ -1,0 +1,29 @@
+<?php
+
+namespace {{ namespace }}\DependencyInjection;
+
+{% block use_statements %}
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Loader;
+{% endblock %}
+
+/**
+ * This is the class that loads and manages your bundle configuration
+ *
+ * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
+ */
+{% block class_definition %}
+class {{ class_name }} extends Extension
+{% endblock class_definition %}
+{
+{% block class_body %}
+    /**
+     * {@inheritDoc}
+     */
+    public function load(array $configs, ContainerBuilder $container)
+    {
+    }
+{% endblock class_body %}
+}

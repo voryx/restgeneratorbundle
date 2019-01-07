@@ -1,0 +1,6 @@
+    public function testGet()
+    {
+        $crawler = self::$client->request('GET', '/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json');
+        $this->assertEquals(200, self::$client->getResponse()->getStatusCode(), 'Expected a 200 response status after requesting /{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}/'.self::$id.'.json, got '.self::$client->getResponse()->getStatusCode());
+    }
+

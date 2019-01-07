@@ -1,0 +1,18 @@
+    /**
+{% block phpdoc_method_header %}
+     * @param array $parameters
+     * @return {{ entity_class }} ${{ entity_class|lower }}
+     * @throws InvalidFormException
+{% endblock phpdoc_method_header %}
+     */
+{% block method_definition %}
+    public function post($parameters)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        ${{ entity_class|lower }} = $this->create{{ entity_class }}();
+
+        return $this->processForm(${{ entity_class|lower }}, $parameters, 'POST');
+{% endblock method_body %}
+    }
+

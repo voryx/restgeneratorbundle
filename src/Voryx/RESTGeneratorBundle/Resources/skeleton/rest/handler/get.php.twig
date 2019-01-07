@@ -1,0 +1,15 @@
+    /**
+{% block phpdoc_method_header %}
+     * @param int $id
+     * @return {{ entity_class }} ${{ entity_class|lower }}
+ {% endblock phpdoc_method_header %}
+     */
+{% block method_definition %}
+    public function get($id)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        return $this->repository->find($id);
+{% endblock method_body %}
+    }
+

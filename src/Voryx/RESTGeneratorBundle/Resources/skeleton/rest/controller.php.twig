@@ -5,6 +5,7 @@ namespace {{ namespace }}\Controller{{ entity_namespace ? '\\' ~ entity_namespac
 {% block use_statements %}
 use {{ namespace }}\Entity\{{ entity }};
 use {{ namespace }}\Form\{{ entity }}Type;
+use {{ namespace }}\Exception\InvalidFormException;
 
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
@@ -17,28 +18,38 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use FOS\RestBundle\Controller\Annotations\Get as RESTGet;
+use FOS\RestBundle\Controller\Annotations\Put as RESTPut;
+use FOS\RestBundle\Controller\Annotations\Patch as RESTPatch;
+use FOS\RestBundle\Controller\Annotations\Post as RESTPost;
+use FOS\RestBundle\Controller\Annotations\Delete as RESTDelete;
 {%- endif %}
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use Voryx\RESTGeneratorBundle\Controller\VoryxController;
+use FOS\RestBundle\Controller\FOSRestController;
+{% if document %}
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+{% endif %}
 {% endblock use_statements %}
 
 /**
 {% block phpdoc_class_header %}
- * {{ entity }} controller.
+ * {{ entity|replace({"\\":'/'}) }} controller.
 {% endblock phpdoc_class_header %}
  * @RouteResource("{{ entity }}")
 {% block phpdoc_class_annotations %}
 {% if 'annotation' == format %}
- * @Route("/{{ route_prefix }}")
+ * @Route("/{{ route_prefix }}/{{ entity|lower|replace({"\\":'/'}) }}")
 {% endif %}
 {% endblock phpdoc_class_annotations %}
  */
 {% block class_definition %}
-class {{ entity_class }}RESTController extends VoryxController
+class {{ entity_class }}RESTController extends FOSRestController
 {% endblock class_definition %}
 {
 {% block class_body %}
@@ -53,5 +64,7 @@ class {{ entity_class }}RESTController extends VoryxController
     {%- include 'rest/actions/patch.php.twig' %}
 
     {%- include 'rest/actions/delete.php.twig' %}
+
+    {%- include 'rest/actions/getOr404.php.twig' %}
 {% endblock class_body %}
 }
